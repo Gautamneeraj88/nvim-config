@@ -1,4 +1,20 @@
 return {
+  -- ─── TODO Comments — distinct colors per keyword ─────────────────────────────
+  {
+    "folke/todo-comments.nvim",
+    opts = {
+      keywords = {
+        TODO  = { color = "#4fc1ff" },  -- blue
+        FIXME = { color = "#f7768e" },  -- red
+        NOTE  = { color = "#9ece6a" },  -- green
+        HACK  = { color = "#e0af68" },  -- yellow
+        WARN  = { color = "#ff9e64" },  -- orange
+        PERF  = { color = "#bb9af7" },  -- purple
+        TEST  = { color = "#1abc9c" },  -- teal
+      },
+    },
+  },
+
   -- ─── File Explorer (neo-tree only, no double explorer) ───────────────────────
   {
     "nvim-neo-tree/neo-tree.nvim",
