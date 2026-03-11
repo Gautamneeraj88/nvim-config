@@ -1470,103 +1470,186 @@ It tracks silently in the background and sends data to your dashboard.
 
 ## Debugger — DAP
 
-Step through code line by line, inspect variables, set breakpoints — all inside Neovim. Works for **Python**, **Go**, and **TypeScript/JavaScript**.
+Step through code line by line, inspect variables, set breakpoints — all inside Neovim.
+Works for **Python**, **Go**, and **TypeScript/JavaScript**.
+
+---
 
 ### First-time setup
 
-Open Mason and install the debug adapters:
 ```
 :Mason
 ```
-Install these (press `i` next to each):
-- `debugpy` — Python
-- `delve` — Go
-- `js-debug-adapter` — TypeScript/JavaScript
+Press `i` to install:
+- `debugpy` — Python debugger
+- `delve` — Go debugger
+- `js-debug-adapter` — TypeScript/JavaScript debugger
 
-### Keymaps
+---
 
-**Starting and controlling a debug session:**
-```
-<F5>          → start debugging / continue to next breakpoint
-<F10>         → step OVER (run next line, don't enter functions)
-<F11>         → step INTO (enter the function call)
-<F12>         → step OUT (finish current function, return to caller)
-<F9>          → step BACK (go to previous line)
-<leader>dc    → run to cursor (skip to where cursor is)
-<leader>dq    → stop / quit debugging
-<leader>dr    → restart debug session
-```
+### Understanding the UI layout
 
-**Breakpoints:**
-```
-<leader>db    → toggle breakpoint on current line (red dot appears)
-<leader>dB    → conditional breakpoint (only breaks if condition is true)
-<leader>dl    → log point (prints message without stopping)
-```
-
-**Inspecting values:**
-```
-<leader>de    → evaluate expression under cursor (or visual selection)
-<leader>dh    → hover to see variable value
-<leader>du    → toggle debug UI panels
-```
-
-**Python specific:**
-```
-<leader>dtm   → debug the test method under cursor
-<leader>dtc   → debug the test class under cursor
-```
-
-**Go specific:**
-```
-<leader>dgt   → debug the Go test under cursor
-<leader>dgl   → re-debug last Go test
-```
-
-### What the UI shows
-
-When debugging starts, panels open automatically:
+When you start debugging (`<F5>`), the UI opens automatically:
 
 ```
-LEFT PANEL:
-  Scopes      → all variables in current scope with their values
-  Breakpoints → list of all breakpoints you've set
-  Stacks      → call stack (how you got to current line)
-  Watches     → expressions you want to monitor continuously
-
-BOTTOM PANEL:
-  REPL        → interactive debug console (type expressions to evaluate)
-  Console     → program's stdout/stderr output
+┌──────────────────────────────────┬──────────────────────────────────────┐
+│  Variables                       │                                      │
+│  ────────────────────────────    │                                      │
+│  items = [Item(price=10), ...]   │         YOUR CODE                    │
+│  total = 0                       │                                      │
+│  item  = Item(price=10)          │   →  current line marked with ▶      │
+│                                  │      variable values shown inline    │
+│  Breakpoints                     │                                      │
+│  ────────────────────────────    │                                      │
+│  purchase_orders.py:42  ●        │                                      │
+│                                  │                                      │
+│  Call Stack                      │                                      │
+│  ────────────────────────────    │                                      │
+│  calculate_total  line 42        │                                      │
+│  main             line 10        │                                      │
+│                                  │                                      │
+│  Watches                         │                                      │
+│  ────────────────────────────    │                                      │
+│  (type expressions to monitor)   │                                      │
+└──────────────────────────────────┴──────────────────────────────────────┘
+│  REPL — type: total * 2 → shows result │  Console — print() output here │
+└────────────────────────────────────────┴────────────────────────────────┘
 ```
 
-Variable values also appear **inline in your code** as virtual text after each line.
+### What each panel means
 
-### Breakpoint signs
+**Variables (top-left)**
+Shows every variable in the current scope and its live value. Expand objects with `▸`.
+Updates automatically as you step through code.
+
+**Breakpoints (middle-left)**
+Lists every breakpoint you've set across all files. You can toggle them on/off here.
+
+**Call Stack (lower-left)**
+Shows the chain of function calls that led to the current line.
+Example: `main()` called `process_order()` which called `calculate_total()`.
+Click any frame to jump to that point and see its variables.
+
+**Watches (bottom-left)**
+Type any expression here to monitor it continuously as you step.
+Example: add `len(items)` to always see the list length.
+
+**REPL (bottom-center)**
+Type any expression and press Enter to evaluate it live.
+Example: type `total * 1.2` to calculate what the value would be with tax.
+
+**Console (bottom-right)**
+Your `print()` / `console.log()` / `fmt.Println()` output appears here.
+
+---
+
+### Controls
 
 ```
-●  red dot     → normal breakpoint
-◆  blue dot    → conditional breakpoint
-◎  circle      → log point
-▶  green arrow → current line being executed
+<F5>          → start / continue to next breakpoint
+<F10>         → step OVER — run next line (don't enter functions)
+<F11>         → step INTO  — enter the function being called
+<F12>         → step OUT   — finish current function, return to caller
+<F9>          → step BACK  — go one line back
+<leader>dc    → run to cursor — skip ahead to where cursor is
+<leader>dq    → stop debugging
+<leader>dr    → restart session
+<leader>du    → toggle UI open/close
 ```
 
-### Workflow example (Python)
+### Breakpoints
+
+```
+<leader>db    → toggle breakpoint (red ● dot in gutter)
+<leader>dB    → conditional breakpoint — only pauses if condition is true
+                e.g. pause only when: total > 100
+<leader>dl    → log point — print a message WITHOUT pausing execution
+```
+
+### Inspecting values
+
+```
+<leader>de    → evaluate expression under cursor in a floating popup
+<leader>dh    → hover variable to see its value
+```
+In visual mode, select any expression then `<leader>de` to evaluate it.
+
+---
+
+### Step over vs step into — the most important distinction
+
+```python
+result = calculate_total(items)   # cursor is here
+```
+
+| Key | What happens |
+|---|---|
+| `<F10>` step OVER | Runs `calculate_total()` completely and moves to next line. Use when you trust the function. |
+| `<F11>` step INTO | Enters `calculate_total()` so you can debug inside it. Use when the function has a bug. |
+| `<F12>` step OUT | Finishes the current function and returns to where it was called. |
+
+---
+
+### Breakpoint signs in gutter
+
+```
+●   red    → normal breakpoint — always pauses here
+◆   blue   → conditional breakpoint — pauses only if condition is true
+◎   teal   → log point — prints message, does not pause
+▶   green  → current line being executed right now
+```
+
+---
+
+### Full workflow — Python example
 
 ```python
 def calculate_total(items):
     total = 0
-    for item in items:     # ← set breakpoint here with <leader>db
+    for item in items:        # step 1: set breakpoint here
         total += item.price
     return total
 ```
 
-1. Place cursor on the `for` line
-2. Press `<leader>db` — red dot appears
-3. Press `<F5>` — program runs and pauses at breakpoint
-4. Look at left panel — see `items`, `total`, `item` and their values
-5. Press `<F10>` to step over each iteration
-6. Press `<leader>de` on `item.price` to evaluate it
-7. Press `<F5>` to continue to end
+1. Open the file in Neovim
+2. Place cursor on the `for` line → `<leader>db` → red dot `●` appears
+3. Run your program / press `<F5>` → execution pauses at the breakpoint
+4. **Variables panel** shows: `items = [...]`, `total = 0`
+5. Press `<F10>` → moves to `total += item.price`
+6. **Variables panel** updates: `item = Item(price=10.0)`
+7. Press `<leader>de` with cursor on `item.price` → shows the value in a popup
+8. Press `<F10>` again → `total` updates to `10.0` in the Variables panel
+9. Press `<F5>` → continues to end (or next breakpoint)
+10. Press `<leader>dq` → stop debugging
+
+---
+
+### Conditional breakpoint example
+
+Useful when a bug only happens on a specific iteration:
+
+```python
+for item in items:   # set conditional breakpoint: item.price > 100
+```
+
+1. `<leader>dB` → a prompt appears: type `item.price > 100` → Enter
+2. Debugging skips all items with price ≤ 100 and only pauses when price > 100
+
+---
+
+### Python-specific
+
+```
+<leader>dtm   → debug the test method cursor is inside
+<leader>dtc   → debug the entire test class
+```
+
+### Go-specific
+
+```
+<leader>dgt   → debug the Go test under cursor
+<leader>dgl   → re-run and debug last Go test
+```
 
 ### How step over vs step into works
 

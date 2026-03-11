@@ -63,12 +63,28 @@ return {
         config = function(_, opts)
           local dap, dapui = require("dap"), require("dapui")
           dapui.setup(opts)
+
+          -- Add visible header labels to each DAP panel via winbar
+          vim.api.nvim_create_autocmd("FileType", {
+            pattern = { "dapui_scopes", "dapui_breakpoints", "dapui_stacks", "dapui_watches", "dapui_console", "dap-repl" },
+            callback = function()
+              local titles = {
+                dapui_scopes      = "  Variables — current values of all variables",
+                dapui_breakpoints = "  Breakpoints — lines where execution pauses",
+                dapui_stacks      = "  Call Stack — how execution got to this line",
+                dapui_watches     = "  Watches — type expressions to monitor",
+                dapui_console     = "  Console — print() / log output",
+                ["dap-repl"]      = "  REPL — type any expression to evaluate it",
+              }
+              local title = titles[vim.bo.filetype]
+              if title then vim.wo.winbar = title end
+            end,
+          })
+
           -- Auto-open UI when debugging starts
           dap.listeners.after.event_initialized["dapui_config"] = function()
             dapui.open()
           end
-          -- Do NOT auto-close — user closes manually with <leader>du
-          -- Auto-close was causing the UI to flash and disappear immediately
         end,
       },
       -- Shows variable values inline in your code while debugging
