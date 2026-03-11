@@ -1459,10 +1459,11 @@ Runs **silently in the background** — tracks exactly how much time you spend c
 ### Useful commands
 
 ```
-:WakaTimeToday    → see today's coding time in the statusline
+:WakaTimeApiKey   → set or update your API key
 ```
 
-Everything else is visible at wakatime.com — daily/weekly reports, project breakdowns, language stats.
+Stats are only visible at **wakatime.com/dashboard** — the plugin has no in-editor display.
+It tracks silently in the background and sends data to your dashboard.
 
 ---
 
