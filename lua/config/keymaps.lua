@@ -44,11 +44,11 @@ map("n", "<leader>-", "<C-W>s", { desc = "Split window below" })
 map("n", "<leader>|", "<C-W>v", { desc = "Split window right" })
 map("n", "<leader>w=", "<C-w>=", { desc = "Equalize window sizes" })
 
--- Window resize (use arrow keys with Ctrl)
-map("n", "<C-Up>",    "<cmd>resize +2<cr>",          { desc = "Increase window height" })
-map("n", "<C-Down>",  "<cmd>resize -2<cr>",          { desc = "Decrease window height" })
-map("n", "<C-Left>",  "<cmd>vertical resize -2<cr>", { desc = "Decrease window width" })
-map("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase window width" })
+-- Window resize (<leader>w + arrow-like keys, step of 5)
+map("n", "<leader>w+", "<cmd>resize +5<cr>",          { desc = "Increase window height" })
+map("n", "<leader>w-", "<cmd>resize -5<cr>",          { desc = "Decrease window height" })
+map("n", "<leader>w>", "<cmd>vertical resize +5<cr>", { desc = "Increase window width" })
+map("n", "<leader>w<", "<cmd>vertical resize -5<cr>", { desc = "Decrease window width" })
 
 -- ─── Terminal ─────────────────────────────────────────────────────────────────
 
