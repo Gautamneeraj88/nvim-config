@@ -338,19 +338,39 @@ gr           → show all references (opens fzf list of every usage)
 <leader>cf   → format current file with the configured formatter
 ```
 
-### Diagnostics (errors & warnings)
+### Diagnostics — errors & warnings shown in your code
+
+When LSP finds a problem, it shows it **directly in your code** in two places:
+
+**1. Sign column** (the narrow strip on the far left):
+```
+E  → error (red)
+W  → warning (yellow)
+I  → info (blue)
+H  → hint (cyan)
+```
+
+**2. Virtual text** (the message shown at the end of the line in italics):
+```python
+from sqlalchemy import create_engine    ● Import "sqlalchemy" could not be resolved
+async def my_func(data: MyType):        ● Pyright: "MyType" is not defined
+```
+
+**3. Statusline counts** (bottom bar):
+```
+ 6  8   → 6 errors, 8 warnings in this file
+```
+
+### Navigating diagnostics
 
 ```
-]d           → jump to NEXT error or warning
-[d           → jump to PREVIOUS error or warning
-<leader>cd   → show full error message for the issue on current line
+]d           → jump to NEXT error or warning in file
+[d           → jump to PREVIOUS error or warning in file
+<leader>cd   → show the FULL error message for issue on current line (floating popup)
+<leader>xx   → open Trouble panel — see ALL errors in a list (see Trouble section)
 ```
 
-Errors show inline in the code as virtual text. Colors mean:
-- Red `E` = error (code won't compile/run)
-- Yellow `W` = warning (code will run but something's wrong)
-- Blue `I` = info
-- Cyan `H` = hint
+> **Workflow:** See `E6` in statusline → press `<leader>xx` to open all errors → press `Enter` on each to jump to it → fix it → errors disappear.
 
 ### LSP management
 
@@ -364,35 +384,60 @@ Errors show inline in the code as virtual text. Colors mean:
 
 ## Diagnostics Panel — Trouble
 
-The statusline shows error/warning **counts** (e.g. `E6 W8`). Trouble lets you see all of them in a **panel** you can browse and jump through.
+Inline diagnostics show errors **next to the line** they occur on — but when you have many errors across many files, you need a way to see them all at once. That's what **Trouble** is for.
+
+### Opening Trouble
 
 ```
-<leader>xx   → show ALL errors & warnings for the whole project
-<leader>xX   → show errors & warnings for current file only
+<leader>xx   → ALL diagnostics across the entire project (every file)
+<leader>xX   → diagnostics for current file only
 <leader>xL   → location list
 <leader>xQ   → quickfix list
-<leader>cs   → all symbols in file (functions, classes, variables)
-q            → close the Trouble panel
+<leader>cs   → all symbols in current file (functions, classes, etc.)
 ```
 
-### Inside the Trouble panel
+### What Trouble looks like
 
 ```
-j / k        → move up/down through issues
-Enter        → jump to that error in your code
-o            → open without closing Trouble
-P            → toggle auto-preview
+ ERRORS & WARNINGS ─────────────────────────────────────
+  purchase_orders.py
+    39  E  Pyright: Function declaration obscured by...
+    12  W  Ruff: "sqlalchemy" imported but unused
+  invoice_service.py
+    5   E  Import "httpx" could not be resolved
+    18  W  "response" is not accessed
 ```
 
-### Trouble vs inline diagnostics — what's the difference?
+### Navigating inside Trouble
 
-| | Inline (always on) | Trouble panel |
+```
+j / k        → move up and down the list
+Enter        → jump TO that error (closes Trouble, opens file at that line)
+o            → preview the error without closing Trouble
+P            → toggle live preview pane
+]d / [d      → next/prev item while staying in Trouble
+q            → close Trouble panel
+```
+
+### Fixing errors workflow
+
+1. Press `<leader>xx` — see all errors listed
+2. Press `j/k` to move to an error
+3. Press `Enter` to jump to it in your code
+4. Fix the error
+5. Press `<leader>xx` again — the fixed error disappears from the list
+6. Repeat until the list is empty
+
+### Trouble vs inline diagnostics
+
+| | Inline (always visible) | Trouble panel |
 |---|---|---|
-| **What** | Shows error text next to the line | Lists all errors in a panel |
-| **When to use** | See the error for the line you're on | See ALL errors at once, jump between them |
-| **Key** | `]d` / `[d` to jump | `<leader>xx` to open |
+| **Shows** | Error text next to the line | All errors in a browsable list |
+| **Scope** | Current visible code | Whole project or current file |
+| **Navigate** | `]d` / `[d` | `j` / `k` then `Enter` |
+| **Best for** | Seeing what's wrong right here | Finding and fixing all errors |
 
-> **Tip:** When you see `E6` in the statusline (6 errors), press `<leader>xx` to open Trouble and fix them one by one.
+> **Tip:** Inline diagnostics + Trouble work together. Use inline for quick awareness, Trouble when you want to systematically fix everything.
 
 ---
 
