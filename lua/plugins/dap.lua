@@ -150,25 +150,31 @@ return {
   },
 
   -- ─── TypeScript / JavaScript Debugger ─────────────────────────────────────────
+  -- Uses js-debug-adapter installed via Mason (no build step needed)
+  -- Run :Mason and install: js-debug-adapter
   {
-    "mxsdev/nvim-dap-vscode-js",
+    "mfussenegger/nvim-dap",
     ft = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
-    dependencies = {
-      "mfussenegger/nvim-dap",
-      {
-        "microsoft/vscode-js-debug",
-        build = "npm install --legacy-peer-deps --no-save && npx gulp vsDebugServerBundle && rm -rf out && mv dist out",
-        version = "1.*",
-      },
-    },
     config = function()
-      require("dap-vscode-js").setup({
-        debugger_path = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug",
-        adapters = { "pwa-node", "pwa-chrome", "node-terminal" },
-      })
-      -- Configure launch settings for each JS/TS filetype
+      local dap = require("dap")
+      local js_debug = vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js"
+
+      -- Register the adapter using Mason's installed js-debug-adapter
+      for _, adapter in ipairs({ "pwa-node", "pwa-chrome", "node-terminal" }) do
+        dap.adapters[adapter] = {
+          type = "server",
+          host = "localhost",
+          port = "${port}",
+          executable = {
+            command = "node",
+            args    = { js_debug, "${port}" },
+          },
+        }
+      end
+
+      -- Launch configurations for JS/TS files
       for _, lang in ipairs({ "typescript", "javascript", "typescriptreact", "javascriptreact" }) do
-        require("dap").configurations[lang] = {
+        dap.configurations[lang] = {
           {
             type    = "pwa-node",
             request = "launch",
@@ -179,14 +185,14 @@ return {
           {
             type      = "pwa-node",
             request   = "attach",
-            name      = "Attach to process",
+            name      = "Attach to running process",
             processId = require("dap.utils").pick_process,
             cwd       = "${workspaceFolder}",
           },
           {
             type    = "pwa-chrome",
             request = "launch",
-            name    = "Launch Chrome",
+            name    = "Launch Chrome (localhost:3000)",
             url     = "http://localhost:3000",
             webRoot = "${workspaceFolder}",
           },
