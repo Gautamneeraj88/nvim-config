@@ -37,7 +37,8 @@ Everything is documented here so you can learn and use every feature.
 25. [Color Highlighter](#color-highlighter)
 26. [Package Info](#package-info)
 27. [Wakatime — Coding Time Tracker](#wakatime--coding-time-tracker)
-28. [Auto-save](#auto-save)
+28. [Debugger — DAP](#debugger--dap)
+29. [Auto-save](#auto-save)
 29. [TODO Comments](#todo-comments)
 30. [Markdown](#markdown)
 31. [Themes](#themes)
@@ -1467,6 +1468,118 @@ It tracks silently in the background and sends data to your dashboard.
 
 ---
 
+## Debugger — DAP
+
+Step through code line by line, inspect variables, set breakpoints — all inside Neovim. Works for **Python**, **Go**, and **TypeScript/JavaScript**.
+
+### First-time setup
+
+Open Mason and install the debug adapters:
+```
+:Mason
+```
+Install these (press `i` next to each):
+- `debugpy` — Python
+- `delve` — Go
+- `js-debug-adapter` — TypeScript/JavaScript
+
+### Keymaps
+
+**Starting and controlling a debug session:**
+```
+<F5>          → start debugging / continue to next breakpoint
+<F10>         → step OVER (run next line, don't enter functions)
+<F11>         → step INTO (enter the function call)
+<F12>         → step OUT (finish current function, return to caller)
+<F9>          → step BACK (go to previous line)
+<leader>dc    → run to cursor (skip to where cursor is)
+<leader>dq    → stop / quit debugging
+<leader>dr    → restart debug session
+```
+
+**Breakpoints:**
+```
+<leader>db    → toggle breakpoint on current line (red dot appears)
+<leader>dB    → conditional breakpoint (only breaks if condition is true)
+<leader>dl    → log point (prints message without stopping)
+```
+
+**Inspecting values:**
+```
+<leader>de    → evaluate expression under cursor (or visual selection)
+<leader>dh    → hover to see variable value
+<leader>du    → toggle debug UI panels
+```
+
+**Python specific:**
+```
+<leader>dtm   → debug the test method under cursor
+<leader>dtc   → debug the test class under cursor
+```
+
+**Go specific:**
+```
+<leader>dgt   → debug the Go test under cursor
+<leader>dgl   → re-debug last Go test
+```
+
+### What the UI shows
+
+When debugging starts, panels open automatically:
+
+```
+LEFT PANEL:
+  Scopes      → all variables in current scope with their values
+  Breakpoints → list of all breakpoints you've set
+  Stacks      → call stack (how you got to current line)
+  Watches     → expressions you want to monitor continuously
+
+BOTTOM PANEL:
+  REPL        → interactive debug console (type expressions to evaluate)
+  Console     → program's stdout/stderr output
+```
+
+Variable values also appear **inline in your code** as virtual text after each line.
+
+### Breakpoint signs
+
+```
+●  red dot     → normal breakpoint
+◆  blue dot    → conditional breakpoint
+◎  circle      → log point
+▶  green arrow → current line being executed
+```
+
+### Workflow example (Python)
+
+```python
+def calculate_total(items):
+    total = 0
+    for item in items:     # ← set breakpoint here with <leader>db
+        total += item.price
+    return total
+```
+
+1. Place cursor on the `for` line
+2. Press `<leader>db` — red dot appears
+3. Press `<F5>` — program runs and pauses at breakpoint
+4. Look at left panel — see `items`, `total`, `item` and their values
+5. Press `<F10>` to step over each iteration
+6. Press `<leader>de` on `item.price` to evaluate it
+7. Press `<F5>` to continue to end
+
+### How step over vs step into works
+
+```
+code:  result = calculate(x, y)
+
+<F10> step OVER → runs calculate() completely, moves to next line
+<F11> step INTO  → enters calculate() function, debugs inside it
+<F12> step OUT   → finishes current function, returns to caller
+```
+
+---
+
 ## How to Customize
 
 ### Add a new plugin
@@ -1589,6 +1702,20 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>cr` | Rename symbol |
 | `<leader>cf` | Format file |
 | `<leader>cd` | Show diagnostic |
+| `<leader>db` | Debug: toggle breakpoint |
+| `<leader>dB` | Debug: conditional breakpoint |
+| `<leader>dc` | Debug: run to cursor |
+| `<leader>du` | Debug: toggle UI |
+| `<leader>de` | Debug: evaluate expression |
+| `<leader>dh` | Debug: hover variable |
+| `<leader>dq` | Debug: stop |
+| `<leader>dr` | Debug: restart |
+| `<leader>dtm` | Debug: Python test method |
+| `<leader>dgt` | Debug: Go test |
+| `<F5>` | Debug: start / continue |
+| `<F10>` | Debug: step over |
+| `<F11>` | Debug: step into |
+| `<F12>` | Debug: step out |
 | `<leader>tt` | Run nearest test |
 | `<leader>tf` | Run file tests |
 | `<leader>tl` | Re-run last test |
