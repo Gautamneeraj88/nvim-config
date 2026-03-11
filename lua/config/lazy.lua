@@ -31,8 +31,6 @@ require("lazy").setup({
     -- Markdown support (rendering, LSP, formatting)
     { import = "lazyvim.plugins.extras.lang.markdown" },
 
-    -- Better UI (floating cmdline, notifications, search popup)
-    { import = "lazyvim.plugins.extras.ui.noice" },
 
     -- Test runner (neotest core — adapters configured in lua/plugins/testing.lua)
     { import = "lazyvim.plugins.extras.test.core" },
