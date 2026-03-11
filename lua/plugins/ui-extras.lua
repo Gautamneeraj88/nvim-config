@@ -3,12 +3,20 @@ return {
   -- Shows hex/rgb/hsl/css/tailwind colors as colored backgrounds inline
   -- e.g. #ff0000 shows with a red background, "red" shows red, bg-red-500 shows red
   {
-    "brenoprata18/nvim-highlight-colors",
+    "catgoose/nvim-colorizer.lua",
     event = "BufReadPost",
     opts = {
-      render              = "background", -- show color as background behind the code
-      enable_named_colors = true,         -- highlight "red", "blue", etc.
-      enable_tailwind     = true,         -- highlight Tailwind classes like bg-red-500
+      filetypes = {
+        "*",                              -- enable for all filetypes
+        css = { css = true },
+        html = { names = true },
+      },
+      user_default_options = {
+        names         = true,             -- highlight "red", "blue", etc.
+        RRGGBBAA      = true,
+        tailwind      = true,             -- highlight Tailwind classes
+        mode          = "background",     -- show as colored background
+      },
     },
   },
 

@@ -23,9 +23,8 @@ return {
       debug = false,
       contenttypes = {
         ["application/json"] = {
-          ft = "json",
-          formatter = { "jq", "." },  -- format JSON responses with jq
-          pathresolver = require("kulala.parser.jsonpath").parse,
+          ft        = "json",
+          formatter = { "jq", "." }, -- format JSON responses with jq
         },
       },
       show_icons = "on_request",
