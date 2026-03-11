@@ -241,6 +241,8 @@ Special comments are highlighted in different colors automatically:
 -- NOTE: important information       (green)
 -- HACK: workaround, not ideal       (yellow)
 -- WARN: be careful here             (orange)
+-- PERF: performance improvement     (purple)
+-- TEST: test related note           (teal)
 ```
 
 ```
