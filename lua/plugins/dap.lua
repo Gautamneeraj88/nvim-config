@@ -41,10 +41,12 @@ return {
         config = function(_, opts)
           local dap, dapui = require("dap"), require("dapui")
           dapui.setup(opts)
-          -- Auto-open/close UI when debugging starts/ends
-          dap.listeners.after.event_initialized["dapui_config"]  = function() dapui.open() end
-          dap.listeners.before.event_terminated["dapui_config"]  = function() dapui.close() end
-          dap.listeners.before.event_exited["dapui_config"]      = function() dapui.close() end
+          -- Auto-open UI when debugging starts
+          dap.listeners.after.event_initialized["dapui_config"] = function()
+            dapui.open()
+          end
+          -- Do NOT auto-close — user closes manually with <leader>du
+          -- Auto-close was causing the UI to flash and disappear immediately
         end,
       },
       -- Shows variable values inline in your code while debugging
