@@ -89,7 +89,7 @@ return {
   -- Animates: cursor movement, window resize, window open/close
   -- NOTE: scroll animation is disabled since neoscroll handles that already
   {
-    "echasnovski/mini.animate",
+    "nvim-mini/mini.animate",
     event = "VeryLazy",
     opts = function()
       local mouse_scrolled = false
