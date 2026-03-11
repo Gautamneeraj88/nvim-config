@@ -1,15 +1,128 @@
-# Neovim Config
+# Neovim Config — Complete Guide
 
-A minimal, modern Neovim setup built on **LazyVim** for TypeScript/JavaScript, Python, and Go development.
+A modern, minimal Neovim setup built on **LazyVim** for TypeScript/JavaScript, Python, and Go.
+Everything is documented here so you can learn and use every feature.
 
-## Quick Start
+---
+
+## Table of Contents
+
+1. [Prerequisites & Installation](#prerequisites--installation)
+2. [Understanding Neovim Basics](#understanding-neovim-basics)
+3. [File Structure](#file-structure)
+4. [The Leader Key & Which-Key](#the-leader-key--which-key)
+5. [File Explorer — Neo-tree](#file-explorer--neo-tree)
+6. [Fuzzy Search — fzf-lua](#fuzzy-search--fzf-lua)
+7. [LSP — Code Intelligence](#lsp--code-intelligence)
+8. [Peek Definition — goto-preview](#peek-definition--goto-preview)
+9. [Completion](#completion)
+10. [Git Integration](#git-integration)
+11. [Terminal](#terminal)
+12. [Test Runner — Neotest](#test-runner--neotest)
+13. [Auto-save](#auto-save)
+14. [TODO Comments](#todo-comments)
+15. [Markdown](#markdown)
+16. [Themes](#themes)
+17. [Buffers & Windows](#buffers--windows)
+18. [Editing Shortcuts](#editing-shortcuts)
+19. [Statusline](#statusline)
+20. [Python — Virtual Environment](#python--virtual-environment)
+21. [How to Customize](#how-to-customize)
+22. [Complete Keybinding Reference](#complete-keybinding-reference)
+
+---
+
+## Prerequisites & Installation
+
+### Required tools
 
 ```bash
-# First launch — install all plugins
+# macOS — install with Homebrew
+brew install neovim git node ripgrep fzf lazygit
+
+# Verify versions
+nvim --version     # needs 0.10+
+node --version     # needs 18+
+rg --version       # ripgrep for grep search
+fzf --version      # fuzzy finder
+lazygit --version  # git TUI
+```
+
+### First launch
+
+```bash
+# 1. Open Neovim — plugins will auto-install
 nvim
-# Inside nvim:
-:Lazy sync       # install/update all plugins
-:Mason           # verify LSP servers are installed
+
+# 2. Wait for lazy.nvim to finish installing (~1 min first time)
+
+# 3. Install LSP servers
+:Mason
+# Press i next to: pyright, typescript-language-server, gopls, prettierd
+
+# 4. Verify everything works
+:checkhealth
+```
+
+---
+
+## Understanding Neovim Basics
+
+Neovim is **modal** — it has different modes for different tasks. This is the most important concept to understand.
+
+### Modes
+
+| Mode | How to Enter | What it Does |
+|---|---|---|
+| **Normal** | `Esc` or `jk` | Navigate, run commands. **Default mode.** |
+| **Insert** | `i` `a` `o` | Type text like a regular editor |
+| **Visual** | `v` | Select characters |
+| **Visual Line** | `V` (capital) | Select whole lines |
+| **Command** | `:` | Run vim commands like `:w`, `:q` |
+
+> **Rule:** Always go back to Normal mode when you're not actively typing. Everything powerful happens in Normal mode.
+
+### Essential Normal Mode Motions
+
+These let you move around without touching arrow keys (much faster once learned):
+
+```
+h j k l      → left / down / up / right
+w            → jump to start of next word
+b            → jump to start of previous word
+e            → jump to end of current word
+0            → go to start of line
+$            → go to end of line
+gg           → go to top of file
+G            → go to bottom of file
+5j           → move 5 lines down (any number + motion)
+Ctrl+d       → scroll half page down (smooth)
+Ctrl+u       → scroll half page up (smooth)
+```
+
+### Operators (actions in Normal mode)
+
+```
+d            → delete
+y            → yank (copy)
+c            → change (delete + enter insert mode)
+```
+
+Operators combine with motions:
+```
+dw           → delete word
+d$           → delete to end of line
+yy           → yank (copy) entire line
+dd           → delete entire line
+ciw          → change inner word (delete word, enter insert)
+di"          → delete inside quotes
+```
+
+### Undo / Redo
+
+```
+u            → undo
+Ctrl+r       → redo
 ```
 
 ---
@@ -18,355 +131,884 @@ nvim
 
 ```
 ~/.config/nvim/
-├── init.lua                      ← entry point (just loads config.lazy)
+├── init.lua                  ← Entry point — just loads lua/config/lazy.lua
+│
 └── lua/
     ├── config/
-    │   ├── lazy.lua              ← plugin manager + LazyVim extras
-    │   ├── options.lua           ← editor settings
-    │   ├── keymaps.lua           ← custom keybindings
-    │   └── autocmds.lua          ← auto commands
+    │   ├── lazy.lua          ← Plugin manager setup + LazyVim extras enabled
+    │   ├── options.lua       ← Editor settings (line numbers, tabs, etc.)
+    │   ├── keymaps.lua       ← Custom keybindings
+    │   └── autocmds.lua      ← Automatic actions (save cursor pos, etc.)
+    │
     └── plugins/
-        ├── autosave.lua          ← auto-save
-        ├── colorscheme.lua       ← themes (catppuccin, tokyonight, rose-pine, kanagawa)
-        ├── editor.lua            ← neo-tree, smooth scroll, peek definition
-        ├── markdown.lua          ← markdown browser preview
-        ├── python.lua            ← Python venv auto-detection
-        ├── search.lua            ← fzf-lua (fuzzy search)
-        ├── terminal.lua          ← terminal inside Neovim
-        ├── testing.lua           ← neotest (Jest, Vitest, pytest, Go)
-        └── ui.lua                ← statusline (IST time), indent guides
+        ├── autosave.lua      ← Auto-save configuration
+        ├── colorscheme.lua   ← Themes: catppuccin, tokyonight, rose-pine, kanagawa
+        ├── editor.lua        ← neo-tree, peek definition, smooth scroll, TODO colors
+        ├── markdown.lua      ← Markdown browser preview
+        ├── python.lua        ← Python venv auto-detection for pyright
+        ├── search.lua        ← fzf-lua fuzzy search
+        ├── terminal.lua      ← Terminal inside Neovim
+        ├── testing.lua       ← Neotest (Jest, Vitest, pytest, Go test)
+        └── ui.lua            ← Statusline (IST time), indent guides, dressing
 ```
+
+### What each config file controls
+
+**`lua/config/lazy.lua`** — The most important file. Controls which LazyVim extras (language packs) are active:
+- `lang.typescript` → TypeScript + JavaScript LSP, formatting
+- `lang.python` → Python LSP (pyright), linting
+- `lang.go` → Go LSP (gopls), formatting
+- `lang.json` → JSON LSP, schema validation
+- `formatting.prettier` → Prettier for TS/JS/CSS
+- `ui.noice` → Beautiful floating command line
+- `test.core` → Neotest framework
+
+**`lua/config/options.lua`** — Things like relative line numbers, tab size, search behavior.
+
+**`lua/config/keymaps.lua`** — Keybindings you set yourself (not from plugins).
+
+**`lua/plugins/`** — One file per concern. To disable a feature, add `enabled = false` to the relevant plugin.
 
 ---
 
-## General
+## The Leader Key & Which-Key
 
-### The Leader Key
+The **leader key is `Space`**. It's the gateway to almost all commands.
 
-The **leader key is `Space`**. Press it and wait — `which-key` will pop up showing all available commands grouped by category. This is your built-in cheatsheet.
+**Press `Space` and wait 300ms** — a popup appears showing all available commands grouped by category:
 
-### Modes
+```
+Space f ...   → File operations
+Space s ...   → Search operations
+Space g ...   → Git operations
+Space c ...   → Code (LSP) operations
+Space t ...   → Test + Terminal operations
+Space u ...   → UI toggles
+Space b ...   → Buffer operations
+Space w ...   → Window operations
+```
 
-| Mode | How to enter | What it's for |
-|---|---|---|
-| Normal | `Esc` or `jk` | Navigate, run commands |
-| Insert | `i`, `a`, `o` | Type text |
-| Visual | `v`, `V` | Select text |
-| Command | `:` | Run vim commands |
+> **Tip:** You don't need to memorize keymaps. Just press `Space`, read the popup, and press the next key. Which-key will guide you.
 
 ---
 
-## File Explorer (Neo-tree)
+## File Explorer — Neo-tree
+
+A VSCode-style file tree on the left side.
+
+### Opening & Closing
 
 ```
-<leader>e    → toggle explorer sidebar
-<leader>o    → focus explorer (move cursor into it)
+<leader>e    → toggle explorer (open if closed, close if open)
+<leader>o    → focus explorer (move your cursor into the tree)
 ```
 
-**Inside the explorer:**
+Once the explorer is focused, use these:
+
+### Navigation inside explorer
+
 ```
+j / k        → move up and down
 Enter        → open file / expand folder
-a            → create new file (end with / to make a folder)
-d            → delete file
+l            → expand folder
+h            → collapse folder
+```
+
+### File operations
+
+```
+a            → create new file (type name + Enter)
+               to create a folder: end the name with /
+               e.g. "components/Button.tsx" creates the full path
+d            → delete file (asks for confirmation)
 r            → rename file
 y            → copy file
 x            → cut file
 p            → paste file
-H            → toggle hidden files
+```
+
+### Explorer display
+
+```
+H            → toggle showing hidden files (dotfiles)
+R            → refresh the tree
 q            → close explorer
 ```
 
+> **Tip:** The tree auto-follows your current file. When you open a file with `<leader>ff`, the tree will highlight it automatically.
+
 ---
 
-## Fuzzy Search (fzf-lua)
+## Fuzzy Search — fzf-lua
 
-Fast search across files, code, git, and more.
+Find anything instantly. This is one of the most important tools.
+
+### Finding files
 
 ```
-<leader>ff   → find files by name
+<leader>ff   → find files by name (searches entire project)
 <leader>fr   → recent files (files you opened before)
-<leader>fb   → switch between open buffers
-<leader>/    → live grep — search text across ALL project files
-<leader>fw   → search the word your cursor is on
-<leader>ft   → search all TODO / FIXME / NOTE comments
-<leader>ss   → search symbols in current file (functions, classes, etc.)
-<leader>sS   → search symbols across entire project
-<leader>sk   → search all keymaps
-<leader>:    → command history
+<leader>fb   → switch between currently open buffers (open files)
+```
+
+### Searching inside files
+
+```
+<leader>/    → live grep — search for text across ALL project files
+<leader>fw   → search the exact word your cursor is on
+```
+
+**How live grep works:**
+1. Press `<leader>/`
+2. Start typing the text you're looking for
+3. Results update instantly
+4. Press `Enter` to open that file at that line
+
+### LSP-powered search
+
+```
+<leader>ss   → all functions/classes/variables in current file
+<leader>sS   → all symbols across the entire project
+gr           → find all places where current symbol is used
+```
+
+### Git search
+
+```
+<leader>gc   → browse all git commits (with diff preview)
+<leader>gb   → browse all branches (press Enter to switch)
+```
+
+### Other search
+
+```
+<leader>ft   → search all TODO/FIXME/NOTE comments in project
+<leader>sk   → search all keymaps (useful when you forget a shortcut)
+<leader>:    → browse command history
 <leader>uT   → switch theme with live preview
 ```
 
-**Inside any fzf window:**
+### Inside any fzf window
+
 ```
 Type         → filter results in real time
-Enter        → open selected item
-Ctrl+j/k     → move up/down
-Ctrl+d        → scroll preview down
-Ctrl+u       → scroll preview up
-Esc          → close
+Enter        → open / select
+Ctrl+j       → move down
+Ctrl+k       → move up
+Ctrl+d       → scroll preview pane down
+Ctrl+u       → scroll preview pane up
+Esc          → close without selecting
 ```
 
 ---
 
 ## LSP — Code Intelligence
 
-These work when your cursor is on any symbol (function, variable, class, import).
+LSP (Language Server Protocol) gives you IDE features. It works automatically when you open a supported file.
+
+**Active language servers:**
+- **TypeScript/JS** → `vtsls` or `tsserver`
+- **Python** → `pyright`
+- **Go** → `gopls`
+- **JSON** → `jsonls`
+
+### Navigation
 
 ```
-gd           → go TO definition (navigates away)
-gp           → peek definition (floating window, stay in your file)
-gpi          → peek implementation (TS/Go only — finds where interface is implemented)
-gpr          → peek references (see all usages)
+gd           → go TO definition (jumps to where it's defined)
+gp           → peek definition (shows in floating window, you stay put)
+K            → show hover documentation (type info, docstring, signature)
+gr           → show all references (opens fzf list of every usage)
+```
+
+### Code actions & editing
+
+```
+<leader>ca   → code actions — context-aware fixes:
+               • Add missing import
+               • Remove unused import
+               • Extract to function
+               • Implement interface
+               • Fix lint errors
+
+<leader>cr   → rename symbol — renames everywhere in the project
+               (safer than find & replace — only renames actual usages)
+
+<leader>cf   → format current file with the configured formatter
+```
+
+### Diagnostics (errors & warnings)
+
+```
+]d           → jump to NEXT error or warning
+[d           → jump to PREVIOUS error or warning
+<leader>cd   → show full error message for the issue on current line
+```
+
+Errors show inline in the code as virtual text. Colors mean:
+- Red `E` = error (code won't compile/run)
+- Yellow `W` = warning (code will run but something's wrong)
+- Blue `I` = info
+- Cyan `H` = hint
+
+### LSP management
+
+```
+:LspInfo     → show which servers are running for current file
+:LspRestart  → restart all LSP servers (use when they get stuck)
+:Mason       → open Mason to install/uninstall language servers
+```
+
+---
+
+## Peek Definition — goto-preview
+
+Shows definition/references in a floating window **without leaving your current position**. Very useful when you want to quickly check something without losing your place.
+
+```
+gp           → peek definition
 gpt          → peek type definition
-gpc          → close all peek windows
-Esc          → close peek window
-
-K            → hover documentation (type info, docstring)
-gr           → find all references (opens fzf list)
-<leader>ca   → code actions (fix imports, extract function, quick fixes)
-<leader>cr   → rename symbol everywhere in project
-<leader>cf   → format current file
-
-]d / [d      → jump to next / previous error or warning
-<leader>cd   → show diagnostic details for current line
+gpr          → peek all references
+gpi          → peek implementation (TypeScript & Go only)
+gpc          → close all open peek windows
+Esc          → close peek window when focused inside it
 ```
 
-**LSP info & management:**
-```
-:LspInfo     → show which LSP servers are attached to current file
-:LspRestart  → restart LSP servers (useful when they get stuck)
-:Mason       → manage LSP server installations
-```
+### gd vs gp — what's the difference?
+
+| Key | Behavior |
+|---|---|
+| `gd` | **Jumps** to definition — you leave your current file |
+| `gp` | **Peeks** at definition — stays in floating window, current file unchanged |
+
+> **Use `gp`** when you just want to check how something is implemented.
+> **Use `gd`** when you actually want to navigate there and work on it.
+
+### Note on `gpi`
+
+`gpi` (peek implementation) only works with TypeScript and Go because those languages have the concept of interfaces + implementations. Python is dynamic so it doesn't apply.
 
 ---
 
 ## Completion
 
-Completion popup appears automatically as you type.
+A popup appears automatically as you type. No configuration needed.
 
 ```
-Tab / Shift+Tab   → move through suggestions
-Enter             → accept selected suggestion
-Ctrl+e            → close completion popup
-Ctrl+b / Ctrl+f   → scroll docs in popup
+Tab          → select next suggestion
+Shift+Tab    → select previous suggestion
+Enter        → accept the selected suggestion
+Ctrl+e       → dismiss/close the popup
+Ctrl+b       → scroll documentation in popup upward
+Ctrl+f       → scroll documentation in popup downward
 ```
+
+The completion shows:
+- **LSP suggestions** — functions, variables, types from your language server
+- **Snippets** — code templates
+- **Buffer words** — words already in your open files
+- **Path completion** — file paths when typing strings
 
 ---
 
-## Git
+## Git Integration
 
-### Lazygit (full git UI)
-```
-<leader>gg   → open lazygit
-<leader>tg   → open lazygit in terminal panel
-```
-
-**Inside lazygit:** press `?` to see all keymaps.
-
-### Git signs (inline in editor)
-Changed lines show colored marks in the left gutter:
-- `│` green = added line
-- `│` orange = modified line
-- `_` red = deleted line
+### Lazygit — full Git UI
 
 ```
-]h / [h      → jump to next / previous changed hunk
-<leader>ghp  → preview what changed in this hunk (floating diff)
-<leader>ghs  → stage this hunk
-<leader>ghr  → revert this hunk back to HEAD
-<leader>ghb  → blame current line (who wrote this and when)
+<leader>gg   → open lazygit (full screen)
+<leader>tg   → open lazygit in a terminal panel
+```
+
+**Inside lazygit** (press `?` to see all keys):
+```
+Space        → stage/unstage file
+c            → commit
+p            → push
+P            → pull
+b            → branch menu
+d            → view diff
+Enter        → open file / expand
+q            → quit
+```
+
+### Gitsigns — inline git in editor
+
+Changed lines show in the **sign column** (left gutter):
+- Green `│` = new line added
+- Orange `│` = line modified
+- Red `_` = line deleted below
+
+```
+]h           → jump to next changed hunk
+[h           → jump to previous changed hunk
+<leader>ghp  → preview the diff of this hunk in a floating window
+<leader>ghs  → stage just this hunk (without staging whole file)
+<leader>ghr  → reset/discard changes in this hunk
+<leader>ghb  → show git blame for current line (who wrote this & when)
 ```
 
 ### FZF git commands
+
 ```
-<leader>gc   → browse git commits
-<leader>gb   → browse and switch git branches
+<leader>gc   → browse commit history with diff preview
+<leader>gb   → browse branches, press Enter to checkout
 ```
 
 ---
 
 ## Terminal
 
-```
-<C-\>        → toggle floating terminal (press again to hide)
-<leader>th   → open horizontal split terminal (bottom)
-<leader>tv   → open vertical split terminal (right)
-<leader>tg   → open lazygit
+A terminal inside Neovim so you don't need to leave.
 
-Esc Esc      → exit terminal INSERT mode → back to normal mode
-Ctrl+h/j/k/l → navigate to other windows while in terminal
+### Opening terminals
+
 ```
+<C-\>        → toggle floating terminal (main terminal, press again to hide)
+<leader>th   → open terminal in horizontal split (bottom panel)
+<leader>tv   → open terminal in vertical split (right panel)
+<leader>tg   → open lazygit
+```
+
+### Inside the terminal
+
+When the terminal opens, you're in **terminal INSERT mode** (you can type commands).
+
+```
+Esc Esc      → exit terminal mode → back to Normal mode
+               (then you can navigate Neovim like normal)
+Ctrl+h       → move to left window (while in terminal)
+Ctrl+j       → move to bottom window
+Ctrl+k       → move to top window
+Ctrl+l       → move to right window
+<C-\>        → toggle terminal closed (hide it)
+```
+
+> **Workflow:** Open terminal with `<C-\>`, run your command, press `<C-\>` again to hide it and go back to your code.
 
 ---
 
-## Test Runner (Neotest)
+## Test Runner — Neotest
 
-Supports **Jest**, **Vitest** (TypeScript/JS), **pytest** (Python), **Go test** — auto-detected per project.
+Run tests without leaving Neovim. Supports Jest, Vitest, pytest, and Go test. Auto-detects which framework your project uses.
+
+### Running tests
 
 ```
-<leader>tt   → run the test nearest to cursor
-<leader>tf   → run all tests in current file
-<leader>tl   → re-run the last test
-<leader>ts   → toggle test summary panel (see all tests, pass/fail)
-<leader>to   → toggle test output panel (see full output)
-<leader>tS   → stop running test
-
-]t           → jump to next failed test
-[t           → jump to previous failed test
+<leader>tt   → run the test that your cursor is inside/on
+<leader>tf   → run ALL tests in the current file
+<leader>tl   → re-run the last test you ran
+<leader>tS   → stop a running test
 ```
 
-Pass/fail icons appear inline in your code next to each test automatically.
+### Viewing results
+
+```
+<leader>ts   → toggle test summary panel (tree of all tests, pass/fail)
+<leader>to   → toggle test output panel (full output, stdout, errors)
+]t           → jump to next FAILED test
+[t           → jump to previous FAILED test
+```
+
+### Result icons shown in your code
+
+After running tests, icons appear next to each test function:
+```
+ (green)  → test passed
+ (red)    → test failed
+ (yellow) → test running
+ (grey)   → test skipped
+```
+
+### Language-specific notes
+
+**TypeScript/JavaScript:**
+- Automatically uses Jest if `jest.config.*` exists
+- Automatically uses Vitest if `vitest.config.*` exists
+- Runs via `npx jest` or `npx vitest`
+
+**Python:**
+- Uses pytest as the runner
+- Works with virtual environments (auto-detected)
+
+**Go:**
+- Runs with `-count=1 -timeout=60s -race` flags
+- Works with standard `go test`
 
 ---
 
 ## Auto-save
 
-**Saves automatically** — you don't need to do anything.
+Your files save **automatically**. You don't need to press `<C-s>` constantly.
 
-- Saves 1.5 seconds after you stop typing
-- Saves instantly when you switch to another buffer or app loses focus
-- Does NOT save in file explorer, lazy, or mason windows
+### When it saves
 
-You can still manually save with `<C-s>` if you want.
+| Event | Delay |
+|---|---|
+| You stop typing | After 1.5 seconds |
+| You switch to another buffer | Instantly |
+| Neovim loses focus (switch app) | Instantly |
+| You leave insert mode (`jk` / `Esc`) | After 1.5 seconds |
+
+### When it does NOT save
+
+- Inside Neo-tree, Lazy, Mason windows
+- Read-only files
+- If you immediately start typing again (cancels the deferred save)
+
+You can still manually save with `<C-s>` anytime.
 
 ---
 
 ## TODO Comments
 
-Special comments are highlighted in different colors automatically:
+Special comment keywords are **highlighted in distinct colors** automatically in any language.
 
-```lua
--- TODO: something to do later       (blue)
--- FIXME: broken, needs fixing       (red)
--- NOTE: important information       (green)
--- HACK: workaround, not ideal       (yellow)
--- WARN: be careful here             (orange)
--- PERF: performance improvement     (purple)
--- TEST: test related note           (teal)
+### Keywords and colors
+
+```python
+# TODO: something to do later                  → Blue
+# FIXME: this is broken, needs fixing           → Red
+# NOTE: important context for this code         → Green
+# HACK: workaround, not the right solution      → Yellow
+# WARN: be careful, edge case here              → Orange
+# PERF: opportunity to improve performance      → Purple
+# TEST: note about testing this                 → Teal
 ```
 
+These work in all languages (Python `#`, JavaScript `//`, Go `//`, Lua `--`, etc.)
+
+### Navigating TODOs
+
 ```
-<leader>ft   → search all TODOs across project (fzf)
-]t / [t      → jump to next / previous TODO in current file
+<leader>ft   → open fzf with ALL todos in the project (with preview)
+]t           → jump to next TODO in current file
+[t           → jump to previous TODO in current file
 ```
 
 ---
 
 ## Markdown
 
-In any `.md` file:
+### In-editor rendering
+
+When you open a `.md` file, Neovim **renders it visually**:
+- Headers appear larger/bold
+- **Bold** and *italic* text renders styled
+- Code blocks get syntax highlighted
+- Bullet points and checkboxes render as actual symbols
+
+### Browser preview
 
 ```
-<leader>mp   → open live preview in browser (auto-reloads as you type)
-<leader>cf   → format markdown with prettier
+<leader>mp   → open live preview in your default browser
+               (auto-reloads every time you save)
 ```
 
-Headers, bold text, bullet points, and code blocks render visually inside Neovim automatically.
+> First time: run `:Lazy sync` then `:MarkdownPreviewInstall` to build the preview server.
+
+### Formatting
+
+```
+<leader>cf   → format the markdown file with prettier
+```
 
 ---
 
 ## Themes
 
-4 themes installed. Switch anytime with:
+4 themes installed. You can switch anytime — no restart needed.
+
+### Switch theme
 
 ```
-<leader>uT   → open theme picker with live preview
+<leader>uT   → open live theme picker (preview updates as you move)
 ```
 
-| Theme | Command | Vibe |
+### Available themes
+
+| Theme | Command | Style |
 |---|---|---|
-| **Catppuccin Mocha** | `:colorscheme catppuccin` | Default — dark, purple/pink |
-| **Tokyonight** | `:colorscheme tokyonight` | Dark blue |
-| **Rose Pine** | `:colorscheme rose-pine` | Warm, earthy |
-| **Kanagawa** | `:colorscheme kanagawa` | Dark Japanese aesthetic |
+| **Catppuccin Mocha** | `:colorscheme catppuccin` | Default — dark, purple/pink tones |
+| **Tokyonight Night** | `:colorscheme tokyonight` | Dark blue/purple |
+| **Rose Pine** | `:colorscheme rose-pine` | Warm, earthy, rose tones |
+| **Kanagawa Wave** | `:colorscheme kanagawa` | Dark Japanese ink aesthetic |
 
-To make a theme permanent, edit `lua/plugins/colorscheme.lua` and change the `colorscheme` value.
+### Variants within each theme
+
+Each theme has variants you can try by editing `lua/plugins/colorscheme.lua`:
+
+```lua
+-- Catppuccin variants: "latte" (light), "frappe", "macchiato", "mocha" (dark)
+opts = { flavour = "mocha" }
+
+-- Tokyonight variants: "night", "storm", "moon", "day" (light)
+opts = { style = "night" }
+
+-- Rose Pine variants: "main", "moon", "dawn" (light)
+opts = { variant = "main" }
+
+-- Kanagawa variants: "wave", "dragon", "lotus" (light)
+opts = { theme = "wave" }
+```
+
+### Make a theme permanent
+
+Edit `lua/plugins/colorscheme.lua`, find this line and change the value:
+```lua
+{ "LazyVim/LazyVim", opts = { colorscheme = "catppuccin" } }
+-- change "catppuccin" to "tokyonight", "rose-pine", or "kanagawa"
+```
 
 ---
 
 ## Buffers & Windows
 
-### Buffers (open files)
+### What's a buffer?
+
+A **buffer** is an open file. You can have many files open at once — they show as tabs in the top bar.
+
 ```
-Tab / Shift+Tab   → next / previous open buffer
-<leader>bd        → close current buffer
-<leader>fb        → see all open buffers (fzf)
-H / L             → previous / next buffer (in normal mode)
+Tab          → go to NEXT open buffer (next tab)
+Shift+Tab    → go to PREVIOUS open buffer (prev tab)
+H            → previous buffer (same as Shift+Tab)
+L            → next buffer
+<leader>bd   → close current buffer (close this tab)
+<leader>fb   → see all open buffers in fzf (switch by searching)
 ```
 
-### Windows (splits)
+### What's a window?
+
+A **window** is a pane/split showing a buffer. You can have multiple windows open side by side.
+
 ```
-<leader>-    → split horizontally (top/bottom)
-<leader>|    → split vertically (left/right)
+<leader>-    → split current window HORIZONTALLY (top/bottom)
+<leader>|    → split current window VERTICALLY (left/right)
 <leader>w=   → make all windows equal size
-Ctrl+h/j/k/l → move between windows
+Ctrl+h       → move cursor to LEFT window
+Ctrl+j       → move cursor to BOTTOM window
+Ctrl+k       → move cursor to TOP window
+Ctrl+l       → move cursor to RIGHT window
 ```
 
 ---
 
-## Python — Virtual Environment
+## Editing Shortcuts
 
-The config auto-detects your venv. Priority order:
-1. `VIRTUAL_ENV` env var (if you activated venv before opening nvim)
-2. Walks up from file location looking for `.venv/`, `venv/`, `env/`
-3. Scans monorepo subdirectories for venvs (e.g. `backend/.venv`)
+### Exiting insert mode
 
-**Best practice for monorepos:**
-```bash
-cd your-project/backend
-source .venv/bin/activate
-nvim .
+```
+jk           → exit insert mode (much faster than reaching Escape)
+Esc          → also works
 ```
 
-**Manual override if needed:**
+### Saving
+
 ```
-:PyrightSetPythonPath /path/to/.venv/bin/python
+<C-s>        → save file (works in normal, insert, and visual mode)
+               (auto-save handles it anyway, but useful for manual saves)
 ```
 
-**Verify which Python pyright is using:**
+### Moving lines
+
 ```
-:LspInfo
+Alt+j        → move current line DOWN one line
+Alt+k        → move current line UP one line
+```
+In visual mode, select multiple lines first, then `Alt+j/k` moves the whole selection.
+
+### Indenting
+
+```
+> (visual)   → indent selection RIGHT (stays in visual mode)
+< (visual)   → indent selection LEFT (stays in visual mode)
+```
+
+### Pasting
+
+```
+p (visual)   → paste over selection WITHOUT losing clipboard
+               (normally, pasting over text would copy the replaced text)
+```
+
+### Selecting
+
+```
+<leader>sa   → select entire file (all content)
+v            → start visual selection, then move cursor to extend
+V            → select whole lines
+viw          → select inner word (cursor anywhere on word)
+vi"          → select content inside quotes
+vi(          → select content inside parentheses
+```
+
+### Search & Replace
+
+```
+/pattern     → search forward for pattern
+?pattern     → search backward for pattern
+n            → next search result
+N            → previous search result
+Esc          → clear search highlight
+
+:%s/old/new/g      → replace all occurrences in file
+:%s/old/new/gc     → replace with confirmation for each
+```
+
+### Quickfix navigation
+
+When you have a list of errors/results to navigate:
+```
+[q           → previous item in quickfix list
+]q           → next item in quickfix list
 ```
 
 ---
 
 ## Statusline
 
-The bottom statusline shows from left to right:
-- **Mode** (NORMAL / INSERT / VISUAL)
-- **Git branch** name
-- **File path**
-- **LSP diagnostics** (errors/warnings count)
-- **File type**
-- **Cursor position** (line:column)
-- **Time in IST** (India Standard Time, 24-hour format)
+The bar at the bottom of the screen shows (left to right):
+
+```
+[MODE]  branch  filename  errors  warnings   filetype  line:col  HH:MM IST
+```
+
+- **MODE** — NORMAL / INSERT / VISUAL / COMMAND
+- **branch** — current git branch name
+- **filename** — relative path of current file, `[+]` if unsaved
+- **errors** — count of LSP errors (red)
+- **warnings** — count of LSP warnings (yellow)
+- **filetype** — detected language (python, typescript, go, etc.)
+- **line:col** — cursor position
+- **HH:MM IST** — current time in India Standard Time, 24-hour format
+
+---
+
+## Python — Virtual Environment
+
+Pyright (the Python LSP) needs to know your venv to find installed packages.
+
+### Auto-detection order
+
+1. **`VIRTUAL_ENV` env var** — if you activate venv before opening Neovim
+2. **Walk up directory tree** — looks for `.venv`, `venv`, `env`, `.env` from file location upward
+3. **Scan monorepo subdirs** — finds `backend/.venv`, `services/api/.venv`, etc.
+
+### Best practice (monorepo)
+
+```bash
+cd /your-monorepo/backend
+source .venv/bin/activate
+nvim .
+```
+
+The config auto-detects `backend/.venv` because it scans subdirectories.
+
+### Manual override
+
+If auto-detection fails:
+```
+:PyrightSetPythonPath /full/path/to/.venv/bin/python
+```
+
+### Verify it's working
+
+```
+:LspInfo
+```
+Look for `pyright` in the active clients list. The Python path should show your venv's Python.
+
+---
+
+## How to Customize
+
+### Add a new plugin
+
+Create a new file in `lua/plugins/` (or add to an existing one):
+
+```lua
+-- lua/plugins/my-plugin.lua
+return {
+  {
+    "author/plugin-name",
+    event = "VeryLazy",    -- load lazily for performance
+    opts = {
+      -- plugin options here
+    },
+    keys = {
+      { "<leader>x", "<cmd>PluginCommand<cr>", desc = "Do something" },
+    },
+  },
+}
+```
+
+### Disable a plugin
+
+Add `enabled = false` to any plugin spec:
+
+```lua
+-- In the relevant plugin file:
+{ "plugin/name", enabled = false }
+```
+
+### Add a new language
+
+Edit `lua/config/lazy.lua` and add a LazyVim language extra:
+
+```lua
+{ import = "lazyvim.plugins.extras.lang.rust" },
+{ import = "lazyvim.plugins.extras.lang.docker" },
+{ import = "lazyvim.plugins.extras.lang.yaml" },
+```
+
+Then run `:Mason` to install the LSP server.
+
+### Change a keymap
+
+Edit `lua/config/keymaps.lua`:
+
+```lua
+-- Format: map("mode", "keys", "action", { desc = "description" })
+map("n", "<leader>x", "<cmd>SomeCommand<cr>", { desc = "My command" })
+```
+
+Modes: `"n"` = normal, `"i"` = insert, `"v"` = visual, `"t"` = terminal
+
+### Change editor settings
+
+Edit `lua/config/options.lua`. All options are `vim.opt.setting = value`.
+
+Common things to change:
+```lua
+opt.tabstop = 4      -- use 4-space tabs instead of 2
+opt.wrap = false     -- disable line wrapping
+opt.relativenumber = false  -- use absolute line numbers
+```
+
+---
+
+## Complete Keybinding Reference
+
+### Leader (`Space`) commands
+
+| Key | Action |
+|---|---|
+| `<leader>e` | Toggle file explorer |
+| `<leader>o` | Focus file explorer |
+| `<leader>ff` | Find files |
+| `<leader>fr` | Recent files |
+| `<leader>fb` | Open buffers |
+| `<leader>/` | Live grep |
+| `<leader>fw` | Search word under cursor |
+| `<leader>ft` | Search TODOs |
+| `<leader>ss` | Document symbols |
+| `<leader>sS` | Workspace symbols |
+| `<leader>sk` | Search keymaps |
+| `<leader>:` | Command history |
+| `<leader>gc` | Git commits |
+| `<leader>gb` | Git branches |
+| `<leader>gg` | Lazygit |
+| `<leader>ghp` | Preview git hunk |
+| `<leader>ghs` | Stage git hunk |
+| `<leader>ghr` | Reset git hunk |
+| `<leader>ghb` | Git blame line |
+| `<leader>ca` | Code action |
+| `<leader>cr` | Rename symbol |
+| `<leader>cf` | Format file |
+| `<leader>cd` | Show diagnostic |
+| `<leader>tt` | Run nearest test |
+| `<leader>tf` | Run file tests |
+| `<leader>tl` | Re-run last test |
+| `<leader>ts` | Test summary panel |
+| `<leader>to` | Test output panel |
+| `<leader>tS` | Stop test |
+| `<leader>tg` | Lazygit terminal |
+| `<leader>th` | Horizontal terminal |
+| `<leader>tv` | Vertical terminal |
+| `<leader>mp` | Markdown preview |
+| `<leader>uT` | Switch theme |
+| `<leader>-` | Split horizontal |
+| `<leader>\|` | Split vertical |
+| `<leader>w=` | Equalize windows |
+| `<leader>bd` | Close buffer |
+| `<leader>sa` | Select all |
+| `<leader>qq` | Quit all |
+
+### LSP & Peek keys (no leader)
+
+| Key | Action |
+|---|---|
+| `gd` | Go to definition |
+| `gp` | Peek definition |
+| `gpi` | Peek implementation |
+| `gpr` | Peek references |
+| `gpt` | Peek type definition |
+| `gpc` | Close peek windows |
+| `gr` | Find references (fzf) |
+| `K` | Hover documentation |
+| `]d` | Next diagnostic |
+| `[d` | Previous diagnostic |
+| `]h` | Next git hunk |
+| `[h` | Previous git hunk |
+| `]t` | Next failed test |
+| `[t` | Previous failed test |
+| `]q` | Next quickfix |
+| `[q` | Previous quickfix |
+
+### General keys
+
+| Key | Action |
+|---|---|
+| `<C-s>` | Save file |
+| `<C-\>` | Toggle terminal |
+| `<C-h/j/k/l>` | Navigate windows |
+| `Tab` | Next buffer |
+| `Shift+Tab` | Previous buffer |
+| `H` | Previous buffer |
+| `L` | Next buffer |
+| `jk` | Exit insert mode |
+| `Esc` | Clear search / close peek |
+| `Alt+j` | Move line/selection down |
+| `Alt+k` | Move line/selection up |
+| `>` (visual) | Indent right |
+| `<` (visual) | Indent left |
+| `p` (visual) | Paste without yank |
+
+### Vim built-ins worth knowing
+
+| Key | Action |
+|---|---|
+| `u` | Undo |
+| `Ctrl+r` | Redo |
+| `yy` | Copy line |
+| `dd` | Delete line |
+| `p` | Paste after cursor |
+| `P` | Paste before cursor |
+| `ciw` | Change inner word |
+| `di"` | Delete inside quotes |
+| `o` | New line below, enter insert |
+| `O` | New line above, enter insert |
+| `A` | Go to end of line, enter insert |
+| `I` | Go to start of line, enter insert |
+| `%` | Jump to matching bracket |
+| `*` | Search for word under cursor |
+| `za` | Toggle fold |
+| `.` | Repeat last action |
 
 ---
 
 ## Useful Commands
 
 ```
-:Lazy          → open plugin manager (update, clean, check plugins)
+:Lazy          → open plugin manager
 :Lazy sync     → install + update all plugins
-:Mason         → manage LSP, linter, formatter installations
+:Lazy clean    → remove unused plugins
+:Mason         → manage LSP server installations
 :LspInfo       → show active LSP servers for current file
-:LspRestart    → restart LSP
-:checkhealth   → diagnose Neovim and plugin issues
-:noh           → clear search highlights (or just press Esc)
-```
-
----
-
-## Editing Tips
-
-```
-jk             → exit insert mode (faster than reaching Escape)
-<C-s>          → save file
-<leader>qq     → quit all
-
-Alt+j / Alt+k  → move current line or selection up/down
-< / > (visual) → indent left/right (stays in visual mode)
-v then p       → paste over selection without losing clipboard
-
-<leader>sa     → select entire file
+:LspRestart    → restart LSP servers
+:checkhealth   → diagnose issues with Neovim setup
+:noh           → clear search highlights
+:e filename    → open a file
+:vs filename   → open file in vertical split
+:sp filename   → open file in horizontal split
 ```
