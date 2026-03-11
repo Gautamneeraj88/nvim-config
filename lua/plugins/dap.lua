@@ -64,20 +64,26 @@ return {
           local dap, dapui = require("dap"), require("dapui")
           dapui.setup(opts)
 
-          -- Add visible header labels to each DAP panel via winbar
-          vim.api.nvim_create_autocmd("FileType", {
-            pattern = { "dapui_scopes", "dapui_breakpoints", "dapui_stacks", "dapui_watches", "dapui_console", "dap-repl" },
-            callback = function()
-              local titles = {
-                dapui_scopes      = "  Variables — current values of all variables",
-                dapui_breakpoints = "  Breakpoints — lines where execution pauses",
-                dapui_stacks      = "  Call Stack — how execution got to this line",
-                dapui_watches     = "  Watches — type expressions to monitor",
-                dapui_console     = "  Console — print() / log output",
-                ["dap-repl"]      = "  REPL — type any expression to evaluate it",
-              }
-              local title = titles[vim.bo.filetype]
-              if title then vim.wo.winbar = title end
+          -- Add visible header labels to each DAP panel
+          local dap_titles = {
+            dapui_scopes      = "  Variables",
+            dapui_breakpoints = "  Breakpoints",
+            dapui_stacks      = "  Call Stack",
+            dapui_watches     = "  Watches",
+            dapui_console     = "  Console",
+            ["dap-repl"]      = "  REPL",
+          }
+          vim.api.nvim_create_autocmd({ "FileType", "BufWinEnter" }, {
+            callback = function(args)
+              local ft = vim.bo[args.buf].filetype
+              local title = dap_titles[ft]
+              if not title then return end
+              -- defer so window is fully initialized before setting winbar
+              vim.schedule(function()
+                for _, win in ipairs(vim.fn.win_findbuf(args.buf)) do
+                  vim.api.nvim_set_option_value("winbar", title, { win = win })
+                end
+              end)
             end,
           })
 
