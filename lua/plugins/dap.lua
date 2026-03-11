@@ -16,26 +16,48 @@ return {
         "rcarriga/nvim-dap-ui",
         dependencies = { "nvim-neotest/nvim-nio" },
         opts = {
-          icons = { expanded = "", collapsed = "", current_frame = "" },
+          icons = { expanded = "▾", collapsed = "▸", current_frame = "→" },
+          controls = {
+            enabled = true,
+            element = "repl",
+            icons = {
+              pause        = "⏸",
+              play         = "▶",
+              step_into    = "↓",
+              step_over    = "→",
+              step_out     = "↑",
+              step_back    = "←",
+              run_last     = "↺",
+              terminate    = "⏹",
+              disconnect   = "⏏",
+            },
+          },
+          -- Simple 2-panel layout:
+          -- LEFT  → what your variables contain right now
+          -- BOTTOM → your program's output / console
           layouts = {
             {
+              -- LEFT PANEL — variables and call stack
               elements = {
-                { id = "scopes",      size = 0.40 }, -- variables & their values
-                { id = "breakpoints", size = 0.20 }, -- all breakpoints
-                { id = "stacks",      size = 0.20 }, -- call stack
-                { id = "watches",     size = 0.20 }, -- custom watch expressions
+                { id = "scopes", size = 0.60 }, -- ← VARIABLES (most important)
+                { id = "stacks", size = 0.40 }, -- ← CALL STACK (how you got here)
               },
-              size = 40,
+              size     = 40,
               position = "left",
             },
             {
+              -- BOTTOM PANEL — program output
               elements = {
-                { id = "repl",   size = 0.5 }, -- debug console / REPL
-                { id = "console", size = 0.5 }, -- program output
+                { id = "console", size = 1.0 }, -- ← OUTPUT (print statements show here)
               },
-              size = 12,
+              size     = 10,
               position = "bottom",
             },
+          },
+          floating = {
+            max_height  = 0.9,
+            max_width   = 0.5,
+            border      = "rounded",
           },
         },
         config = function(_, opts)
