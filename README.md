@@ -14,21 +14,22 @@ Everything is documented here so you can learn and use every feature.
 5. [File Explorer — Neo-tree](#file-explorer--neo-tree)
 6. [Fuzzy Search — fzf-lua](#fuzzy-search--fzf-lua)
 7. [LSP — Code Intelligence](#lsp--code-intelligence)
-8. [Peek Definition — goto-preview](#peek-definition--goto-preview)
-9. [Completion](#completion)
-10. [Git Integration](#git-integration)
-11. [Terminal](#terminal)
-12. [Test Runner — Neotest](#test-runner--neotest)
-13. [Auto-save](#auto-save)
-14. [TODO Comments](#todo-comments)
-15. [Markdown](#markdown)
-16. [Themes](#themes)
-17. [Buffers & Windows](#buffers--windows)
-18. [Editing Shortcuts](#editing-shortcuts)
-19. [Statusline](#statusline)
-20. [Python — Virtual Environment](#python--virtual-environment)
-21. [How to Customize](#how-to-customize)
-22. [Complete Keybinding Reference](#complete-keybinding-reference)
+8. [Diagnostics Panel — Trouble](#diagnostics-panel--trouble)
+9. [Peek Definition — goto-preview](#peek-definition--goto-preview)
+10. [Completion](#completion)
+11. [Git Integration](#git-integration)
+12. [Terminal](#terminal)
+13. [Test Runner — Neotest](#test-runner--neotest)
+14. [Auto-save](#auto-save)
+15. [TODO Comments](#todo-comments)
+16. [Markdown](#markdown)
+17. [Themes](#themes)
+18. [Buffers & Windows](#buffers--windows)
+19. [Editing Shortcuts](#editing-shortcuts)
+20. [Statusline](#statusline)
+21. [Python — Virtual Environment](#python--virtual-environment)
+22. [How to Customize](#how-to-customize)
+23. [Complete Keybinding Reference](#complete-keybinding-reference)
 
 ---
 
@@ -361,6 +362,40 @@ Errors show inline in the code as virtual text. Colors mean:
 
 ---
 
+## Diagnostics Panel — Trouble
+
+The statusline shows error/warning **counts** (e.g. `E6 W8`). Trouble lets you see all of them in a **panel** you can browse and jump through.
+
+```
+<leader>xx   → show ALL errors & warnings for the whole project
+<leader>xX   → show errors & warnings for current file only
+<leader>xL   → location list
+<leader>xQ   → quickfix list
+<leader>cs   → all symbols in file (functions, classes, variables)
+q            → close the Trouble panel
+```
+
+### Inside the Trouble panel
+
+```
+j / k        → move up/down through issues
+Enter        → jump to that error in your code
+o            → open without closing Trouble
+P            → toggle auto-preview
+```
+
+### Trouble vs inline diagnostics — what's the difference?
+
+| | Inline (always on) | Trouble panel |
+|---|---|---|
+| **What** | Shows error text next to the line | Lists all errors in a panel |
+| **When to use** | See the error for the line you're on | See ALL errors at once, jump between them |
+| **Key** | `]d` / `[d` to jump | `<leader>xx` to open |
+
+> **Tip:** When you see `E6` in the statusline (6 errors), press `<leader>xx` to open Trouble and fix them one by one.
+
+---
+
 ## Peek Definition — goto-preview
 
 Shows definition/references in a floating window **without leaving your current position**. Very useful when you want to quickly check something without losing your place.
@@ -681,15 +716,31 @@ L            → next buffer
 
 A **window** is a pane/split showing a buffer. You can have multiple windows open side by side.
 
+**Create splits:**
 ```
 <leader>-    → split current window HORIZONTALLY (top/bottom)
 <leader>|    → split current window VERTICALLY (left/right)
-<leader>w=   → make all windows equal size
+```
+
+**Navigate between windows:**
+```
 Ctrl+h       → move cursor to LEFT window
 Ctrl+j       → move cursor to BOTTOM window
 Ctrl+k       → move cursor to TOP window
 Ctrl+l       → move cursor to RIGHT window
 ```
+
+**Resize windows:**
+```
+<leader>w+   → increase height (taller)
+<leader>w-   → decrease height (shorter)
+<leader>w>   → increase width (wider)
+<leader>w<   → decrease width (narrower)
+<leader>w=   → make all windows equal size
+```
+
+> **Note:** Each resize press moves by 5 units. Press multiple times for bigger changes.
+> macOS Ctrl+arrow keys are taken by Mission Control so we use `<leader>w` instead.
 
 ---
 
@@ -927,9 +978,18 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>tv` | Vertical terminal |
 | `<leader>mp` | Markdown preview |
 | `<leader>uT` | Switch theme |
+| `<leader>xx` | All diagnostics (Trouble) |
+| `<leader>xX` | File diagnostics (Trouble) |
+| `<leader>xL` | Location list |
+| `<leader>xQ` | Quickfix list |
+| `<leader>cs` | Symbols (Trouble) |
 | `<leader>-` | Split horizontal |
 | `<leader>\|` | Split vertical |
 | `<leader>w=` | Equalize windows |
+| `<leader>w+` | Increase window height |
+| `<leader>w-` | Decrease window height |
+| `<leader>w>` | Increase window width |
+| `<leader>w<` | Decrease window width |
 | `<leader>bd` | Close buffer |
 | `<leader>sa` | Select all |
 | `<leader>qq` | Quit all |
