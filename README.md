@@ -18,18 +18,24 @@ Everything is documented here so you can learn and use every feature.
 9. [Peek Definition — goto-preview](#peek-definition--goto-preview)
 10. [Completion](#completion)
 11. [Git Integration](#git-integration)
-12. [Terminal](#terminal)
-13. [Test Runner — Neotest](#test-runner--neotest)
-14. [Auto-save](#auto-save)
-15. [TODO Comments](#todo-comments)
-16. [Markdown](#markdown)
-17. [Themes](#themes)
-18. [Buffers & Windows](#buffers--windows)
-19. [Editing Shortcuts](#editing-shortcuts)
-20. [Statusline](#statusline)
-21. [Python — Virtual Environment](#python--virtual-environment)
-22. [How to Customize](#how-to-customize)
-23. [Complete Keybinding Reference](#complete-keybinding-reference)
+12. [Git Diff Viewer — Diffview](#git-diff-viewer--diffview)
+13. [Merge Conflicts — git-conflict](#merge-conflicts--git-conflict)
+14. [Terminal](#terminal)
+15. [Test Runner — Neotest](#test-runner--neotest)
+16. [Project Find & Replace — Spectre](#project-find--replace--spectre)
+17. [REST Client — Kulala](#rest-client--kulala)
+18. [Undo Tree](#undo-tree)
+19. [Session Management](#session-management)
+20. [Auto-save](#auto-save)
+21. [TODO Comments](#todo-comments)
+22. [Markdown](#markdown)
+23. [Themes](#themes)
+24. [Buffers & Windows](#buffers--windows)
+25. [Editing Shortcuts](#editing-shortcuts)
+26. [Statusline](#statusline)
+27. [Python — Virtual Environment](#python--virtual-environment)
+28. [How to Customize](#how-to-customize)
+29. [Complete Keybinding Reference](#complete-keybinding-reference)
 
 ---
 
@@ -537,6 +543,88 @@ Changed lines show in the **sign column** (left gutter):
 
 ---
 
+## Git Diff Viewer — Diffview
+
+Side-by-side diffs, full file history, and 3-way merge conflict resolution — all inside Neovim.
+
+### Viewing changes
+
+```
+<leader>gd    → open diff view (all uncommitted changes, side by side)
+<leader>gD    → diff current state vs last commit (HEAD~1)
+<leader>gfh   → history of current file (every commit that touched it)
+<leader>gFH   → history of entire project
+<leader>gdc   → close diff view
+```
+
+### Inside Diffview
+
+```
+Tab / S-Tab   → jump between changed files in the file panel
+]c / [c       → next / previous change (hunk) in the diff
+<leader>b     → toggle file panel (left sidebar)
+q             → close diffview
+```
+
+### Reading a diff
+
+```
+Left pane     → OLD version (before your changes)
+Right pane    → NEW version (your current changes)
+
+Green lines   → added
+Red lines     → removed
+```
+
+---
+
+## Merge Conflicts — git-conflict
+
+When you pull or merge and get conflicts, this plugin highlights them and lets you resolve with single keypresses.
+
+### What a conflict looks like
+
+```python
+<<<<<<< HEAD (current branch — YOUR changes)
+def calculate(x):
+    return x * 2
+=======
+def calculate(x, y):
+    return x + y
+>>>>>>> feature/new-calc (incoming branch — THEIR changes)
+```
+
+### Resolving conflicts
+
+Place cursor anywhere inside the conflict block and press:
+
+```
+co   → choose OURS   — keep HEAD (your current branch version)
+ct   → choose THEIRS — keep incoming (their version)
+cb   → choose BOTH   — keep both versions stacked
+c0   → choose NONE   — delete the entire conflict block
+```
+
+### Navigating conflicts
+
+```
+]x   → jump to next conflict in file
+[x   → jump to previous conflict in file
+```
+
+### Full merge conflict workflow
+
+1. Pull / merge → git says "conflict in file.py"
+2. Open the file in Neovim — conflicts are highlighted
+3. Press `]x` to jump to first conflict
+4. Read both sides, press `co` / `ct` / `cb` to resolve
+5. Press `]x` for next conflict, repeat
+6. Save file, stage it with `<leader>ghs`, then commit
+
+> **Tip:** Use `<leader>gd` (Diffview) alongside git-conflict for a full picture of what changed.
+
+---
+
 ## Terminal
 
 A terminal inside Neovim so you don't need to leave.
@@ -639,6 +727,178 @@ After running tests, icons appear next to each test function:
 **Go:**
 - Runs with `-count=1 -timeout=60s -race` flags
 - Works with standard `go test`
+
+---
+
+## Project Find & Replace — Spectre
+
+Search for a string across your **entire project** and replace it — with a preview of every change before applying. Much more powerful than `:%s/old/new/g` which only works in one file.
+
+### Opening Spectre
+
+```
+<leader>sr   → open Spectre (project-wide search & replace)
+<leader>sw   → search for word under cursor across project
+```
+
+### Inside Spectre
+
+```
+dd           → toggle excluding a specific result (don't replace this one)
+<leader>rr   → replace ALL results
+<leader>rc   → replace only the result under cursor
+<leader>ri   → toggle case-insensitive search
+<leader>rw   → toggle whole-word match
+<leader>re   → toggle regex mode
+q            → close Spectre
+```
+
+### Workflow
+
+1. Press `<leader>sr` — Spectre opens
+2. Type your search term — all matches show with file + line preview
+3. Type your replacement term
+4. Use `dd` to exclude any results you don't want changed
+5. Press `<leader>rr` to apply all replacements
+
+> **Tip:** Spectre supports regex. For example search `function (\w+)\(` to find all function declarations.
+
+---
+
+## REST Client — Kulala
+
+Write and run HTTP requests directly in Neovim — like Postman/Insomnia but in a `.http` file you can commit to your repo.
+
+### Create a request file
+
+Create any file ending in `.http`:
+
+```http
+### Health check
+GET https://api.example.com/health
+
+### Get all users
+GET https://api.example.com/users
+Authorization: Bearer {{TOKEN}}
+
+### Create user
+POST https://api.example.com/users
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com"
+}
+
+### Update user
+PUT https://api.example.com/users/{{USER_ID}}
+Content-Type: application/json
+
+{
+  "name": "Jane Doe"
+}
+```
+
+### Running requests
+
+Place cursor inside any request block and press:
+
+```
+<leader>rr   → run request under cursor
+<leader>ra   → run ALL requests in the file
+<leader>rp   → replay the last request
+<leader>ri   → inspect request (see full headers, body before sending)
+<leader>rc   → copy request as cURL command
+<leader>re   → switch environment (dev / staging / prod)
+]r           → jump to next request in file
+[r           → jump to previous request in file
+```
+
+### Environments
+
+Create a `kulala.env.json` file in your project root:
+
+```json
+{
+  "dev": {
+    "TOKEN": "dev-token-123",
+    "BASE_URL": "http://localhost:8000",
+    "USER_ID": "1"
+  },
+  "prod": {
+    "TOKEN": "prod-token-abc",
+    "BASE_URL": "https://api.example.com",
+    "USER_ID": "42"
+  }
+}
+```
+
+Then use `{{TOKEN}}` and `{{BASE_URL}}` in your `.http` file. Switch between environments with `<leader>re`.
+
+---
+
+## Undo Tree
+
+Neovim tracks **every change you ever make** to a file (even across sessions). Normally `u` is linear undo — if you undo something and then make a new edit, the undone changes are lost. Undotree shows your entire history as a **tree** so you can go back to any past state.
+
+```
+<leader>uu   → toggle Undo Tree panel
+```
+
+### Inside Undo Tree
+
+```
+j / k        → move through history states
+Enter        → jump to that state (your file changes to match)
+d            → toggle diff panel (see what changed between states)
+q            → close undo tree
+```
+
+### Reading the tree
+
+```
+●            → a save point
+│            → linear sequence of changes
+├─           → branch (you undid then made a new change)
+```
+
+> **When to use:** You've been editing for a while, did some undos, made more changes, and now want to get back to a specific earlier version — Undotree lets you find and restore it.
+
+---
+
+## Session Management
+
+Saves your entire workspace state — open files, splits, cursor positions — and restores it when you reopen Neovim in the same project.
+
+### Usage
+
+```
+<leader>qs   → restore session for current directory
+<leader>ql   → restore last session (wherever you were last)
+<leader>qd   → stop auto-saving session for this session
+```
+
+### How it works
+
+- When you quit Neovim, the session is **automatically saved**
+- Next time you open Neovim in the same folder, press `<leader>qs` and everything comes back exactly as you left it — same files, same splits, same cursor positions
+
+### Workflow
+
+```bash
+# Start working
+cd ~/projects/my-app
+nvim .
+
+# Do your work — open files, arrange splits
+# Quit normally
+:qa
+
+# Next day
+cd ~/projects/my-app
+nvim .
+# Press <leader>qs — everything is back
+```
 
 ---
 
@@ -1029,10 +1289,25 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>gc` | Git commits |
 | `<leader>gb` | Git branches |
 | `<leader>gg` | Lazygit |
+| `<leader>gd` | Diffview (all changes) |
+| `<leader>gD` | Diff vs last commit |
+| `<leader>gfh` | File history |
+| `<leader>gFH` | Project history |
+| `<leader>gdc` | Close Diffview |
 | `<leader>ghp` | Preview git hunk |
 | `<leader>ghs` | Stage git hunk |
 | `<leader>ghr` | Reset git hunk |
 | `<leader>ghb` | Git blame line |
+| `<leader>sr` | Spectre (find & replace) |
+| `<leader>sw` | Spectre (search word) |
+| `<leader>rr` | REST: run request |
+| `<leader>ra` | REST: run all requests |
+| `<leader>rc` | REST: copy as cURL |
+| `<leader>re` | REST: switch environment |
+| `<leader>uu` | Toggle Undo Tree |
+| `<leader>qs` | Restore session |
+| `<leader>ql` | Restore last session |
+| `<leader>qd` | Discard session |
 | `<leader>ca` | Code action |
 | `<leader>cr` | Rename symbol |
 | `<leader>cf` | Format file |
@@ -1080,6 +1355,14 @@ opt.relativenumber = false  -- use absolute line numbers
 | `[d` | Previous diagnostic |
 | `]h` | Next git hunk |
 | `[h` | Previous git hunk |
+| `]x` | Next merge conflict |
+| `[x` | Previous merge conflict |
+| `co` | Resolve conflict — choose ours |
+| `ct` | Resolve conflict — choose theirs |
+| `cb` | Resolve conflict — keep both |
+| `c0` | Resolve conflict — keep none |
+| `]r` | Next REST request |
+| `[r` | Previous REST request |
 | `]t` | Next failed test |
 | `[t` | Previous failed test |
 | `]q` | Next quickfix |

@@ -35,6 +35,12 @@ require("lazy").setup({
     -- Test runner (neotest core — adapters configured in lua/plugins/testing.lua)
     { import = "lazyvim.plugins.extras.test.core" },
 
+    -- Project-wide find & replace
+    { import = "lazyvim.plugins.extras.editor.spectre" },
+
+    -- Session management (restore open files on relaunch)
+    { import = "lazyvim.plugins.extras.util.persistence" },
+
     -- Your personal tweaks (lua/plugins/)
     { import = "plugins" },
   },
