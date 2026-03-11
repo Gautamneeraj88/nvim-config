@@ -32,25 +32,25 @@ return {
               disconnect   = "⏏",
             },
           },
-          -- Simple 2-panel layout:
-          -- LEFT  → what your variables contain right now
-          -- BOTTOM → your program's output / console
           layouts = {
             {
-              -- LEFT PANEL — variables and call stack
+              -- LEFT PANEL — 4 sections, each with its own header label
               elements = {
-                { id = "scopes", size = 0.60 }, -- ← VARIABLES (most important)
-                { id = "stacks", size = 0.40 }, -- ← CALL STACK (how you got here)
+                { id = "scopes",      size = 0.40 }, -- header: "Scopes"      → variables & values
+                { id = "breakpoints", size = 0.20 }, -- header: "Breakpoints" → all breakpoints set
+                { id = "stacks",      size = 0.25 }, -- header: "Stacks"      → call stack / how you got here
+                { id = "watches",     size = 0.15 }, -- header: "Watches"     → expressions you're monitoring
               },
-              size     = 40,
+              size     = 45,
               position = "left",
             },
             {
-              -- BOTTOM PANEL — program output
+              -- BOTTOM PANEL — 2 sections with header labels
               elements = {
-                { id = "console", size = 1.0 }, -- ← OUTPUT (print statements show here)
+                { id = "repl",    size = 0.45 }, -- header: "DAP REPL"  → type expressions to evaluate
+                { id = "console", size = 0.55 }, -- header: "Console"   → print() output shows here
               },
-              size     = 10,
+              size     = 12,
               position = "bottom",
             },
           },
