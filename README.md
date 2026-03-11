@@ -544,27 +544,52 @@ A terminal inside Neovim so you don't need to leave.
 ### Opening terminals
 
 ```
-<C-\>        → toggle floating terminal (main terminal, press again to hide)
+<C-\>        → toggle floating terminal (press again to hide)
 <leader>th   → open terminal in horizontal split (bottom panel)
 <leader>tv   → open terminal in vertical split (right panel)
 <leader>tg   → open lazygit
 ```
 
-### Inside the terminal
+### What <C-\> does — two different things
 
-When the terminal opens, you're in **terminal INSERT mode** (you can type commands).
+`<C-\>` behaves differently depending on where you press it:
+
+| Where | What happens |
+|---|---|
+| **Normal mode** (editing code) | Opens the floating terminal |
+| **Inside terminal** | Hides/closes the terminal window |
+
+### Exiting terminal mode
+
+When the terminal opens you are in **terminal INSERT mode** — keystrokes go to the shell.
+To get back to Neovim's normal mode there are two options:
 
 ```
-Esc Esc      → exit terminal mode → back to Normal mode
-               (then you can navigate Neovim like normal)
-Ctrl+h       → move to left window (while in terminal)
-Ctrl+j       → move to bottom window
-Ctrl+k       → move to top window
-Ctrl+l       → move to right window
-<C-\>        → toggle terminal closed (hide it)
+<C-\><C-n>   → exit terminal INSERT mode → back to Normal mode
+               (RELIABLE — always works, native Neovim shortcut)
+
+Esc Esc      → same thing, but may not work if noice.nvim intercepts Esc
 ```
 
-> **Workflow:** Open terminal with `<C-\>`, run your command, press `<C-\>` again to hide it and go back to your code.
+Once in Normal mode inside the terminal window you can:
+```
+Ctrl+h/j/k/l → move to another window (leave terminal open)
+<C-\>        → hide the terminal entirely
+j / k        → scroll up and down through terminal output
+```
+
+### Practical workflow
+
+```
+1. Press <C-\>        → terminal opens, you're in terminal mode
+2. Type your command  → e.g. npm run dev / python main.py / go run .
+3. Press <C-\><C-n>   → exit to Normal mode (terminal stays open)
+4. Scroll with j/k    → read the output
+5. Press <C-\>        → hide terminal, go back to code
+6. Press <C-\>        → show terminal again (session still running!)
+```
+
+> **Key insight:** Hiding the terminal (`<C-\>`) does NOT kill your shell. The process keeps running in the background. You can show/hide it freely.
 
 ---
 

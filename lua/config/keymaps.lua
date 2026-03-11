@@ -52,8 +52,11 @@ map("n", "<leader>w<", "<cmd>vertical resize -5<cr>", { desc = "Decrease window 
 
 -- ─── Terminal ─────────────────────────────────────────────────────────────────
 
--- Exit terminal mode easily
-map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+-- Exit terminal mode back to normal mode
+-- <C-\><C-n> is the native Neovim terminal escape — always works
+map("t", "<C-\\><C-n>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+-- Also map Esc Esc as convenience (may not work if noice intercepts Esc)
+map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode", nowait = true })
 
 -- Navigate windows from terminal too
 map("t", "<C-h>", "<cmd>wincmd h<cr>", { desc = "Go to left window" })
