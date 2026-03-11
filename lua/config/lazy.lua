@@ -41,6 +41,15 @@ require("lazy").setup({
     -- Session management (restore open files on relaunch)
     { import = "lazyvim.plugins.extras.util.persistence" },
 
+    -- Zen mode — distraction-free coding
+    { import = "lazyvim.plugins.extras.ui.zen-mode" },
+
+    -- Code outline panel (aerial)
+    { import = "lazyvim.plugins.extras.editor.aerial" },
+
+    -- Live rename preview
+    { import = "lazyvim.plugins.extras.editor.inc-rename" },
+
     -- Your personal tweaks (lua/plugins/)
     { import = "plugins" },
   },

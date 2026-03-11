@@ -26,16 +26,24 @@ Everything is documented here so you can learn and use every feature.
 17. [REST Client — Kulala](#rest-client--kulala)
 18. [Undo Tree](#undo-tree)
 19. [Session Management](#session-management)
-20. [Auto-save](#auto-save)
-21. [TODO Comments](#todo-comments)
-22. [Markdown](#markdown)
-23. [Themes](#themes)
-24. [Buffers & Windows](#buffers--windows)
-25. [Editing Shortcuts](#editing-shortcuts)
-26. [Statusline](#statusline)
-27. [Python — Virtual Environment](#python--virtual-environment)
-28. [How to Customize](#how-to-customize)
-29. [Complete Keybinding Reference](#complete-keybinding-reference)
+20. [Zen Mode](#zen-mode)
+21. [Code Outline — Aerial](#code-outline--aerial)
+22. [Live Rename — inc-rename](#live-rename--inc-rename)
+23. [Better Folds — UFO](#better-folds--ufo)
+24. [Tabout](#tabout)
+25. [Color Highlighter](#color-highlighter)
+26. [Package Info](#package-info)
+27. [Wakatime — Coding Time Tracker](#wakatime--coding-time-tracker)
+28. [Auto-save](#auto-save)
+29. [TODO Comments](#todo-comments)
+30. [Markdown](#markdown)
+31. [Themes](#themes)
+32. [Buffers & Windows](#buffers--windows)
+33. [Editing Shortcuts](#editing-shortcuts)
+34. [Statusline](#statusline)
+35. [Python — Virtual Environment](#python--virtual-environment)
+36. [How to Customize](#how-to-customize)
+37. [Complete Keybinding Reference](#complete-keybinding-reference)
 
 ---
 
@@ -1201,6 +1209,162 @@ Look for `pyright` in the active clients list. The Python path should show your 
 
 ---
 
+## Zen Mode
+
+Hides everything except your code — no statusline, no explorer, no tabs. Centers the text. Good for deep focus sessions.
+
+```
+<leader>z    → toggle zen mode (press again to exit)
+```
+
+When zen mode is active:
+- File explorer hides
+- Statusline hides
+- Buffer tabs hide
+- Code is centered in the window
+- All your keymaps still work normally
+
+---
+
+## Code Outline — Aerial
+
+A panel showing all functions, classes, and methods in the current file as a tree. Jump to any symbol instantly. Like VS Code's outline panel.
+
+```
+<leader>cs   → toggle aerial outline panel
+{            → jump to previous symbol (function/class)
+}            → jump to next symbol
+```
+
+### Inside the aerial panel
+
+```
+Enter        → jump to that symbol in your code
+p            → preview symbol without leaving aerial
+q            → close aerial
+```
+
+> **Tip:** Use aerial when working in a large file — instead of scrolling to find a function, open aerial and jump straight to it.
+
+---
+
+## Live Rename — inc-rename
+
+When you rename a symbol (`<leader>cr`), it shows a **live preview** of every place that will change as you type — before you press Enter to confirm.
+
+```
+<leader>cr   → start renaming (now shows live preview as you type)
+Enter        → confirm rename
+Esc          → cancel
+```
+
+**Before inc-rename:** you typed the new name blindly then it changed everywhere
+**After inc-rename:** you see all usages update in real time as you type the new name
+
+---
+
+## Better Folds — UFO
+
+Smarter code folding using LSP and treesitter. Fold entire functions, classes, or import blocks. Shows a hint of how many lines are folded.
+
+```
+za           → toggle fold under cursor (open if closed, close if open)
+zo           → open fold under cursor
+zc           → close fold under cursor
+zR           → open ALL folds in file
+zM           → close ALL folds in file
+zr           → open folds one level at a time
+zm           → close folds one level at a time
+zp           → peek inside a fold without opening it
+```
+
+### Fold hints
+
+When a section is folded, UFO shows:
+```python
+class UserService:  ···  47 lines
+```
+The `47 lines` tells you how much is folded.
+
+> **Tip:** Press `zM` to fold everything and get a high-level overview of the file structure. Then `za` on the function you want to work on.
+
+---
+
+## Tabout
+
+When your cursor is **inside** brackets, quotes, or parentheses, press `Tab` to jump **out** to after the closing symbol — without reaching for arrow keys.
+
+```
+"hello|"   → press Tab → cursor moves to after the "
+[item|]    → press Tab → cursor moves to after the ]
+(arg|)     → press Tab → cursor moves to after the )
+```
+
+Works with: `"` `'` `` ` `` `(` `)` `[` `]` `{` `}` `<` `>`
+
+> **Note:** When the completion popup is open, `Tab` still selects suggestions. Tabout only activates when the popup is closed.
+
+---
+
+## Color Highlighter
+
+Hex, RGB, HSL, CSS named colors, and Tailwind classes are shown with a **colored background** inline — no more guessing what a color looks like.
+
+```css
+color: #ff6b6b;              /* shows with pink/red background */
+background: rgb(100,200,50); /* shows with green background */
+color: red;                  /* shows with red background */
+```
+
+```html
+<div class="bg-blue-500 text-red-300">  <!-- both colors shown inline -->
+```
+
+No keymaps needed — it's always on automatically.
+
+---
+
+## Package Info
+
+When you open `package.json`, shows the **current installed version** of each package inline, and highlights outdated ones.
+
+```
+<leader>np   → toggle showing package versions
+<leader>nu   → update package under cursor to latest
+<leader>nd   → delete package under cursor
+<leader>ni   → install a new package
+<leader>nc   → change version of package under cursor
+```
+
+Example view in `package.json`:
+```json
+"react": "^18.2.0"     ← shows installed version, green if up to date
+"axios": "^1.3.0"      ← shows in red/orange if outdated
+```
+
+---
+
+## Wakatime — Coding Time Tracker
+
+Runs **silently in the background** — tracks exactly how much time you spend coding, broken down by project, language, and file. View your stats at wakatime.com.
+
+### First-time setup
+
+1. Sign up at wakatime.com (free)
+2. Get your API key from the dashboard
+3. In Neovim: `:WakaTimeApiKey` → paste your key → Enter
+4. That's it — tracking starts automatically
+
+### Useful commands
+
+```
+:WakaTimeToday    → see today's coding time in the statusline
+```
+
+Everything else is visible at wakatime.com — daily/weekly reports, project breakdowns, language stats.
+
+---
+
 ## How to Customize
 
 ### Add a new plugin
@@ -1308,6 +1472,15 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>qs` | Restore session |
 | `<leader>ql` | Restore last session |
 | `<leader>qd` | Discard session |
+| `<leader>z` | Toggle Zen mode |
+| `<leader>cs` | Code outline (Aerial) |
+| `<leader>np` | Toggle package versions |
+| `<leader>nu` | Update npm package |
+| `<leader>ni` | Install npm package |
+| `<leader>nc` | Change package version |
+| `zR` | Open all folds |
+| `zM` | Close all folds |
+| `zp` | Peek inside fold |
 | `<leader>ca` | Code action |
 | `<leader>cr` | Rename symbol |
 | `<leader>cf` | Format file |
