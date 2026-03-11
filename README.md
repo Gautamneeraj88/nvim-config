@@ -26,8 +26,11 @@ Everything is documented here so you can learn and use every feature.
 17. [REST Client — Kulala](#rest-client--kulala)
 18. [Undo Tree](#undo-tree)
 19. [Session Management](#session-management)
-20. [Zen Mode](#zen-mode)
-21. [Code Outline — Aerial](#code-outline--aerial)
+20. [Flash — Jump Anywhere](#flash--jump-anywhere)
+21. [Multi-cursor](#multi-cursor)
+22. [Project Switcher](#project-switcher)
+23. [Zen Mode](#zen-mode)
+25. [Code Outline — Aerial](#code-outline--aerial)
 22. [Live Rename — inc-rename](#live-rename--inc-rename)
 23. [Better Folds — UFO](#better-folds--ufo)
 24. [Tabout](#tabout)
@@ -1209,6 +1212,104 @@ Look for `pyright` in the active clients list. The Python path should show your 
 
 ---
 
+## Flash — Jump Anywhere
+
+Jump to any visible location on screen by typing just 2 characters. Much faster than `wwwww` or searching.
+
+```
+s            → jump anywhere (type 2 chars of the target word)
+S            → treesitter jump (select a code block visually)
+```
+
+### How it works
+
+1. Press `s`
+2. Type the first 2 characters of where you want to go (e.g. `fu` for a function)
+3. Matching locations get labeled with a letter
+4. Press that letter — cursor jumps there instantly
+
+```
+# Example: jump to "function handleSubmit"
+Press: s → h → a
+Labels appear → press the label → you're there
+```
+
+> **Tip:** Works across all visible lines. Much faster than `/search` + Enter when the target is visible on screen.
+
+---
+
+## Multi-cursor
+
+Select a word and keep adding the next occurrence — then edit all of them simultaneously. Like VS Code's `Ctrl+D`.
+
+### Basic workflow
+
+```
+<C-n>          → select word under cursor, then press again for next occurrence
+n              → add next occurrence (after first <C-n>)
+N              → add previous occurrence
+q              → skip current and go to next
+Q              → remove current cursor
+<Esc>          → exit multi-cursor mode
+```
+
+### Select all at once
+
+```
+<leader>ma     → select ALL occurrences of word at once
+```
+
+### Add cursors vertically
+
+```
+<C-Down>       → add cursor on line below
+<C-Up>         → add cursor on line above
+```
+
+### Once cursors are placed
+
+All normal editing commands work on every cursor simultaneously:
+```
+i              → insert at all cursors
+A              → append at end of all lines
+c              → change at all cursors
+d              → delete at all cursors
+```
+
+### Example workflow
+
+Want to rename a variable `userData` to `userInfo` in the current function:
+1. Place cursor on `userData`
+2. Press `<C-n>` — first one selected
+3. Press `n` repeatedly to add each occurrence (or `<leader>ma` for all)
+4. Press `c` then type `userInfo`
+5. Press `Esc` — done
+
+---
+
+## Project Switcher
+
+Jump between your different projects instantly without leaving Neovim.
+
+```
+<leader>fp     → open project picker (fuzzy search all your projects)
+```
+
+### How it works
+
+- Auto-detects projects by looking for `.git`, `package.json`, `go.mod`, `pyproject.toml`
+- When you open a file, it automatically `cd`s to the project root
+- All your previously opened projects are remembered
+
+### Workflow
+
+```
+<leader>fp     → type project name → Enter → Neovim switches to that project
+                 (changes directory, updates file explorer, LSP restarts for new root)
+```
+
+---
+
 ## Zen Mode
 
 Hides everything except your code — no statusline, no explorer, no tabs. Centers the text. Good for deep focus sessions.
@@ -1472,6 +1573,8 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>qs` | Restore session |
 | `<leader>ql` | Restore last session |
 | `<leader>qd` | Discard session |
+| `<leader>fp` | Switch project |
+| `<leader>ma` | Multi-cursor: select all occurrences |
 | `<leader>z` | Toggle Zen mode |
 | `<leader>cs` | Code outline (Aerial) |
 | `<leader>np` | Toggle package versions |
@@ -1511,6 +1614,19 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>bd` | Close buffer |
 | `<leader>sa` | Select all |
 | `<leader>qq` | Quit all |
+
+### Flash & Multi-cursor (no leader)
+
+| Key | Action |
+|---|---|
+| `s` | Flash jump (type 2 chars to jump anywhere) |
+| `S` | Flash treesitter selection |
+| `<C-n>` | Multi-cursor: select word / add next occurrence |
+| `<C-Down>` | Multi-cursor: add cursor below |
+| `<C-Up>` | Multi-cursor: add cursor above |
+| `n` | Multi-cursor: add next match |
+| `q` | Multi-cursor: skip current match |
+| `Esc` | Exit multi-cursor mode |
 
 ### LSP & Peek keys (no leader)
 

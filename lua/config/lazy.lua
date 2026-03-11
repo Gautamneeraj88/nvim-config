@@ -50,6 +50,9 @@ require("lazy").setup({
     -- Live rename preview
     { import = "lazyvim.plugins.extras.editor.inc-rename" },
 
+    -- Flash — jump anywhere on screen with 2 keystrokes
+    { import = "lazyvim.plugins.extras.editor.flash" },
+
     -- Your personal tweaks (lua/plugins/)
     { import = "plugins" },
   },
