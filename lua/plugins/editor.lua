@@ -71,7 +71,6 @@ return {
       height = 20,
       border = "rounded",
       default_mappings = false, -- we set our own below
-      opacity = nil,
       -- When the float opens, map Esc to close it (buffer-local, won't affect other windows)
       post_open_hook = function(buf, _)
         vim.keymap.set("n", "<Esc>", function()
@@ -80,7 +79,7 @@ return {
       end,
     },
     keys = {
-      { "gp",  "<cmd>lua require('goto-preview').goto_preview_definition()<cr>",      desc = "Peek Definition" },
+      { "gp",  function() require("goto-preview").goto_preview_definition() end,      desc = "Peek Definition" },
       { "gpi", function()
           local clients = vim.lsp.get_clients({ bufnr = 0 })
           local supported = vim.tbl_filter(function(c)
@@ -92,9 +91,9 @@ return {
             require("goto-preview").goto_preview_implementation()
           end
         end, desc = "Peek Implementation" },
-      { "gpr", "<cmd>lua require('goto-preview').goto_preview_references()<cr>",      desc = "Peek References" },
-      { "gpt", "<cmd>lua require('goto-preview').goto_preview_type_definition()<cr>", desc = "Peek Type Definition" },
-      { "gpc", "<cmd>lua require('goto-preview').close_all_win()<cr>",                desc = "Close All Peek Windows" },
+      { "gpr", function() require("goto-preview").goto_preview_references() end,      desc = "Peek References" },
+      { "gpt", function() require("goto-preview").goto_preview_type_definition() end, desc = "Peek Type Definition" },
+      { "gpc", function() require("goto-preview").close_all_win() end,               desc = "Close All Peek Windows" },
     },
   },
 
@@ -105,7 +104,6 @@ return {
     opts = {
       mappings = { "<C-u>", "<C-d>", "<C-b>", "<C-f>", "zt", "zz", "zb" },
       hide_cursor = false,
-      stop_eof = true,
       duration_multiplier = 0.8, -- faster scroll (lower = faster)
       easing = "sine",
     },

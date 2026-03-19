@@ -18,16 +18,12 @@ return {
     "mistweaverco/kulala.nvim",
     ft = { "http", "rest" },
     opts = {
-      default_view = "body",          -- show response body by default
-      default_env = "dev",            -- default environment
-      debug = false,
       contenttypes = {
         ["application/json"] = {
           ft        = "json",
           formatter = { "jq", "." }, -- format JSON responses with jq
         },
       },
-      show_icons = "on_request",
       icons = {
         inlay = {
           loading = "⏳",
@@ -37,14 +33,14 @@ return {
       },
     },
     keys = {
-      { "<leader>rr", "<cmd>lua require('kulala').run()<cr>",            ft = "http", desc = "Run request" },
-      { "<leader>ra", "<cmd>lua require('kulala').run_all()<cr>",        ft = "http", desc = "Run all requests" },
-      { "<leader>rp", "<cmd>lua require('kulala').replay()<cr>",         ft = "http", desc = "Replay last request" },
-      { "<leader>ri", "<cmd>lua require('kulala').inspect()<cr>",        ft = "http", desc = "Inspect request" },
-      { "<leader>rc", "<cmd>lua require('kulala').copy()<cr>",           ft = "http", desc = "Copy as cURL" },
-      { "<leader>re", "<cmd>lua require('kulala').set_selected_env()<cr>", ft = "http", desc = "Switch environment" },
-      { "]r",         "<cmd>lua require('kulala').jump_next()<cr>",      ft = "http", desc = "Next request" },
-      { "[r",         "<cmd>lua require('kulala').jump_prev()<cr>",      ft = "http", desc = "Prev request" },
+      { "<leader>rr", function() require("kulala").run() end,              ft = "http", desc = "Run request" },
+      { "<leader>ra", function() require("kulala").run_all() end,          ft = "http", desc = "Run all requests" },
+      { "<leader>rp", function() require("kulala").replay() end,           ft = "http", desc = "Replay last request" },
+      { "<leader>ri", function() require("kulala").inspect() end,          ft = "http", desc = "Inspect request" },
+      { "<leader>rc", function() require("kulala").copy() end,             ft = "http", desc = "Copy as cURL" },
+      { "<leader>re", function() require("kulala").set_selected_env() end, ft = "http", desc = "Switch environment" },
+      { "]r",         function() require("kulala").jump_next() end,        ft = "http", desc = "Next request" },
+      { "[r",         function() require("kulala").jump_prev() end,        ft = "http", desc = "Prev request" },
     },
   },
 }

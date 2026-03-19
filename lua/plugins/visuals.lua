@@ -6,14 +6,9 @@ return {
     "sphamba/smear-cursor.nvim",
     event = "VeryLazy",
     opts = {
-      smear_between_buffers    = true,
-      smear_between_neighbor_lines = true,
-      scroll_buffer_space      = true,
-      legacy_computing_symbols_support = false,
-      stiffness                = 0.8,   -- cursor spring stiffness (0-1, higher = snappier)
-      trailing_stiffness       = 0.5,   -- tail follows more slowly
-      distance_stop_animating  = 0.5,
-      hide_target_hack         = true,
+      stiffness               = 0.8,  -- cursor spring stiffness (0-1, higher = snappier)
+      trailing_stiffness      = 0.5,  -- tail follows more slowly
+      distance_stop_animating = 0.5,
     },
   },
 
@@ -54,11 +49,6 @@ return {
     "petertriho/nvim-scrollbar",
     event = "BufReadPost",
     opts = {
-      show           = true,
-      show_in_active_only = false,
-      set_highlights = true,
-      folds          = 1000,
-      max_lines      = false,
       hide_if_all_visible = true, -- hide scrollbar if entire file is visible
       throttle_ms    = 100,
       handle = {
@@ -81,7 +71,7 @@ return {
       excluded_buftypes = { "terminal" },
       excluded_filetypes = { "neo-tree", "lazy", "mason", "aerial", "trouble" },
       autocmd = { render = { "BufWinEnter", "TabEnter", "TermEnter", "WinEnter",
-                             "CmdwinLeave", "TextChanged", "VimResized", "WinScrolled" } },
+                             "CmdwinLeave", "VimResized", "WinScrolled" } },
     },
   },
 
@@ -92,14 +82,6 @@ return {
     "nvim-mini/mini.animate",
     event = "VeryLazy",
     opts = function()
-      local mouse_scrolled = false
-      for _, scroll in ipairs({ "Up", "Down" }) do
-        local key = "<ScrollWheel" .. scroll .. ">"
-        vim.keymap.set({ "", "i" }, key, function()
-          mouse_scrolled = true
-          return key
-        end, { expr = true })
-      end
       local animate = require("mini.animate")
       return {
         resize = {
@@ -113,10 +95,8 @@ return {
         },
         -- Disable scroll animation — neoscroll handles this
         scroll = { enable = false },
-        -- Cursor trail animation
-        cursor = {
-          timing = animate.gen_timing.linear({ duration = 80, unit = "total" }),
-        },
+        -- Cursor animation disabled — smear-cursor.nvim handles this
+        cursor = { enable = false },
       }
     end,
   },

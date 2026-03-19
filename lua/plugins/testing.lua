@@ -20,15 +20,15 @@ return {
           jestCommand = "npx jest",
           jestConfigFile = function()
             local file = vim.fn.expand("%:p")
-            if string.find(file, "/packages/") then
-              return string.match(file, "(.-/[^/]+/)src") .. "jest.config.ts"
+            local root = string.find(file, "/packages/")
+              and string.match(file, "(.-/[^/]+/)src")
+              or (vim.fn.getcwd() .. "/")
+            for _, ext in ipairs({ "ts", "js", "mjs", "cjs" }) do
+              local path = root .. "jest.config." .. ext
+              if vim.fn.filereadable(path) == 1 then return path end
             end
-            return vim.fn.getcwd() .. "/jest.config.ts"
           end,
           env = { CI = true },
-          cwd = function()
-            return vim.fn.getcwd()
-          end,
         },
         -- Vitest (detects vitest.config.* automatically)
         ["neotest-vitest"] = {},

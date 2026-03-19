@@ -1,18 +1,14 @@
 return {
-  -- ─── Statusline with IST time ─────────────────────────────────────────────
+  -- ─── Statusline with system time ─────────────────────────────────────────
   {
     "nvim-lualine/lualine.nvim",
     opts = function(_, opts)
-      -- IST = UTC + 5:30 (India Standard Time), 24-hour format
-      local function ist_time()
-        local utc = os.time(os.date("!*t"))
-        local ist = utc + (5 * 3600 + 30 * 60)
-        return " " .. os.date("%H:%M", ist) .. " IST"
+      local function clock()
+        return " " .. os.date("%H:%M")
       end
 
-      -- Replace default clock with IST time in the rightmost section
       opts.sections = opts.sections or {}
-      opts.sections.lualine_z = { ist_time }
+      opts.sections.lualine_z = { clock }
 
       return opts
     end,
@@ -28,7 +24,7 @@ return {
         win_options = { winblend = 0 },
       },
       select = {
-        backend = { "telescope", "fzf_lua", "builtin" },
+        backend = { "fzf_lua", "builtin" },
       },
     },
   },

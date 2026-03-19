@@ -4,7 +4,6 @@ return {
     "folke/snacks.nvim",
     opts = {
       terminal = {
-        enabled = true,
         win = {
           style    = "terminal",
           border   = "rounded",
@@ -21,12 +20,6 @@ return {
         function() Snacks.terminal() end,
         mode = { "n", "t" },
         desc = "Toggle Terminal",
-      },
-      -- <leader>tg opens lazygit in a full terminal
-      {
-        "<leader>tg",
-        function() Snacks.lazygit() end,
-        desc = "Lazygit",
       },
       -- <leader>th opens a horizontal split terminal
       {

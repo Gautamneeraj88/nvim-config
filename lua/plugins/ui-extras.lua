@@ -12,7 +12,7 @@ return {
         html = { names = true },
       },
       user_default_options = {
-        names         = true,             -- highlight "red", "blue", etc.
+        names         = false,            -- don't highlight color names globally (too noisy in code)
         RRGGBBAA      = true,
         tailwind      = true,             -- highlight Tailwind classes
         mode          = "background",     -- show as colored background
@@ -26,20 +26,19 @@ return {
   {
     "vuki656/package-info.nvim",
     dependencies = { "MunifTanjim/nui.nvim" },
-    ft = "json",
+    event = "BufReadPost",
+    cond = function() return vim.fn.expand("%:t") == "package.json" end,
     config = function()
       require("package-info").setup({
-        hide_up_to_date      = false, -- show version even when up to date
-        hide_unstable_versions = false,
-        package_manager      = "npm", -- change to "yarn" or "pnpm" if needed
+        package_manager = "npm", -- change to "yarn" or "pnpm" if needed
       })
     end,
     keys = {
-      { "<leader>np", "<cmd>lua require('package-info').toggle()<cr>",          desc = "Toggle package versions" },
-      { "<leader>nu", "<cmd>lua require('package-info').update()<cr>",          desc = "Update package" },
-      { "<leader>nd", "<cmd>lua require('package-info').delete()<cr>",          desc = "Delete package" },
-      { "<leader>ni", "<cmd>lua require('package-info').install()<cr>",         desc = "Install new package" },
-      { "<leader>nc", "<cmd>lua require('package-info').change_version()<cr>",  desc = "Change package version" },
+      { "<leader>np", function() require("package-info").toggle() end,         desc = "Toggle package versions" },
+      { "<leader>nu", function() require("package-info").update() end,         desc = "Update package" },
+      { "<leader>nd", function() require("package-info").delete() end,         desc = "Delete package" },
+      { "<leader>ni", function() require("package-info").install() end,        desc = "Install new package" },
+      { "<leader>nc", function() require("package-info").change_version() end, desc = "Change package version" },
     },
   },
 

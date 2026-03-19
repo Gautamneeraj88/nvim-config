@@ -10,9 +10,7 @@ return {
       { "<leader>mp", "<cmd>MarkdownPreviewToggle<cr>", ft = "markdown", desc = "Markdown Preview (browser)" },
     },
     config = function()
-      vim.g.mkdp_auto_close = 1      -- close preview when buffer closes
-      vim.g.mkdp_open_to_the_world = 0
-      vim.g.mkdp_browser = ""        -- uses your default browser
+      vim.g.mkdp_auto_close = 1 -- close preview when buffer closes
     end,
   },
 }

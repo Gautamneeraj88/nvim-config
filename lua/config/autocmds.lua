@@ -1,9 +1,9 @@
 -- Autocmds are automatically loaded on the VeryLazy event
 -- LazyVim sets up good defaults — we only add what's specific to our workflow
 
--- Close utility windows with just 'q'
+-- Close man pages with q (LazyVim handles the other utility windows)
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "help", "lspinfo", "man", "notify", "qf", "query", "startuptime", "checkhealth" },
+  pattern = { "man" },
   callback = function(event)
     vim.bo[event.buf].buflisted = false
     vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
@@ -17,23 +17,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
--- When you reopen a file, go back to where you were
-vim.api.nvim_create_autocmd("BufReadPost", {
-  callback = function(event)
-    local exclude = { "gitcommit" }
-    local buf = event.buf
-    if vim.tbl_contains(exclude, vim.bo[buf].filetype) or vim.b[buf].lazyvim_last_loc then
-      return
-    end
-    vim.b[buf].lazyvim_last_loc = true
-    local mark = vim.api.nvim_buf_get_mark(buf, '"')
-    local lcount = vim.api.nvim_buf_line_count(buf)
-    if mark[1] > 0 and mark[1] <= lcount then
-      pcall(vim.api.nvim_win_set_cursor, 0, mark)
-    end
-  end,
-})
-
 -- Show JSON without hiding quotes (conceallevel 0 = no hiding)
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "json", "jsonc" },
@@ -42,22 +25,11 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Equalize splits when Neovim window is resized
-vim.api.nvim_create_autocmd("VimResized", {
-  callback = function()
-    local current_tab = vim.fn.tabpagenr()
-    vim.cmd("tabdo wincmd =")
-    vim.cmd("tabnext " .. current_tab)
-  end,
-})
-
 -- Python: disable pydoc fallback for K — use LSP hover instead
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "python",
   callback = function()
-    -- Prevent K from calling pydoc when LSP hover is available
-    vim.bo.keywordprg = ":help"
-    -- Override K to always use LSP hover
+    -- Override K to always use LSP hover (instead of pydoc)
     vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = true, desc = "LSP Hover" })
   end,
 })

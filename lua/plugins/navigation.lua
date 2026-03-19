@@ -6,7 +6,6 @@ return {
     event = "VeryLazy",
     init = function()
       vim.g.VM_theme                      = "ocean"
-      vim.g.VM_highlight_matches          = "underline"
       vim.g.VM_show_warnings              = 0
       vim.g.VM_silent_exit                = 1
       -- Use <C-n> to select word, n/N for next/prev, q to skip, Q to remove
@@ -22,20 +21,9 @@ return {
   },
 
   -- ─── Project Switcher ─────────────────────────────────────────────────────────
-  -- Track and jump between your projects instantly
+  -- Snacks has a built-in project picker based on recent git roots
   {
-    "ahmedkhalf/project.nvim",
-    event = "VeryLazy",
-    config = function()
-      require("project_nvim").setup({
-        -- Detect project root by these files/folders
-        detection_methods = { "pattern", "lsp" },
-        patterns = { ".git", "package.json", "pyproject.toml", "go.mod", "Makefile", ".env" },
-        silent_chdir    = true,  -- silently change to project root on open
-        scope_chdir     = "global",
-        show_hidden     = false,
-      })
-    end,
+    "folke/snacks.nvim",
     keys = {
       {
         "<leader>fp",

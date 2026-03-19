@@ -26,28 +26,27 @@ Everything is documented here so you can learn and use every feature.
 17. [REST Client — Kulala](#rest-client--kulala)
 18. [Undo Tree](#undo-tree)
 19. [Session Management](#session-management)
-20. [Flash — Jump Anywhere](#flash--jump-anywhere)
-21. [Multi-cursor](#multi-cursor)
-22. [Project Switcher](#project-switcher)
-23. [Zen Mode](#zen-mode)
-25. [Code Outline — Aerial](#code-outline--aerial)
-22. [Live Rename — inc-rename](#live-rename--inc-rename)
-23. [Better Folds — UFO](#better-folds--ufo)
-24. [Tabout](#tabout)
-25. [Color Highlighter](#color-highlighter)
-26. [Package Info](#package-info)
-27. [Wakatime — Coding Time Tracker](#wakatime--coding-time-tracker)
-28. [Debugger — DAP](#debugger--dap)
-29. [Auto-save](#auto-save)
-29. [TODO Comments](#todo-comments)
-30. [Markdown](#markdown)
-31. [Themes](#themes)
-32. [Buffers & Windows](#buffers--windows)
-33. [Editing Shortcuts](#editing-shortcuts)
-34. [Statusline](#statusline)
-35. [Python — Virtual Environment](#python--virtual-environment)
-36. [How to Customize](#how-to-customize)
-37. [Complete Keybinding Reference](#complete-keybinding-reference)
+20. [Multi-cursor](#multi-cursor)
+21. [Project Switcher](#project-switcher)
+22. [Zen Mode](#zen-mode)
+23. [Code Outline — Aerial](#code-outline--aerial)
+24. [Live Rename — inc-rename](#live-rename--inc-rename)
+25. [Better Folds — UFO](#better-folds--ufo)
+26. [Tabout](#tabout)
+27. [Color Highlighter](#color-highlighter)
+28. [Package Info](#package-info)
+29. [Wakatime — Coding Time Tracker](#wakatime--coding-time-tracker)
+30. [Debugger — DAP](#debugger--dap)
+31. [Auto-save](#auto-save)
+32. [TODO Comments](#todo-comments)
+33. [Markdown](#markdown)
+34. [Themes](#themes)
+35. [Buffers & Windows](#buffers--windows)
+36. [Editing Shortcuts](#editing-shortcuts)
+37. [Statusline](#statusline)
+38. [Python — Virtual Environment](#python--virtual-environment)
+39. [How to Customize](#how-to-customize)
+40. [Complete Keybinding Reference](#complete-keybinding-reference)
 
 ---
 
@@ -179,8 +178,11 @@ Ctrl+r       → redo
 - `lang.go` → Go LSP (gopls), formatting
 - `lang.json` → JSON LSP, schema validation
 - `formatting.prettier` → Prettier for TS/JS/CSS
-- `ui.noice` → Beautiful floating command line
+- `lang.markdown` → Markdown LSP, rendering, formatting
 - `test.core` → Neotest framework
+- `editor.aerial` → Code outline panel
+- `editor.inc-rename` → Live rename preview
+- `editor.fzf` → fzf-lua as the LazyVim picker
 
 **`lua/config/options.lua`** — Things like relative line numbers, tab size, search behavior.
 
@@ -295,7 +297,7 @@ gr           → find all places where current symbol is used
 
 ```
 <leader>gc   → browse all git commits (with diff preview)
-<leader>gb   → browse all branches (press Enter to switch)
+<leader>gB   → browse all branches (press Enter to switch)
 ```
 
 ### Other search
@@ -550,7 +552,7 @@ Changed lines show in the **sign column** (left gutter):
 
 ```
 <leader>gc   → browse commit history with diff preview
-<leader>gb   → browse branches, press Enter to checkout
+<leader>gB   → browse branches, press Enter to checkout
 ```
 
 ---
@@ -1127,7 +1129,7 @@ p (visual)   → paste over selection WITHOUT losing clipboard
 ### Selecting
 
 ```
-<leader>sa   → select entire file (all content)
+<leader>A    → select entire file (all content)
 v            → start visual selection, then move cursor to extend
 V            → select whole lines
 viw          → select inner word (cursor anywhere on word)
@@ -1210,32 +1212,6 @@ If auto-detection fails:
 :LspInfo
 ```
 Look for `pyright` in the active clients list. The Python path should show your venv's Python.
-
----
-
-## Flash — Jump Anywhere
-
-Jump to any visible location on screen by typing just 2 characters. Much faster than `wwwww` or searching.
-
-```
-s            → jump anywhere (type 2 chars of the target word)
-S            → treesitter jump (select a code block visually)
-```
-
-### How it works
-
-1. Press `s`
-2. Type the first 2 characters of where you want to go (e.g. `fu` for a function)
-3. Matching locations get labeled with a letter
-4. Press that letter — cursor jumps there instantly
-
-```
-# Example: jump to "function handleSubmit"
-Press: s → h → a
-Labels appear → press the label → you're there
-```
-
-> **Tip:** Works across all visible lines. Much faster than `/search` + Enter when the target is visible on screen.
 
 ---
 
@@ -1749,7 +1725,7 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>sk` | Search keymaps |
 | `<leader>:` | Command history |
 | `<leader>gc` | Git commits |
-| `<leader>gb` | Git branches |
+| `<leader>gB` | Git branches |
 | `<leader>gg` | Lazygit |
 | `<leader>gd` | Diffview (all changes) |
 | `<leader>gD` | Diff vs last commit |
@@ -1761,7 +1737,7 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>ghr` | Reset git hunk |
 | `<leader>ghb` | Git blame line |
 | `<leader>sr` | Spectre (find & replace) |
-| `<leader>sw` | Spectre (search word) |
+| `<leader>sW` | Spectre (search word under cursor) |
 | `<leader>rr` | REST: run request |
 | `<leader>ra` | REST: run all requests |
 | `<leader>rc` | REST: copy as cURL |
@@ -1823,15 +1799,13 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>w>` | Increase window width |
 | `<leader>w<` | Decrease window width |
 | `<leader>bd` | Close buffer |
-| `<leader>sa` | Select all |
+| `<leader>A` | Select all |
 | `<leader>qq` | Quit all |
 
-### Flash & Multi-cursor (no leader)
+### Multi-cursor (no leader)
 
 | Key | Action |
 |---|---|
-| `s` | Flash jump (type 2 chars to jump anywhere) |
-| `S` | Flash treesitter selection |
 | `<C-n>` | Multi-cursor: select word / add next occurrence |
 | `<C-Down>` | Multi-cursor: add cursor below |
 | `<C-Up>` | Multi-cursor: add cursor above |

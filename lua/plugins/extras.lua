@@ -1,5 +1,3 @@
--- Plugins that were previously loaded via LazyVim extras
--- Added directly here since those extras don't exist in the current LazyVim version
 return {
   -- ─── Project-wide Find & Replace (Spectre) ───────────────────────────────────
   {
@@ -8,7 +6,7 @@ return {
     opts = { open_cmd = "noswapfile vnew" },
     keys = {
       { "<leader>sr", function() require("spectre").open() end,                               desc = "Search & Replace (Spectre)" },
-      { "<leader>sw", function() require("spectre").open_visual({ select_word = true }) end,  desc = "Search word under cursor" },
+      { "<leader>sW", function() require("spectre").open_visual({ select_word = true }) end,  desc = "Search word under cursor" },
       { "<leader>sf", function() require("spectre").open_file_search() end,                   desc = "Search in current file" },
     },
   },
@@ -43,11 +41,9 @@ return {
         },
       },
       plugins = {
-        options    = { enabled = true, ruler = false, showcmd = false },
-        twilight   = { enabled = false },
-        gitsigns   = { enabled = false },
-        tmux       = { enabled = false },
-        alacritty  = { enabled = false },
+        options  = { ruler = false, showcmd = false },
+        twilight = { enabled = false },
+        gitsigns = { enabled = false },
       },
     },
     keys = {
@@ -55,21 +51,4 @@ return {
     },
   },
 
-  -- ─── Flash — jump anywhere with 2 keystrokes ──────────────────────────────────
-  {
-    "folke/flash.nvim",
-    event = "VeryLazy",
-    opts  = {
-      modes = {
-        search = { enabled = false }, -- don't activate flash on / search
-        char   = { enabled = false }, -- don't override f/t motions
-      },
-    },
-    keys = {
-      { "s",     function() require("flash").jump() end,              mode = { "n", "x", "o" }, desc = "Flash jump" },
-      { "S",     function() require("flash").treesitter() end,        mode = { "n", "x", "o" }, desc = "Flash treesitter" },
-      { "r",     function() require("flash").remote() end,            mode = "o",               desc = "Remote flash" },
-      { "<C-s>", function() require("flash").toggle() end,            mode = "c",               desc = "Toggle flash search" },
-    },
-  },
 }

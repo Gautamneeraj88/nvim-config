@@ -29,10 +29,8 @@ return {
         },
       },
       fzf_opts = {
-        ["--ansi"] = "",
         ["--prompt"] = "  ",
         ["--info"] = "inline",
-        ["--height"] = "100%",
         ["--layout"] = "reverse",
       },
     },
@@ -54,7 +52,7 @@ return {
 
       -- Git
       { "<leader>gc", "<cmd>FzfLua git_commits<cr>",             desc = "Git Commits" },
-      { "<leader>gb", "<cmd>FzfLua git_branches<cr>",            desc = "Git Branches" },
+      { "<leader>gB", "<cmd>FzfLua git_branches<cr>",            desc = "Git Branches" },
 
       -- TODOs / FIXMEs across the project
       { "<leader>ft", "<cmd>TodoFzfLua<cr>",                     desc = "Search TODOs" },

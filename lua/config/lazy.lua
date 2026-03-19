@@ -31,7 +31,6 @@ require("lazy").setup({
     -- Markdown support (rendering, LSP, formatting)
     { import = "lazyvim.plugins.extras.lang.markdown" },
 
-
     -- Test runner (neotest core — adapters configured in lua/plugins/testing.lua)
     { import = "lazyvim.plugins.extras.test.core" },
 
@@ -41,11 +40,14 @@ require("lazy").setup({
     -- Live rename preview
     { import = "lazyvim.plugins.extras.editor.inc-rename" },
 
+    -- Use fzf-lua as the LazyVim picker (replaces snacks.picker for built-in keymaps)
+    { import = "lazyvim.plugins.extras.editor.fzf" },
+
     -- Your personal tweaks (lua/plugins/)
     { import = "plugins" },
   },
   defaults = { lazy = false, version = false },
-  install = { colorscheme = { "catppuccin", "tokyonight" } },
+  install = { colorscheme = { "catppuccin", "tokyonight", "rose-pine", "kanagawa" } },
   checker = { enabled = true, notify = false },
   performance = {
     rtp = {

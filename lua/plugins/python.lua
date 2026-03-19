@@ -1,6 +1,6 @@
 -- Fix pyright not finding venv packages in monorepos
--- Walks UP from the current file's directory looking for a venv,
--- so backend/.venv is found when editing backend/app/models.py
+-- Walks UP from the project root (params.rootPath) looking for a venv,
+-- and also checks one level of subdirectories (e.g. monorepo/backend/.venv)
 return {
   {
     "neovim/nvim-lspconfig",
@@ -11,7 +11,7 @@ return {
             -- 1. Use activated venv if one is already active in the shell
             local venv = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
 
-            -- 2. Walk up from the file being opened, looking for a venv folder
+            -- 2. Walk up from the project root (params.rootPath), looking for a venv folder
             if not venv then
               -- params.rootPath is the project root detected by pyright
               -- params.rootUri gives us the workspace root
@@ -19,7 +19,7 @@ return {
               local dir = root
 
               for _ = 1, 10 do -- walk up max 10 levels
-                for _, name in ipairs({ ".venv", "venv", "env", ".env" }) do
+                for _, name in ipairs({ ".venv", "venv", "env" }) do
                   local python = dir .. "/" .. name .. "/bin/python"
                   if vim.fn.executable(python) == 1 then
                     venv = dir .. "/" .. name

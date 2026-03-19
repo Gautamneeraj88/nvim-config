@@ -16,7 +16,7 @@ return {
       -- Use LSP first, fall back to treesitter, then indent
       provider_selector = function(_, filetype, _)
         local lsp_filetypes = { "typescript", "javascript", "typescriptreact",
-                                "javascriptreact", "python", "go", "json", "lua" }
+                                "javascriptreact", "python", "go", "json", "lua", "markdown" }
         if vim.tbl_contains(lsp_filetypes, filetype) then
           return { "lsp", "treesitter" }
         end
@@ -65,22 +65,6 @@ return {
     "abecodes/tabout.nvim",
     event = "InsertEnter",
     dependencies = { "nvim-treesitter/nvim-treesitter" },
-    opts = {
-      tabkey            = "<Tab>",
-      backwards_tabkey  = "<S-Tab>",
-      act_as_tab        = true,   -- if nothing to tabout of, act as normal Tab
-      completion        = true,   -- let completion plugin use Tab when popup is open
-      enable_backwards  = true,
-      ignore_beginning  = true,   -- don't tabout if cursor is at start of bracket content
-      tabouts = {
-        { open = "'",  close = "'"  },
-        { open = '"',  close = '"'  },
-        { open = "`",  close = "`"  },
-        { open = "(",  close = ")"  },
-        { open = "[",  close = "]"  },
-        { open = "{",  close = "}"  },
-        { open = "<",  close = ">"  },
-      },
-    },
+    opts = {},
   },
 }

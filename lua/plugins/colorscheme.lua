@@ -8,16 +8,15 @@ return {
     priority = 1000,
     opts = {
       flavour = "mocha",                   -- mocha=dark, macchiato, frappe, latte=light
-      transparent_background = false,
       integrations = {
         neo_tree = true,
         which_key = true,
-        telescope = true,
+        fzf = true,
         mason = true,
         cmp = true,
         gitsigns = true,
         treesitter = true,
-        indent_blankline = { enabled = true },
+        mini = { enabled = true },
       },
     },
   },
@@ -37,7 +36,7 @@ return {
     opts = { variant = "main" }, -- main, moon, dawn
   },
 
-  -- Kanagawa (dark Japanese aesthetic, very popular)
+  -- Kanagawa (dark Japanese aesthetic)
   {
     "rebelot/kanagawa.nvim",
     priority = 1000,
