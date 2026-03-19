@@ -90,13 +90,13 @@ Neovim is **modal** — it has different modes for different tasks. This is the 
 
 ### Modes
 
-| Mode | How to Enter | What it Does |
-|---|---|---|
-| **Normal** | `Esc` or `jk` | Navigate, run commands. **Default mode.** |
-| **Insert** | `i` `a` `o` | Type text like a regular editor |
-| **Visual** | `v` | Select characters |
-| **Visual Line** | `V` (capital) | Select whole lines |
-| **Command** | `:` | Run vim commands like `:w`, `:q` |
+| Mode            | How to Enter  | What it Does                              |
+| --------------- | ------------- | ----------------------------------------- |
+| **Normal**      | `Esc` or `jk` | Navigate, run commands. **Default mode.** |
+| **Insert**      | `i` `a` `o`   | Type text like a regular editor           |
+| **Visual**      | `v`           | Select characters                         |
+| **Visual Line** | `V` (capital) | Select whole lines                        |
+| **Command**     | `:`           | Run vim commands like `:w`, `:q`          |
 
 > **Rule:** Always go back to Normal mode when you're not actively typing. Everything powerful happens in Normal mode.
 
@@ -127,6 +127,7 @@ c            → change (delete + enter insert mode)
 ```
 
 Operators combine with motions:
+
 ```
 dw           → delete word
 d$           → delete to end of line
@@ -173,6 +174,7 @@ Ctrl+r       → redo
 ### What each config file controls
 
 **`lua/config/lazy.lua`** — The most important file. Controls which LazyVim extras (language packs) are active:
+
 - `lang.typescript` → TypeScript + JavaScript LSP, formatting
 - `lang.python` → Python LSP (pyright), linting
 - `lang.go` → Go LSP (gopls), formatting
@@ -280,6 +282,7 @@ Find anything instantly. This is one of the most important tools.
 ```
 
 **How live grep works:**
+
 1. Press `<leader>/`
 2. Start typing the text you're looking for
 3. Results update instantly
@@ -328,6 +331,7 @@ Esc          → close without selecting
 LSP (Language Server Protocol) gives you IDE features. It works automatically when you open a supported file.
 
 **Active language servers:**
+
 - **TypeScript/JS** → `vtsls` or `tsserver`
 - **Python** → `pyright`
 - **Go** → `gopls`
@@ -363,6 +367,7 @@ gr           → show all references (opens fzf list of every usage)
 When LSP finds a problem, it shows it **directly in your code** in two places:
 
 **1. Sign column** (the narrow strip on the far left):
+
 ```
 E  → error (red)
 W  → warning (yellow)
@@ -371,12 +376,14 @@ H  → hint (cyan)
 ```
 
 **2. Virtual text** (the message shown at the end of the line in italics):
+
 ```python
 from sqlalchemy import create_engine    ● Import "sqlalchemy" could not be resolved
 async def my_func(data: MyType):        ● Pyright: "MyType" is not defined
 ```
 
 **3. Statusline counts** (bottom bar):
+
 ```
  6  8   → 6 errors, 8 warnings in this file
 ```
@@ -450,12 +457,12 @@ q            → close Trouble panel
 
 ### Trouble vs inline diagnostics
 
-| | Inline (always visible) | Trouble panel |
-|---|---|---|
-| **Shows** | Error text next to the line | All errors in a browsable list |
-| **Scope** | Current visible code | Whole project or current file |
-| **Navigate** | `]d` / `[d` | `j` / `k` then `Enter` |
-| **Best for** | Seeing what's wrong right here | Finding and fixing all errors |
+|              | Inline (always visible)        | Trouble panel                  |
+| ------------ | ------------------------------ | ------------------------------ |
+| **Shows**    | Error text next to the line    | All errors in a browsable list |
+| **Scope**    | Current visible code           | Whole project or current file  |
+| **Navigate** | `]d` / `[d`                    | `j` / `k` then `Enter`         |
+| **Best for** | Seeing what's wrong right here | Finding and fixing all errors  |
 
 > **Tip:** Inline diagnostics + Trouble work together. Use inline for quick awareness, Trouble when you want to systematically fix everything.
 
@@ -476,9 +483,9 @@ Esc          → close peek window when focused inside it
 
 ### gd vs gp — what's the difference?
 
-| Key | Behavior |
-|---|---|
-| `gd` | **Jumps** to definition — you leave your current file |
+| Key  | Behavior                                                                   |
+| ---- | -------------------------------------------------------------------------- |
+| `gd` | **Jumps** to definition — you leave your current file                      |
 | `gp` | **Peeks** at definition — stays in floating window, current file unchanged |
 
 > **Use `gp`** when you just want to check how something is implemented.
@@ -504,6 +511,7 @@ Ctrl+f       → scroll documentation in popup downward
 ```
 
 The completion shows:
+
 - **LSP suggestions** — functions, variables, types from your language server
 - **Snippets** — code templates
 - **Buffer words** — words already in your open files
@@ -521,6 +529,7 @@ The completion shows:
 ```
 
 **Inside lazygit** (press `?` to see all keys):
+
 ```
 Space        → stage/unstage file
 c            → commit
@@ -535,6 +544,7 @@ q            → quit
 ### Gitsigns — inline git in editor
 
 Changed lines show in the **sign column** (left gutter):
+
 - Green `│` = new line added
 - Orange `│` = line modified
 - Red `_` = line deleted below
@@ -656,10 +666,10 @@ A terminal inside Neovim so you don't need to leave.
 
 `<C-\>` behaves differently depending on where you press it:
 
-| Where | What happens |
-|---|---|
-| **Normal mode** (editing code) | Opens the floating terminal |
-| **Inside terminal** | Hides/closes the terminal window |
+| Where                          | What happens                     |
+| ------------------------------ | -------------------------------- |
+| **Normal mode** (editing code) | Opens the floating terminal      |
+| **Inside terminal**            | Hides/closes the terminal window |
 
 ### Exiting terminal mode
 
@@ -674,6 +684,7 @@ Esc Esc      → same thing, but may not work if noice.nvim intercepts Esc
 ```
 
 Once in Normal mode inside the terminal window you can:
+
 ```
 Ctrl+h/j/k/l → move to another window (leave terminal open)
 <C-\>        → hide the terminal entirely
@@ -720,6 +731,7 @@ Run tests without leaving Neovim. Supports Jest, Vitest, pytest, and Go test. Au
 ### Result icons shown in your code
 
 After running tests, icons appear next to each test function:
+
 ```
  (green)  → test passed
  (red)    → test failed
@@ -730,15 +742,18 @@ After running tests, icons appear next to each test function:
 ### Language-specific notes
 
 **TypeScript/JavaScript:**
+
 - Automatically uses Jest if `jest.config.*` exists
 - Automatically uses Vitest if `vitest.config.*` exists
 - Runs via `npx jest` or `npx vitest`
 
 **Python:**
+
 - Uses pytest as the runner
 - Works with virtual environments (auto-detected)
 
 **Go:**
+
 - Runs with `-count=1 -timeout=60s -race` flags
 - Works with standard `go test`
 
@@ -922,11 +937,11 @@ Your files save **automatically**. You don't need to press `<C-s>` constantly.
 
 ### When it saves
 
-| Event | Delay |
-|---|---|
-| You stop typing | After 1.5 seconds |
-| You switch to another buffer | Instantly |
-| Neovim loses focus (switch app) | Instantly |
+| Event                                | Delay             |
+| ------------------------------------ | ----------------- |
+| You stop typing                      | After 1.5 seconds |
+| You switch to another buffer         | Instantly         |
+| Neovim loses focus (switch app)      | Instantly         |
 | You leave insert mode (`jk` / `Esc`) | After 1.5 seconds |
 
 ### When it does NOT save
@@ -953,6 +968,7 @@ Special comment keywords are **highlighted in distinct colors** automatically in
 # WARN: be careful, edge case here              → Orange
 # PERF: opportunity to improve performance      → Purple
 # TEST: note about testing this                 → Teal
+# INFO: information comment                     -> Redish-orange
 ```
 
 These work in all languages (Python `#`, JavaScript `//`, Go `//`, Lua `--`, etc.)
@@ -972,8 +988,9 @@ These work in all languages (Python `#`, JavaScript `//`, Go `//`, Lua `--`, etc
 ### In-editor rendering
 
 When you open a `.md` file, Neovim **renders it visually**:
+
 - Headers appear larger/bold
-- **Bold** and *italic* text renders styled
+- **Bold** and _italic_ text renders styled
 - Code blocks get syntax highlighted
 - Bullet points and checkboxes render as actual symbols
 
@@ -1006,12 +1023,12 @@ When you open a `.md` file, Neovim **renders it visually**:
 
 ### Available themes
 
-| Theme | Command | Style |
-|---|---|---|
+| Theme                | Command                   | Style                             |
+| -------------------- | ------------------------- | --------------------------------- |
 | **Catppuccin Mocha** | `:colorscheme catppuccin` | Default — dark, purple/pink tones |
-| **Tokyonight Night** | `:colorscheme tokyonight` | Dark blue/purple |
-| **Rose Pine** | `:colorscheme rose-pine` | Warm, earthy, rose tones |
-| **Kanagawa Wave** | `:colorscheme kanagawa` | Dark Japanese ink aesthetic |
+| **Tokyonight Night** | `:colorscheme tokyonight` | Dark blue/purple                  |
+| **Rose Pine**        | `:colorscheme rose-pine`  | Warm, earthy, rose tones          |
+| **Kanagawa Wave**    | `:colorscheme kanagawa`   | Dark Japanese ink aesthetic       |
 
 ### Variants within each theme
 
@@ -1034,6 +1051,7 @@ opts = { theme = "wave" }
 ### Make a theme permanent
 
 Edit `lua/plugins/colorscheme.lua`, find this line and change the value:
+
 ```lua
 { "LazyVim/LazyVim", opts = { colorscheme = "catppuccin" } }
 -- change "catppuccin" to "tokyonight", "rose-pine", or "kanagawa"
@@ -1061,12 +1079,14 @@ L            → next buffer
 A **window** is a pane/split showing a buffer. You can have multiple windows open side by side.
 
 **Create splits:**
+
 ```
 <leader>-    → split current window HORIZONTALLY (top/bottom)
 <leader>|    → split current window VERTICALLY (left/right)
 ```
 
 **Navigate between windows:**
+
 ```
 Ctrl+h       → move cursor to LEFT window
 Ctrl+j       → move cursor to BOTTOM window
@@ -1075,6 +1095,7 @@ Ctrl+l       → move cursor to RIGHT window
 ```
 
 **Resize windows:**
+
 ```
 <leader>w+   → increase height (taller)
 <leader>w-   → decrease height (shorter)
@@ -1110,6 +1131,7 @@ Esc          → also works
 Alt+j        → move current line DOWN one line
 Alt+k        → move current line UP one line
 ```
+
 In visual mode, select multiple lines first, then `Alt+j/k` moves the whole selection.
 
 ### Indenting
@@ -1153,6 +1175,7 @@ Esc          → clear search highlight
 ### Quickfix navigation
 
 When you have a list of errors/results to navigate:
+
 ```
 [q           → previous item in quickfix list
 ]q           → next item in quickfix list
@@ -1202,6 +1225,7 @@ The config auto-detects `backend/.venv` because it scans subdirectories.
 ### Manual override
 
 If auto-detection fails:
+
 ```
 :PyrightSetPythonPath /full/path/to/.venv/bin/python
 ```
@@ -1211,6 +1235,7 @@ If auto-detection fails:
 ```
 :LspInfo
 ```
+
 Look for `pyright` in the active clients list. The Python path should show your venv's Python.
 
 ---
@@ -1246,6 +1271,7 @@ Q              → remove current cursor
 ### Once cursors are placed
 
 All normal editing commands work on every cursor simultaneously:
+
 ```
 i              → insert at all cursors
 A              → append at end of all lines
@@ -1256,6 +1282,7 @@ d              → delete at all cursors
 ### Example workflow
 
 Want to rename a variable `userData` to `userInfo` in the current function:
+
 1. Place cursor on `userData`
 2. Press `<C-n>` — first one selected
 3. Press `n` repeatedly to add each occurrence (or `<leader>ma` for all)
@@ -1296,6 +1323,7 @@ Hides everything except your code — no statusline, no explorer, no tabs. Cente
 ```
 
 When zen mode is active:
+
 - File explorer hides
 - Statusline hides
 - Buffer tabs hide
@@ -1359,9 +1387,11 @@ zp           → peek inside a fold without opening it
 ### Fold hints
 
 When a section is folded, UFO shows:
+
 ```python
 class UserService:  ···  47 lines
 ```
+
 The `47 lines` tells you how much is folded.
 
 > **Tip:** Press `zM` to fold everything and get a high-level overview of the file structure. Then `za` on the function you want to work on.
@@ -1389,13 +1419,13 @@ Works with: `"` `'` `` ` `` `(` `)` `[` `]` `{` `}` `<` `>`
 Hex, RGB, HSL, CSS named colors, and Tailwind classes are shown with a **colored background** inline — no more guessing what a color looks like.
 
 ```css
-color: #ff6b6b;              /* shows with pink/red background */
-background: rgb(100,200,50); /* shows with green background */
-color: red;                  /* shows with red background */
+color: #ff6b6b; /* shows with pink/red background */
+background: rgb(100, 200, 50); /* shows with green background */
+color: red; /* shows with red background */
 ```
 
 ```html
-<div class="bg-blue-500 text-red-300">  <!-- both colors shown inline -->
+<div class="bg-blue-500 text-red-300"><!-- both colors shown inline --></div>
 ```
 
 No keymaps needed — it's always on automatically.
@@ -1415,6 +1445,7 @@ When you open `package.json`, shows the **current installed version** of each pa
 ```
 
 Example view in `package.json`:
+
 ```json
 "react": "^18.2.0"     ← shows installed version, green if up to date
 "axios": "^1.3.0"      ← shows in red/orange if outdated
@@ -1456,7 +1487,9 @@ Works for **Python**, **Go**, and **TypeScript/JavaScript**.
 ```
 :Mason
 ```
+
 Press `i` to install:
+
 - `debugpy` — Python debugger
 - `delve` — Go debugger
 - `js-debug-adapter` — TypeScript/JavaScript debugger
@@ -1548,6 +1581,7 @@ Your `print()` / `console.log()` / `fmt.Println()` output appears here.
 <leader>de    → evaluate expression under cursor in a floating popup
 <leader>dh    → hover variable to see its value
 ```
+
 In visual mode, select any expression then `<leader>de` to evaluate it.
 
 ---
@@ -1558,11 +1592,11 @@ In visual mode, select any expression then `<leader>de` to evaluate it.
 result = calculate_total(items)   # cursor is here
 ```
 
-| Key | What happens |
-|---|---|
+| Key               | What happens                                                                                 |
+| ----------------- | -------------------------------------------------------------------------------------------- |
 | `<F10>` step OVER | Runs `calculate_total()` completely and moves to next line. Use when you trust the function. |
-| `<F11>` step INTO | Enters `calculate_total()` so you can debug inside it. Use when the function has a bug. |
-| `<F12>` step OUT | Finishes the current function and returns to where it was called. |
+| `<F11>` step INTO | Enters `calculate_total()` so you can debug inside it. Use when the function has a bug.      |
+| `<F12>` step OUT  | Finishes the current function and returns to where it was called.                            |
 
 ---
 
@@ -1698,6 +1732,7 @@ Modes: `"n"` = normal, `"i"` = insert, `"v"` = visual, `"t"` = terminal
 Edit `lua/config/options.lua`. All options are `vim.opt.setting = value`.
 
 Common things to change:
+
 ```lua
 opt.tabstop = 4      -- use 4-space tabs instead of 2
 opt.wrap = false     -- disable line wrapping
@@ -1710,177 +1745,177 @@ opt.relativenumber = false  -- use absolute line numbers
 
 ### Leader (`Space`) commands
 
-| Key | Action |
-|---|---|
-| `<leader>e` | Toggle file explorer |
-| `<leader>o` | Focus file explorer |
-| `<leader>ff` | Find files |
-| `<leader>fr` | Recent files |
-| `<leader>fb` | Open buffers |
-| `<leader>/` | Live grep |
-| `<leader>fw` | Search word under cursor |
-| `<leader>ft` | Search TODOs |
-| `<leader>ss` | Document symbols |
-| `<leader>sS` | Workspace symbols |
-| `<leader>sk` | Search keymaps |
-| `<leader>:` | Command history |
-| `<leader>gc` | Git commits |
-| `<leader>gB` | Git branches |
-| `<leader>gg` | Lazygit |
-| `<leader>gd` | Diffview (all changes) |
-| `<leader>gD` | Diff vs last commit |
-| `<leader>gfh` | File history |
-| `<leader>gFH` | Project history |
-| `<leader>gdc` | Close Diffview |
-| `<leader>ghp` | Preview git hunk |
-| `<leader>ghs` | Stage git hunk |
-| `<leader>ghr` | Reset git hunk |
-| `<leader>ghb` | Git blame line |
-| `<leader>sr` | Spectre (find & replace) |
-| `<leader>sW` | Spectre (search word under cursor) |
-| `<leader>rr` | REST: run request |
-| `<leader>ra` | REST: run all requests |
-| `<leader>rc` | REST: copy as cURL |
-| `<leader>re` | REST: switch environment |
-| `<leader>uu` | Toggle Undo Tree |
-| `<leader>qs` | Restore session |
-| `<leader>ql` | Restore last session |
-| `<leader>qd` | Discard session |
-| `<leader>fp` | Switch project |
-| `<leader>ma` | Multi-cursor: select all occurrences |
-| `<leader>z` | Toggle Zen mode |
-| `<leader>cs` | Code outline (Aerial) |
-| `<leader>np` | Toggle package versions |
-| `<leader>nu` | Update npm package |
-| `<leader>ni` | Install npm package |
-| `<leader>nc` | Change package version |
-| `zR` | Open all folds |
-| `zM` | Close all folds |
-| `zp` | Peek inside fold |
-| `<leader>ca` | Code action |
-| `<leader>cr` | Rename symbol |
-| `<leader>cf` | Format file |
-| `<leader>cd` | Show diagnostic |
-| `<leader>db` | Debug: toggle breakpoint |
-| `<leader>dB` | Debug: conditional breakpoint |
-| `<leader>dc` | Debug: run to cursor |
-| `<leader>du` | Debug: toggle UI |
-| `<leader>de` | Debug: evaluate expression |
-| `<leader>dh` | Debug: hover variable |
-| `<leader>dq` | Debug: stop |
-| `<leader>dr` | Debug: restart |
-| `<leader>dtm` | Debug: Python test method |
-| `<leader>dgt` | Debug: Go test |
-| `<F5>` | Debug: start / continue |
-| `<F10>` | Debug: step over |
-| `<F11>` | Debug: step into |
-| `<F12>` | Debug: step out |
-| `<leader>tt` | Run nearest test |
-| `<leader>tf` | Run file tests |
-| `<leader>tl` | Re-run last test |
-| `<leader>ts` | Test summary panel |
-| `<leader>to` | Test output panel |
-| `<leader>tS` | Stop test |
-| `<leader>tg` | Lazygit terminal |
-| `<leader>th` | Horizontal terminal |
-| `<leader>tv` | Vertical terminal |
-| `<leader>mp` | Markdown preview |
-| `<leader>uT` | Switch theme |
-| `<leader>xx` | All diagnostics (Trouble) |
-| `<leader>xX` | File diagnostics (Trouble) |
-| `<leader>xL` | Location list |
-| `<leader>xQ` | Quickfix list |
-| `<leader>cs` | Symbols (Trouble) |
-| `<leader>-` | Split horizontal |
-| `<leader>\|` | Split vertical |
-| `<leader>w=` | Equalize windows |
-| `<leader>w+` | Increase window height |
-| `<leader>w-` | Decrease window height |
-| `<leader>w>` | Increase window width |
-| `<leader>w<` | Decrease window width |
-| `<leader>bd` | Close buffer |
-| `<leader>A` | Select all |
-| `<leader>qq` | Quit all |
+| Key           | Action                               |
+| ------------- | ------------------------------------ |
+| `<leader>e`   | Toggle file explorer                 |
+| `<leader>o`   | Focus file explorer                  |
+| `<leader>ff`  | Find files                           |
+| `<leader>fr`  | Recent files                         |
+| `<leader>fb`  | Open buffers                         |
+| `<leader>/`   | Live grep                            |
+| `<leader>fw`  | Search word under cursor             |
+| `<leader>ft`  | Search TODOs                         |
+| `<leader>ss`  | Document symbols                     |
+| `<leader>sS`  | Workspace symbols                    |
+| `<leader>sk`  | Search keymaps                       |
+| `<leader>:`   | Command history                      |
+| `<leader>gc`  | Git commits                          |
+| `<leader>gB`  | Git branches                         |
+| `<leader>gg`  | Lazygit                              |
+| `<leader>gd`  | Diffview (all changes)               |
+| `<leader>gD`  | Diff vs last commit                  |
+| `<leader>gfh` | File history                         |
+| `<leader>gFH` | Project history                      |
+| `<leader>gdc` | Close Diffview                       |
+| `<leader>ghp` | Preview git hunk                     |
+| `<leader>ghs` | Stage git hunk                       |
+| `<leader>ghr` | Reset git hunk                       |
+| `<leader>ghb` | Git blame line                       |
+| `<leader>sr`  | Spectre (find & replace)             |
+| `<leader>sW`  | Spectre (search word under cursor)   |
+| `<leader>rr`  | REST: run request                    |
+| `<leader>ra`  | REST: run all requests               |
+| `<leader>rc`  | REST: copy as cURL                   |
+| `<leader>re`  | REST: switch environment             |
+| `<leader>uu`  | Toggle Undo Tree                     |
+| `<leader>qs`  | Restore session                      |
+| `<leader>ql`  | Restore last session                 |
+| `<leader>qd`  | Discard session                      |
+| `<leader>fp`  | Switch project                       |
+| `<leader>ma`  | Multi-cursor: select all occurrences |
+| `<leader>z`   | Toggle Zen mode                      |
+| `<leader>cs`  | Code outline (Aerial)                |
+| `<leader>np`  | Toggle package versions              |
+| `<leader>nu`  | Update npm package                   |
+| `<leader>ni`  | Install npm package                  |
+| `<leader>nc`  | Change package version               |
+| `zR`          | Open all folds                       |
+| `zM`          | Close all folds                      |
+| `zp`          | Peek inside fold                     |
+| `<leader>ca`  | Code action                          |
+| `<leader>cr`  | Rename symbol                        |
+| `<leader>cf`  | Format file                          |
+| `<leader>cd`  | Show diagnostic                      |
+| `<leader>db`  | Debug: toggle breakpoint             |
+| `<leader>dB`  | Debug: conditional breakpoint        |
+| `<leader>dc`  | Debug: run to cursor                 |
+| `<leader>du`  | Debug: toggle UI                     |
+| `<leader>de`  | Debug: evaluate expression           |
+| `<leader>dh`  | Debug: hover variable                |
+| `<leader>dq`  | Debug: stop                          |
+| `<leader>dr`  | Debug: restart                       |
+| `<leader>dtm` | Debug: Python test method            |
+| `<leader>dgt` | Debug: Go test                       |
+| `<F5>`        | Debug: start / continue              |
+| `<F10>`       | Debug: step over                     |
+| `<F11>`       | Debug: step into                     |
+| `<F12>`       | Debug: step out                      |
+| `<leader>tt`  | Run nearest test                     |
+| `<leader>tf`  | Run file tests                       |
+| `<leader>tl`  | Re-run last test                     |
+| `<leader>ts`  | Test summary panel                   |
+| `<leader>to`  | Test output panel                    |
+| `<leader>tS`  | Stop test                            |
+| `<leader>tg`  | Lazygit terminal                     |
+| `<leader>th`  | Horizontal terminal                  |
+| `<leader>tv`  | Vertical terminal                    |
+| `<leader>mp`  | Markdown preview                     |
+| `<leader>uT`  | Switch theme                         |
+| `<leader>xx`  | All diagnostics (Trouble)            |
+| `<leader>xX`  | File diagnostics (Trouble)           |
+| `<leader>xL`  | Location list                        |
+| `<leader>xQ`  | Quickfix list                        |
+| `<leader>cs`  | Symbols (Trouble)                    |
+| `<leader>-`   | Split horizontal                     |
+| `<leader>\|`  | Split vertical                       |
+| `<leader>w=`  | Equalize windows                     |
+| `<leader>w+`  | Increase window height               |
+| `<leader>w-`  | Decrease window height               |
+| `<leader>w>`  | Increase window width                |
+| `<leader>w<`  | Decrease window width                |
+| `<leader>bd`  | Close buffer                         |
+| `<leader>A`   | Select all                           |
+| `<leader>qq`  | Quit all                             |
 
 ### Multi-cursor (no leader)
 
-| Key | Action |
-|---|---|
-| `<C-n>` | Multi-cursor: select word / add next occurrence |
-| `<C-Down>` | Multi-cursor: add cursor below |
-| `<C-Up>` | Multi-cursor: add cursor above |
-| `n` | Multi-cursor: add next match |
-| `q` | Multi-cursor: skip current match |
-| `Esc` | Exit multi-cursor mode |
+| Key        | Action                                          |
+| ---------- | ----------------------------------------------- |
+| `<C-n>`    | Multi-cursor: select word / add next occurrence |
+| `<C-Down>` | Multi-cursor: add cursor below                  |
+| `<C-Up>`   | Multi-cursor: add cursor above                  |
+| `n`        | Multi-cursor: add next match                    |
+| `q`        | Multi-cursor: skip current match                |
+| `Esc`      | Exit multi-cursor mode                          |
 
 ### LSP & Peek keys (no leader)
 
-| Key | Action |
-|---|---|
-| `gd` | Go to definition |
-| `gp` | Peek definition |
-| `gpi` | Peek implementation |
-| `gpr` | Peek references |
-| `gpt` | Peek type definition |
-| `gpc` | Close peek windows |
-| `gr` | Find references (fzf) |
-| `K` | Hover documentation |
-| `]d` | Next diagnostic |
-| `[d` | Previous diagnostic |
-| `]h` | Next git hunk |
-| `[h` | Previous git hunk |
-| `]x` | Next merge conflict |
-| `[x` | Previous merge conflict |
-| `co` | Resolve conflict — choose ours |
-| `ct` | Resolve conflict — choose theirs |
-| `cb` | Resolve conflict — keep both |
-| `c0` | Resolve conflict — keep none |
-| `]r` | Next REST request |
-| `[r` | Previous REST request |
-| `]t` | Next failed test |
-| `[t` | Previous failed test |
-| `]q` | Next quickfix |
-| `[q` | Previous quickfix |
+| Key   | Action                           |
+| ----- | -------------------------------- |
+| `gd`  | Go to definition                 |
+| `gp`  | Peek definition                  |
+| `gpi` | Peek implementation              |
+| `gpr` | Peek references                  |
+| `gpt` | Peek type definition             |
+| `gpc` | Close peek windows               |
+| `gr`  | Find references (fzf)            |
+| `K`   | Hover documentation              |
+| `]d`  | Next diagnostic                  |
+| `[d`  | Previous diagnostic              |
+| `]h`  | Next git hunk                    |
+| `[h`  | Previous git hunk                |
+| `]x`  | Next merge conflict              |
+| `[x`  | Previous merge conflict          |
+| `co`  | Resolve conflict — choose ours   |
+| `ct`  | Resolve conflict — choose theirs |
+| `cb`  | Resolve conflict — keep both     |
+| `c0`  | Resolve conflict — keep none     |
+| `]r`  | Next REST request                |
+| `[r`  | Previous REST request            |
+| `]t`  | Next failed test                 |
+| `[t`  | Previous failed test             |
+| `]q`  | Next quickfix                    |
+| `[q`  | Previous quickfix                |
 
 ### General keys
 
-| Key | Action |
-|---|---|
-| `<C-s>` | Save file |
-| `<C-\>` | Toggle terminal |
-| `<C-h/j/k/l>` | Navigate windows |
-| `Tab` | Next buffer |
-| `Shift+Tab` | Previous buffer |
-| `H` | Previous buffer |
-| `L` | Next buffer |
-| `jk` | Exit insert mode |
-| `Esc` | Clear search / close peek |
-| `Alt+j` | Move line/selection down |
-| `Alt+k` | Move line/selection up |
-| `>` (visual) | Indent right |
-| `<` (visual) | Indent left |
-| `p` (visual) | Paste without yank |
+| Key           | Action                    |
+| ------------- | ------------------------- |
+| `<C-s>`       | Save file                 |
+| `<C-\>`       | Toggle terminal           |
+| `<C-h/j/k/l>` | Navigate windows          |
+| `Tab`         | Next buffer               |
+| `Shift+Tab`   | Previous buffer           |
+| `H`           | Previous buffer           |
+| `L`           | Next buffer               |
+| `jk`          | Exit insert mode          |
+| `Esc`         | Clear search / close peek |
+| `Alt+j`       | Move line/selection down  |
+| `Alt+k`       | Move line/selection up    |
+| `>` (visual)  | Indent right              |
+| `<` (visual)  | Indent left               |
+| `p` (visual)  | Paste without yank        |
 
 ### Vim built-ins worth knowing
 
-| Key | Action |
-|---|---|
-| `u` | Undo |
-| `Ctrl+r` | Redo |
-| `yy` | Copy line |
-| `dd` | Delete line |
-| `p` | Paste after cursor |
-| `P` | Paste before cursor |
-| `ciw` | Change inner word |
-| `di"` | Delete inside quotes |
-| `o` | New line below, enter insert |
-| `O` | New line above, enter insert |
-| `A` | Go to end of line, enter insert |
-| `I` | Go to start of line, enter insert |
-| `%` | Jump to matching bracket |
-| `*` | Search for word under cursor |
-| `za` | Toggle fold |
-| `.` | Repeat last action |
+| Key      | Action                            |
+| -------- | --------------------------------- |
+| `u`      | Undo                              |
+| `Ctrl+r` | Redo                              |
+| `yy`     | Copy line                         |
+| `dd`     | Delete line                       |
+| `p`      | Paste after cursor                |
+| `P`      | Paste before cursor               |
+| `ciw`    | Change inner word                 |
+| `di"`    | Delete inside quotes              |
+| `o`      | New line below, enter insert      |
+| `O`      | New line above, enter insert      |
+| `A`      | Go to end of line, enter insert   |
+| `I`      | Go to start of line, enter insert |
+| `%`      | Jump to matching bracket          |
+| `*`      | Search for word under cursor      |
+| `za`     | Toggle fold                       |
+| `.`      | Repeat last action                |
 
 ---
 

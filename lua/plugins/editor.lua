@@ -4,13 +4,14 @@ return {
     "folke/todo-comments.nvim",
     opts = {
       keywords = {
-        TODO  = { color = "#4fc1ff" },  -- blue
-        FIXME = { color = "#f7768e" },  -- red
-        NOTE  = { color = "#9ece6a" },  -- green
-        HACK  = { color = "#e0af68" },  -- yellow
-        WARN  = { color = "#ff9e64" },  -- orange
-        PERF  = { color = "#bb9af7" },  -- purple
-        TEST  = { color = "#1abc9c" },  -- teal
+        TODO = { color = "#4fc1ff" }, -- blue
+        FIXME = { color = "#f7768e" }, -- red
+        NOTE = { color = "#9ece6a" }, -- green
+        HACK = { color = "#e0af68" }, -- yellow
+        WARN = { color = "#ff9e64" }, -- orange
+        PERF = { color = "#bb9af7" }, -- purple
+        TEST = { color = "#1abc9c" }, -- teal
+        INFO = { color = "#C44A3A" }, -- reddish-orange
       },
     },
   },
@@ -21,7 +22,7 @@ return {
     opts = {
       filesystem = {
         filtered_items = {
-          visible = true,          -- show dotfiles dimmed, not hidden
+          visible = true, -- show dotfiles dimmed, not hidden
           hide_dotfiles = false,
           hide_gitignored = true,
         },
@@ -54,8 +55,8 @@ return {
         sections = {
           { section = "header" },
           { section = "keys", gap = 1, padding = 1 },
-          { icon = " ", title = "Recent Files",  section = "recent_files", indent = 2, padding = 1 },
-          { icon = " ", title = "Projects",      section = "projects",     indent = 2, padding = 1 },
+          { icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
+          { icon = " ", title = "Projects", section = "projects", indent = 2, padding = 1 },
           { section = "startup" },
         },
       },
@@ -79,8 +80,16 @@ return {
       end,
     },
     keys = {
-      { "gp",  function() require("goto-preview").goto_preview_definition() end,      desc = "Peek Definition" },
-      { "gpi", function()
+      {
+        "gp",
+        function()
+          require("goto-preview").goto_preview_definition()
+        end,
+        desc = "Peek Definition",
+      },
+      {
+        "gpi",
+        function()
           local clients = vim.lsp.get_clients({ bufnr = 0 })
           local supported = vim.tbl_filter(function(c)
             return c.supports_method("textDocument/implementation")
@@ -90,10 +99,30 @@ return {
           else
             require("goto-preview").goto_preview_implementation()
           end
-        end, desc = "Peek Implementation" },
-      { "gpr", function() require("goto-preview").goto_preview_references() end,      desc = "Peek References" },
-      { "gpt", function() require("goto-preview").goto_preview_type_definition() end, desc = "Peek Type Definition" },
-      { "gpc", function() require("goto-preview").close_all_win() end,               desc = "Close All Peek Windows" },
+        end,
+        desc = "Peek Implementation",
+      },
+      {
+        "gpr",
+        function()
+          require("goto-preview").goto_preview_references()
+        end,
+        desc = "Peek References",
+      },
+      {
+        "gpt",
+        function()
+          require("goto-preview").goto_preview_type_definition()
+        end,
+        desc = "Peek Type Definition",
+      },
+      {
+        "gpc",
+        function()
+          require("goto-preview").close_all_win()
+        end,
+        desc = "Close All Peek Windows",
+      },
     },
   },
 
