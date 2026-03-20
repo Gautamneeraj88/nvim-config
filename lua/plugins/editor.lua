@@ -16,6 +16,27 @@ return {
     },
   },
 
+  -- ─── Diagnostics — inline text only on cursor line, full float via <leader>cd ─
+  {
+    "LazyVim/LazyVim",
+    opts = {
+      diagnostics = {
+        virtual_text = {
+          only_current_line = true, -- no clutter on other lines
+          source = "if_many",       -- show source when multiple (eslint vs ts)
+          spacing = 2,
+          prefix = "●",
+          format = function(d)
+            local msg = d.message
+            if #msg > 60 then msg = msg:sub(1, 57) .. "..." end
+            return msg
+          end,
+        },
+        float = { source = true, border = "rounded" },
+      },
+    },
+  },
+
   -- ─── File Explorer (neo-tree only, no double explorer) ───────────────────────
   {
     "nvim-neo-tree/neo-tree.nvim",
