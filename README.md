@@ -20,33 +20,42 @@ Everything is documented here so you can learn and use every feature.
 11. [Git Integration](#git-integration)
 12. [Git Diff Viewer — Diffview](#git-diff-viewer--diffview)
 13. [Merge Conflicts — git-conflict](#merge-conflicts--git-conflict)
-14. [Terminal](#terminal)
-15. [Test Runner — Neotest](#test-runner--neotest)
-16. [Project Find & Replace — Spectre](#project-find--replace--spectre)
-17. [REST Client — Kulala](#rest-client--kulala)
-18. [Undo Tree](#undo-tree)
-19. [Session Management](#session-management)
-20. [Multi-cursor](#multi-cursor)
-21. [Project Switcher](#project-switcher)
-22. [Zen Mode](#zen-mode)
-23. [Code Outline — Aerial](#code-outline--aerial)
-24. [Live Rename — inc-rename](#live-rename--inc-rename)
-25. [Better Folds — UFO](#better-folds--ufo)
-26. [Tabout](#tabout)
-27. [Color Highlighter](#color-highlighter)
-28. [Package Info](#package-info)
-29. [Wakatime — Coding Time Tracker](#wakatime--coding-time-tracker)
-30. [Debugger — DAP](#debugger--dap)
-31. [Auto-save](#auto-save)
-32. [TODO Comments](#todo-comments)
-33. [Markdown](#markdown)
-34. [Themes](#themes)
-35. [Buffers & Windows](#buffers--windows)
-36. [Editing Shortcuts](#editing-shortcuts)
-37. [Statusline](#statusline)
-38. [Python — Virtual Environment](#python--virtual-environment)
-39. [How to Customize](#how-to-customize)
-40. [Complete Keybinding Reference](#complete-keybinding-reference)
+14. [GitHub — Octo](#github--octo)
+15. [Terminal](#terminal)
+16. [Test Runner — Neotest](#test-runner--neotest)
+17. [Project Find & Replace — Spectre](#project-find--replace--spectre)
+18. [REST Client — Kulala](#rest-client--kulala)
+19. [Undo Tree](#undo-tree)
+20. [Session Management](#session-management)
+21. [Multi-cursor](#multi-cursor)
+22. [Project Switcher](#project-switcher)
+23. [Zen Mode](#zen-mode)
+24. [Code Outline — Aerial](#code-outline--aerial)
+25. [Live Rename — inc-rename](#live-rename--inc-rename)
+26. [Better Folds — UFO](#better-folds--ufo)
+27. [Tabout](#tabout)
+28. [Color Highlighter](#color-highlighter)
+29. [Package Info](#package-info)
+30. [Wakatime — Coding Time Tracker](#wakatime--coding-time-tracker)
+31. [Debugger — DAP](#debugger--dap)
+32. [Auto-save](#auto-save)
+33. [TODO Comments](#todo-comments)
+34. [Markdown](#markdown)
+35. [Themes](#themes)
+36. [Panel Layout — Edgy](#panel-layout--edgy)
+37. [Breadcrumbs — Dropbar](#breadcrumbs--dropbar)
+38. [Sticky Context Header](#sticky-context-header)
+39. [Inline Git Blame](#inline-git-blame)
+40. [Code Action Lightbulb](#code-action-lightbulb)
+41. [Yank History — Yanky](#yank-history--yanky)
+42. [Better Quickfix — nvim-bqf](#better-quickfix--nvim-bqf)
+43. [Smarter Word Motions — Spider](#smarter-word-motions--spider)
+44. [Buffers & Windows](#buffers--windows)
+45. [Editing Shortcuts](#editing-shortcuts)
+46. [Statusline](#statusline)
+47. [Python — Virtual Environment](#python--virtual-environment)
+48. [How to Customize](#how-to-customize)
+49. [Complete Keybinding Reference](#complete-keybinding-reference)
 
 ---
 
@@ -161,19 +170,29 @@ Ctrl+r       → redo
     │
     └── plugins/
         ├── autosave.lua      ← Auto-save configuration
-        ├── colorscheme.lua   ← Themes: catppuccin, tokyonight, rose-pine, kanagawa
-        ├── editor.lua        ← neo-tree, peek definition, smooth scroll, TODO colors
+        ├── coding.lua        ← Better folds (UFO), tabout
+        ├── colorscheme.lua   ← Themes: oxocarbon (default), cyberdream, catppuccin, tokyonight, rose-pine, kanagawa
+        ├── dap.lua           ← Debugger (Python, Go, TypeScript/JS)
+        ├── editor.lua        ← neo-tree, gitsigns blame, peek definition, smooth scroll, TODO colors, diagnostics
+        ├── extras.lua        ← Spectre, persistence, zen mode, yank history, better quickfix
+        ├── git-advanced.lua  ← Diffview, git-conflict, Octo (GitHub)
         ├── markdown.lua      ← Markdown browser preview
+        ├── navigation.lua    ← Smart splits, multi-cursor, spider word motions, project switcher
         ├── python.lua        ← Python venv auto-detection for pyright
+        ├── rest.lua          ← REST client (kulala)
         ├── search.lua        ← fzf-lua fuzzy search
         ├── terminal.lua      ← Terminal inside Neovim
         ├── testing.lua       ← Neotest (Jest, Vitest, pytest, Go test)
-        └── ui.lua            ← Statusline (IST time), indent guides, dressing
+        ├── ui.lua            ← Edgy panels, treesitter-context, fidget, lualine, lightbulb, dressing, indent guides
+        ├── ui-extras.lua     ← Dropbar breadcrumbs, color highlighter, package info, wakatime
+        ├── undotree.lua      ← Undo history tree
+        └── visuals.lua       ← Smear cursor, rainbow brackets, scrollbar, animations
 ```
 
 ### What each config file controls
 
 **`lua/config/lazy.lua`** — The most important file. Controls which LazyVim extras (language packs) are active:
+
 
 - `lang.typescript` → TypeScript + JavaScript LSP, formatting
 - `lang.python` → Python LSP (pyright), linting
@@ -375,12 +394,15 @@ I  → info (blue)
 H  → hint (cyan)
 ```
 
-**2. Virtual text** (the message shown at the end of the line in italics):
+**2. Virtual text** — only shown on the line your cursor is on (keeps other lines clean):
 
 ```python
-from sqlalchemy import create_engine    ● Import "sqlalchemy" could not be resolved
-async def my_func(data: MyType):        ● Pyright: "MyType" is not defined
+from sqlalchemy import create_engine    ← no text shown (just underline + sign)
+async def my_func(data: MyType):        ● Pyright: "MyType" is not defined  ← cursor is here
 ```
+
+This keeps the code readable — you see the full message only when you move to a line.
+Press `<leader>cd` for the full detailed float with source info on any line.
 
 **3. Statusline counts** (bottom bar):
 
@@ -558,6 +580,16 @@ Changed lines show in the **sign column** (left gutter):
 <leader>ghb  → show git blame for current line (who wrote this & when)
 ```
 
+### Inline git blame (always visible)
+
+Every line shows a subtle blame annotation at the end — author, date, and commit summary — like GitLens in VS Code:
+
+```
+const port = process.env.PORT ?? 3000;   You, 15 Mar 2026 · add port config
+```
+
+This appears automatically on the line your cursor is on. After 500ms it fades in. No keypress needed.
+
 ### FZF git commands
 
 ```
@@ -649,6 +681,51 @@ c0   → choose NONE   — delete the entire conflict block
 
 ---
 
+## GitHub — Octo
+
+Browse and manage GitHub PRs and issues without leaving Neovim. Review diffs, add comments, merge PRs — all in the editor.
+
+### Setup (one-time)
+
+```bash
+# Install and authenticate the GitHub CLI
+brew install gh
+gh auth login
+```
+
+### Opening Octo
+
+```
+<leader>gop   → list all open PRs for current repo
+<leader>goi   → list all open issues
+<leader>gor   → start a PR review (adds comments, approve/request changes)
+<leader>gom   → merge the current PR
+```
+
+Or use `:Octo` to run any command directly. Examples:
+
+```
+:Octo pr list
+:Octo issue list
+:Octo pr checkout 42     ← checkout PR #42 as a local branch
+:Octo review start
+:Octo pr merge
+```
+
+### Inside a PR view
+
+```
+<leader>ca   → add a comment
+<leader>ic   → insert a suggestion
+Tab          → move to next file in the PR diff
+]c / [c      → next / previous comment thread
+q            → close
+```
+
+> **Tip:** Use `<leader>gop` → select a PR → review the diff inline → `<leader>gor` to start review — all without opening a browser.
+
+---
+
 ## Terminal
 
 A terminal inside Neovim so you don't need to leave.
@@ -724,8 +801,8 @@ Run tests without leaving Neovim. Supports Jest, Vitest, pytest, and Go test. Au
 ```
 <leader>ts   → toggle test summary panel (tree of all tests, pass/fail)
 <leader>to   → toggle test output panel (full output, stdout, errors)
-]f           → jump to next FAILED test
-[f           → jump to previous FAILED test
+]f           → jump to next failed test
+[f           → jump to previous failed test
 ```
 
 ### Result icons shown in your code
@@ -1014,7 +1091,7 @@ When you open a `.md` file, Neovim **renders it visually**:
 
 ## Themes
 
-4 themes installed. You can switch anytime — no restart needed.
+6 themes installed. You can switch anytime — no restart needed.
 
 ### Switch theme
 
@@ -1024,16 +1101,16 @@ When you open a `.md` file, Neovim **renders it visually**:
 
 ### Available themes
 
-| Theme                | Command                   | Style                             |
-| -------------------- | ------------------------- | --------------------------------- |
-| **Catppuccin Mocha** | `:colorscheme catppuccin` | Default — dark, purple/pink tones |
-| **Tokyonight Night** | `:colorscheme tokyonight` | Dark blue/purple                  |
-| **Rose Pine**        | `:colorscheme rose-pine`  | Warm, earthy, rose tones          |
-| **Kanagawa Wave**    | `:colorscheme kanagawa`   | Dark Japanese ink aesthetic       |
+| Theme                | Command                      | Style                                        |
+| -------------------- | ---------------------------- | -------------------------------------------- |
+| **Oxocarbon**        | `:colorscheme oxocarbon`     | **Default** — IBM Carbon, near-black + electric blue |
+| **Cyberdream**       | `:colorscheme cyberdream`    | Cyberpunk neon, vibrant dark                 |
+| **Catppuccin Mocha** | `:colorscheme catppuccin`    | Dark, purple/pink tones                      |
+| **Tokyonight Night** | `:colorscheme tokyonight`    | Dark blue/purple                             |
+| **Rose Pine**        | `:colorscheme rose-pine`     | Warm, earthy, rose tones                     |
+| **Kanagawa Wave**    | `:colorscheme kanagawa`      | Dark Japanese ink aesthetic                  |
 
-### Variants within each theme
-
-Each theme has variants you can try by editing `lua/plugins/colorscheme.lua`:
+### Variants within themes
 
 ```lua
 -- Catppuccin variants: "latte" (light), "frappe", "macchiato", "mocha" (dark)
@@ -1054,8 +1131,194 @@ opts = { theme = "wave" }
 Edit `lua/plugins/colorscheme.lua`, find this line and change the value:
 
 ```lua
-{ "LazyVim/LazyVim", opts = { colorscheme = "catppuccin" } }
--- change "catppuccin" to "tokyonight", "rose-pine", or "kanagawa"
+{ "LazyVim/LazyVim", opts = { colorscheme = "oxocarbon" } }
+-- change to: "cyberdream", "catppuccin", "tokyonight", "rose-pine", or "kanagawa"
+```
+
+---
+
+## Panel Layout — Edgy
+
+Edgy locks your tool windows into consistent positions — just like VS Code's sidebar system. You never have a random split opening in the wrong place.
+
+| Panel | Where | Opens when |
+|-------|-------|------------|
+| **Neo-tree** (Explorer) | Left | `<leader>e` |
+| **Aerial** (Outline) | Right | `<leader>cs` |
+| **Quickfix** | Bottom | `:copen` or `<leader>xQ` |
+| **Trouble** (Diagnostics) | Bottom | `<leader>xx` |
+| **Help** | Bottom | `:help <topic>` |
+
+When you open any of these, they snap into their designated panel instead of taking over your code window. Your editing area stays clean and uninterrupted.
+
+---
+
+## Breadcrumbs — Dropbar
+
+A navigation bar at the **top of every window** showing your current location in the code:
+
+```
+src/services/user.service.ts › UserService › createUser
+```
+
+- Powered by LSP (accurate symbol names) with treesitter as fallback
+- Each segment is **clickable** — press it to jump to that scope
+- Updates live as you move your cursor
+
+No keymaps needed — it's always visible at the top of code windows.
+
+---
+
+## Sticky Context Header
+
+When you scroll deep into a function or class, the **function/class signature stays pinned at the top** of the window — you never lose track of where you are.
+
+```
+class UserService {           ← pinned header (even when scrolled 200 lines down)
+  ─────────────────────────────────────────────────────
+  ...200 lines of methods...
+
+  async createUser(data: CreateUserDto) {   ← cursor is here
+```
+
+- Shows up to 3 lines of context
+- Separated from your code by a thin `─` line
+- Disappears when you scroll back to the top (not needed there)
+
+No keymaps needed — always on automatically.
+
+---
+
+## Inline Git Blame
+
+Every line shows a subtle blame annotation at the end — who wrote it, when, and what the commit said. Just like GitLens in VS Code or Zed's blame.
+
+```typescript
+const port = process.env.PORT ?? 3000;    You, 15 Mar 2026 · add port config
+```
+
+- Appears automatically on the **cursor line** after 500ms
+- Shows: `author, date · commit summary`
+- No keypress needed — just move to the line
+
+For the full blame of any line: `<leader>ghb`
+
+---
+
+## Code Action Lightbulb
+
+When the LSP has **code actions available** on your cursor line, a lightbulb icon `󰌶` appears in the sign column (left gutter).
+
+```
+󰌶 const x = require('lodash')   ← lightbulb means: "I can fix/improve this"
+```
+
+Common code actions:
+- Add missing import
+- Remove unused import
+- Extract to function
+- Implement interface
+- Fix ESLint rule violation
+
+Press `<leader>ca` to open the action menu when you see the lightbulb.
+
+---
+
+## Yank History — Yanky
+
+Every time you yank (copy) something, it's saved to a **yank ring**. After pasting, you can cycle through previous yanks to pick the right one — like a clipboard manager.
+
+### Basic usage
+
+```
+y            → yank (copy) — same key, now tracked in history
+p            → paste after cursor
+P            → paste before cursor
+```
+
+### Cycling through history
+
+```
+<C-p>        → after pasting: replace with previous yank
+<C-n>        → after pasting: replace with next yank (forward)
+<leader>fy   → browse full yank history in a picker
+```
+
+### Example workflow
+
+```
+1. Yank "hello"    (saved to ring)
+2. Yank "world"    (saved to ring)
+3. Yank "foo"      (saved to ring — this is now what p pastes)
+4. Press p         → pastes "foo"
+5. Press <C-p>     → replaces with "world"
+6. Press <C-p>     → replaces with "hello"
+```
+
+---
+
+## Better Quickfix — nvim-bqf
+
+The quickfix window (used by LSP, grep results, test failures) now has an **fzf preview pane** — you can filter the list and see the context of each result before jumping.
+
+```
+<leader>xQ   → open quickfix list (enhanced)
+[q / ]q      → navigate previous / next quickfix item
+```
+
+### Inside the quickfix window
+
+```
+Tab          → toggle selection of an item
+zf           → filter list with fzf (type to narrow results)
+<C-s>        → open item in horizontal split
+o            → open item, stay in quickfix
+q            → close
+```
+
+---
+
+## Smarter Word Motions — Spider
+
+The `w`, `b`, `e` keys are replaced with smarter versions that understand **camelCase** and **snake_case**.
+
+### The difference
+
+Standard `w` jumps the whole word:
+
+```
+camelCaseWord   →   w moves from c to W (whole word in one jump)
+```
+
+Spider `w` stops at each hump:
+
+```
+camelCaseWord   →   w stops at: camel → Case → Word
+```
+
+Same for `snake_case`:
+
+```
+my_variable_name   →   w stops at: my → variable → name
+```
+
+### All affected keys
+
+```
+w    → next word start (stops at camelCase humps + snake_case underscores)
+b    → previous word start
+e    → next word end
+```
+
+All operators work too: `dw`, `cw`, `vw`, `yw` all respect word boundaries.
+
+### Why this matters for TypeScript/Go
+
+```typescript
+// Renaming part of a camelCase name:
+getUserById   →   position cursor on "User", press ciw → type "Member"
+// Result: getMemberById
+// Without spider: ciw would change the entire "getUserById"
 ```
 
 ---
@@ -1095,7 +1358,16 @@ Ctrl+k       → move cursor to TOP window
 Ctrl+l       → move cursor to RIGHT window
 ```
 
-**Resize windows:**
+**Resize windows (smart-splits):**
+
+```
+<A-Left>     → resize split narrower
+<A-Right>    → resize split wider
+<A-Up>       → resize split taller
+<A-Down>     → resize split shorter
+```
+
+**Or use leader keys:**
 
 ```
 <leader>w+   → increase height (taller)
@@ -1105,8 +1377,7 @@ Ctrl+l       → move cursor to RIGHT window
 <leader>w=   → make all windows equal size
 ```
 
-> **Note:** Each resize press moves by 5 units. Press multiple times for bigger changes.
-> macOS Ctrl+arrow keys are taken by Mission Control so we use `<leader>w` instead.
+> **Tip:** Smart splits also works across tmux panes — `<C-hjkl>` navigation and `<A-arrow>` resize work seamlessly between Neovim and tmux.
 
 ---
 
@@ -1763,6 +2034,10 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>gc`  | Git commits                          |
 | `<leader>gB`  | Git branches                         |
 | `<leader>gg`  | Lazygit                              |
+| `<leader>gop` | GitHub: list PRs                     |
+| `<leader>goi` | GitHub: list issues                  |
+| `<leader>gor` | GitHub: start PR review              |
+| `<leader>gom` | GitHub: merge PR                     |
 | `<leader>gd`  | Diffview (all changes)               |
 | `<leader>gD`  | Diff vs last commit                  |
 | `<leader>gfh` | File history                         |
@@ -1822,10 +2097,11 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>tv`  | Vertical terminal                    |
 | `<leader>mp`  | Markdown preview                     |
 | `<leader>uT`  | Switch theme                         |
+| `<leader>fy`  | Yank history picker                  |
 | `<leader>xx`  | All diagnostics (Trouble)            |
 | `<leader>xX`  | File diagnostics (Trouble)           |
 | `<leader>xL`  | Location list                        |
-| `<leader>xQ`  | Quickfix list                        |
+| `<leader>xQ`  | Quickfix list (enhanced)             |
 | `<leader>cs`  | Symbols (Trouble)                    |
 | `<leader>-`   | Split horizontal                     |
 | `<leader>\|`  | Split vertical                       |
@@ -1873,10 +2149,22 @@ opt.relativenumber = false  -- use absolute line numbers
 | `c0`  | Resolve conflict — keep none     |
 | `]r`  | Next REST request                |
 | `[r`  | Previous REST request            |
-| `]t`  | Next failed test                 |
-| `[t`  | Previous failed test             |
+| `]f`  | Next failed test                 |
+| `[f`  | Previous failed test             |
 | `]q`  | Next quickfix                    |
 | `[q`  | Previous quickfix                |
+
+### Window & Split keys
+
+| Key           | Action                          |
+| ------------- | ------------------------------- |
+| `<C-h/j/k/l>` | Navigate windows (tmux-aware)   |
+| `<A-Left>`    | Resize split narrower           |
+| `<A-Right>`   | Resize split wider              |
+| `<A-Up>`      | Resize split taller             |
+| `<A-Down>`    | Resize split shorter            |
+| `<C-p>`       | Cycle yank history backward     |
+| `<C-n>`       | Cycle yank history forward      |
 
 ### General keys
 
@@ -1884,7 +2172,6 @@ opt.relativenumber = false  -- use absolute line numbers
 | ------------- | ------------------------- |
 | `<C-s>`       | Save file                 |
 | `<C-\>`       | Toggle terminal           |
-| `<C-h/j/k/l>` | Navigate windows          |
 | `Tab`         | Next buffer               |
 | `Shift+Tab`   | Previous buffer           |
 | `H`           | Previous buffer           |
