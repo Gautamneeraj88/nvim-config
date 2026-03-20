@@ -49,19 +49,48 @@ map("t", "<C-l>", "<cmd>wincmd l<cr>", { desc = "Go to right window" })
 -- ─── File Explorer ───────────────────────────────────────────────────────────
 
 -- Use neo-tree as the only file explorer (left sidebar, VSCode-style)
--- <leader>e  → toggle tree open/closed (always full project root)
--- <leader>o  → toggle focus mode: narrows tree to current file's directory
+-- <leader>e  → toggle tree open/closed (always full project root / cwd)
+-- <leader>o  → toggle focus mode: roots tree at nearest package root
+--              (walks up from current file to find package.json / tsconfig.json)
 
--- After any tree open, force dotfiles visible regardless of what H was pressed before.
--- The H toggle mutates state.filtered_items at runtime; this resets it back.
-local function neo_ensure_dotfiles()
+-- Walk up from `file` to find the nearest project root marker.
+-- Stops at package.json, tsconfig.json, go.mod, etc. before falling back to cwd.
+local function find_pkg_root(file)
+  local markers = { "package.json", "tsconfig.json", "Cargo.toml", "go.mod", "pyproject.toml", ".git" }
+  local dir = vim.fn.fnamemodify(file, ":p:h")
+  while true do
+    for _, m in ipairs(markers) do
+      if vim.fn.filereadable(dir .. "/" .. m) == 1 or vim.fn.isdirectory(dir .. "/" .. m) == 1 then
+        return dir
+      end
+    end
+    local parent = vim.fn.fnamemodify(dir, ":h")
+    if parent == dir then break end
+    dir = parent
+  end
+  return vim.fn.getcwd()
+end
+
+-- Open/navigate Neo-tree to `dir` using the MAIN filesystem state so that
+-- filtered_items (hide_dotfiles=false) from the plugin config is always active.
+-- Using Neotree dir=... creates a separate extra-state that ignores those opts.
+local function neo_open(dir)
+  local reveal = vim.fn.expand("%:p")
+  -- Reveal opens/focuses the main filesystem state without changing its config
+  vim.cmd("Neotree filesystem reveal")
   vim.schedule(function()
     local ok, manager = pcall(require, "neo-tree.sources.manager")
     if not ok then return end
     local state = manager.get_state("filesystem")
-    if state and state.filtered_items and state.filtered_items.hide_dotfiles then
+    if not state then return end
+    -- Force dotfiles visible (H key mutates this at runtime)
+    if state.filtered_items then
       state.filtered_items.hide_dotfiles = false
-      pcall(require("neo-tree.command").execute, { action = "refresh", source = "filesystem" })
+    end
+    -- Navigate the existing state to the target root
+    local ok2, fs = pcall(require, "neo-tree.sources.filesystem")
+    if ok2 and type(fs.navigate) == "function" then
+      fs.navigate(state, dir, reveal)
     end
   end)
 end
@@ -75,21 +104,11 @@ map("n", "<leader>e", function()
     require("neo-tree.command").execute({ action = "close", source = "filesystem" })
     return
   end
-  require("neo-tree.command").execute({
-    action = "focus", source = "filesystem",
-    dir = vim.fn.getcwd(), reveal_file = vim.fn.expand("%:p"),
-  })
-  neo_ensure_dotfiles()
+  neo_open(vim.fn.getcwd())
 end, { desc = "Toggle Explorer" })
 map("n", "<leader>o", function()
   _neo_focus = not _neo_focus
-  require("neo-tree.command").execute({
-    action      = "focus",
-    source      = "filesystem",
-    dir         = _neo_focus and vim.fn.expand("%:p:h") or vim.fn.getcwd(),
-    reveal_file = vim.fn.expand("%:p"),
-  })
-  neo_ensure_dotfiles()
+  neo_open(_neo_focus and find_pkg_root(vim.fn.expand("%:p")) or vim.fn.getcwd())
 end, { desc = "Toggle Explorer Focus Mode" })
 
 -- ─── Git ──────────────────────────────────────────────────────────────────────
