@@ -54,21 +54,15 @@ return {
   {
     "nvim-neo-tree/neo-tree.nvim",
     opts = function(_, opts)
-      -- Resize helper: update edgy's stored size so it survives layout events.
-      -- Direct nvim_win_set_width gets reverted by edgy's WinResized autocmd.
+      -- Resize helper: update edgy.config.layout.left.size (the edgebar's total
+      -- width) then call layout.update() — this is the only way that persists.
+      -- Direct nvim_win_set_width gets reverted by edgy on its next layout pass.
       local function neo_resize(delta)
-        local ok, state = pcall(require, "edgy.state")
-        if ok and state.sidebars then
-          local sidebar = state.sidebars.left
-          if sidebar then
-            for _, win in ipairs(sidebar.wins or {}) do
-              if win.view and win.view.ft == "neo-tree" then
-                win.view.size.width = math.max(20, (win.view.size.width or 40) + delta)
-                sidebar:layout()
-                return
-              end
-            end
-          end
+        local ok, cfg = pcall(require, "edgy.config")
+        if ok and cfg.layout and cfg.layout.left then
+          cfg.layout.left.size = math.max(20, cfg.layout.left.size + delta)
+          require("edgy.layout").update()
+          return
         end
         -- Fallback when edgy is not active
         vim.cmd("vertical resize " .. math.max(20, vim.fn.winwidth(0) + delta))
