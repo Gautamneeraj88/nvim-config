@@ -3,6 +3,8 @@ return {
   {
     "folke/todo-comments.nvim",
     opts = {
+      signs = true,
+      sign_priority = 8,
       keywords = {
         TODO  = { icon = " ", color = "#4fc1ff" }, -- blue
         FIXME = { icon = " ", color = "#f7768e" }, -- red
@@ -13,6 +15,10 @@ return {
         TEST  = { icon = " ", color = "#1abc9c" }, -- teal
         INFO  = { icon = " ", color = "#C44A3A" }, -- reddish-orange
       },
+    },
+    keys = {
+      { "]t", function() require("todo-comments").jump_next() end, desc = "Next Todo Comment" },
+      { "[t", function() require("todo-comments").jump_prev() end, desc = "Previous Todo Comment" },
     },
   },
 

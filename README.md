@@ -306,7 +306,7 @@ gr           → find all places where current symbol is used
 ### Other search
 
 ```
-<leader>ft   → search all TODO/FIXME/NOTE comments in project
+<leader>st   → search all TODO/FIXME/NOTE comments in project
 <leader>sk   → search all keymaps (useful when you forget a shortcut)
 <leader>:    → browse command history
 <leader>uT   → switch theme with live preview
@@ -976,7 +976,8 @@ These work in all languages (Python `#`, JavaScript `//`, Go `//`, Lua `--`, etc
 ### Navigating TODOs
 
 ```
-<leader>ft   → open fzf with ALL todos in the project (with preview)
+<leader>st   → search all TODOs in project (fzf)
+<leader>sT   → search TODO/FIX/FIXME only
 ]t           → jump to next TODO in current file
 [t           → jump to previous TODO in current file
 ```
@@ -1754,7 +1755,7 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>fb`  | Open buffers                         |
 | `<leader>/`   | Live grep                            |
 | `<leader>fw`  | Search word under cursor             |
-| `<leader>ft`  | Search TODOs                         |
+| `<leader>st`  | Search TODOs                         |
 | `<leader>ss`  | Document symbols                     |
 | `<leader>sS`  | Workspace symbols                    |
 | `<leader>sk`  | Search keymaps                       |
