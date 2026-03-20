@@ -20,7 +20,13 @@ return {
         if vim.tbl_contains(lsp_filetypes, filetype) then
           return { "lsp", "treesitter" }
         end
-        return { "treesitter", "indent" }
+        -- Only use treesitter if a parser is actually installed — avoids UfoFallbackException
+        -- for filetypes like 'http', 'rest', etc. that have no treesitter parser
+        local ok, parsers = pcall(require, "nvim-treesitter.parsers")
+        if ok and parsers.has_parser(filetype) then
+          return { "treesitter", "indent" }
+        end
+        return { "indent" }
       end,
       -- Show how many lines are folded in a virtual text hint
       fold_virt_text_handler = function(virtText, lnum, endLnum, width, truncate)
