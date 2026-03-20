@@ -49,22 +49,37 @@ map("t", "<C-l>", "<cmd>wincmd l<cr>", { desc = "Go to right window" })
 -- ─── File Explorer ───────────────────────────────────────────────────────────
 
 -- Use neo-tree as the only file explorer (left sidebar, VSCode-style)
--- <leader>e  → toggle tree open/closed (shows full project root)
+-- <leader>e  → toggle tree open/closed (always full project root)
 -- <leader>o  → toggle focus mode: narrows tree to current file's directory
---              press again to go back to full project root
--- Using require("neo-tree.command").execute() with source="filesystem" keeps
--- the main tree state so filtered_items (hide_dotfiles=false) is always applied.
--- Neotree dir=... creates a separate "extra state" that ignores those opts.
+
+-- After any tree open, force dotfiles visible regardless of what H was pressed before.
+-- The H toggle mutates state.filtered_items at runtime; this resets it back.
+local function neo_ensure_dotfiles()
+  vim.schedule(function()
+    local ok, manager = pcall(require, "neo-tree.sources.manager")
+    if not ok then return end
+    local state = manager.get_state("filesystem")
+    if state and state.filtered_items and state.filtered_items.hide_dotfiles then
+      state.filtered_items.hide_dotfiles = false
+      pcall(require("neo-tree.command").execute, { action = "refresh", source = "filesystem" })
+    end
+  end)
+end
+
 local _neo_focus = false
 map("n", "<leader>e", function()
   _neo_focus = false
+  local ok, renderer = pcall(require, "neo-tree.ui.renderer")
+  local ok2, manager = pcall(require, "neo-tree.sources.manager")
+  if ok and ok2 and renderer.tree_is_visible(manager.get_state("filesystem")) then
+    require("neo-tree.command").execute({ action = "close", source = "filesystem" })
+    return
+  end
   require("neo-tree.command").execute({
-    action       = "focus",
-    source       = "filesystem",
-    dir          = vim.fn.getcwd(),
-    reveal_file  = vim.fn.expand("%:p"),
-    toggle       = true,
+    action = "focus", source = "filesystem",
+    dir = vim.fn.getcwd(), reveal_file = vim.fn.expand("%:p"),
   })
+  neo_ensure_dotfiles()
 end, { desc = "Toggle Explorer" })
 map("n", "<leader>o", function()
   _neo_focus = not _neo_focus
@@ -74,6 +89,7 @@ map("n", "<leader>o", function()
     dir         = _neo_focus and vim.fn.expand("%:p:h") or vim.fn.getcwd(),
     reveal_file = vim.fn.expand("%:p"),
   })
+  neo_ensure_dotfiles()
 end, { desc = "Toggle Explorer Focus Mode" })
 
 -- ─── Git ──────────────────────────────────────────────────────────────────────
