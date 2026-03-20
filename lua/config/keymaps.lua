@@ -49,20 +49,22 @@ map("t", "<C-l>", "<cmd>wincmd l<cr>", { desc = "Go to right window" })
 -- ─── File Explorer ───────────────────────────────────────────────────────────
 
 -- Use neo-tree as the only file explorer (left sidebar, VSCode-style)
--- <leader>e  → toggle tree open/closed
--- <leader>o  → reveal current file in tree and focus it; press again to jump back
+-- <leader>e  → toggle tree open/closed (shows full project root)
+-- <leader>o  → toggle focus mode: narrows tree to current file's directory
+--              press again to go back to full project root
 map("n", "<leader>e", "<cmd>Neotree toggle<cr>", { desc = "Toggle Explorer" })
+
+local _neo_focus = false
 map("n", "<leader>o", function()
-  local manager = require("neo-tree.sources.manager")
-  local renderer = require("neo-tree.ui.renderer")
-  local state = manager.get_state("filesystem")
-  local is_visible = renderer.tree_is_visible(state)
-  if is_visible and vim.bo.filetype == "neo-tree" then
-    vim.cmd("wincmd p") -- already in tree → jump back to editor
+  _neo_focus = not _neo_focus
+  if _neo_focus then
+    -- focus mode: show only the directory of the current file
+    vim.cmd("Neotree reveal dir=" .. vim.fn.expand("%:p:h"))
   else
-    vim.cmd("Neotree reveal") -- open tree and highlight current file
+    -- normal mode: show full project root
+    vim.cmd("Neotree reveal dir=" .. vim.fn.getcwd())
   end
-end, { desc = "Focus Explorer (reveal file)" })
+end, { desc = "Toggle Explorer Focus Mode" })
 
 -- ─── Git ──────────────────────────────────────────────────────────────────────
 
