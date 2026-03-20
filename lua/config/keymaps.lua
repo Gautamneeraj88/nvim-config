@@ -52,20 +52,28 @@ map("t", "<C-l>", "<cmd>wincmd l<cr>", { desc = "Go to right window" })
 -- <leader>e  → toggle tree open/closed (shows full project root)
 -- <leader>o  → toggle focus mode: narrows tree to current file's directory
 --              press again to go back to full project root
+-- Using require("neo-tree.command").execute() with source="filesystem" keeps
+-- the main tree state so filtered_items (hide_dotfiles=false) is always applied.
+-- Neotree dir=... creates a separate "extra state" that ignores those opts.
 local _neo_focus = false
 map("n", "<leader>e", function()
-  _neo_focus = false -- always reset to full project root
-  vim.cmd("Neotree toggle dir=" .. vim.fn.getcwd())
+  _neo_focus = false
+  require("neo-tree.command").execute({
+    action       = "focus",
+    source       = "filesystem",
+    dir          = vim.fn.getcwd(),
+    reveal_file  = vim.fn.expand("%:p"),
+    toggle       = true,
+  })
 end, { desc = "Toggle Explorer" })
 map("n", "<leader>o", function()
   _neo_focus = not _neo_focus
-  if _neo_focus then
-    -- focus mode: show only the directory of the current file
-    vim.cmd("Neotree reveal dir=" .. vim.fn.expand("%:p:h"))
-  else
-    -- normal mode: show full project root
-    vim.cmd("Neotree reveal dir=" .. vim.fn.getcwd())
-  end
+  require("neo-tree.command").execute({
+    action      = "focus",
+    source      = "filesystem",
+    dir         = _neo_focus and vim.fn.expand("%:p:h") or vim.fn.getcwd(),
+    reveal_file = vim.fn.expand("%:p"),
+  })
 end, { desc = "Toggle Explorer Focus Mode" })
 
 -- ─── Git ──────────────────────────────────────────────────────────────────────
