@@ -1,23 +1,18 @@
 return {
-  -- ─── TODO Comments — distinct colors per keyword ─────────────────────────────
+  -- ─── TODO Comments — custom colors only, everything else default ─────────────
   {
     "folke/todo-comments.nvim",
     opts = {
-      signs = true,
       keywords = {
-        TODO  = { icon = " ", color = "#4fc1ff" }, -- blue
-        FIXME = { icon = " ", color = "#f7768e" }, -- red
-        NOTE  = { icon = " ", color = "#9ece6a", alt = { "INFORMATION" } }, -- green
-        HACK  = { icon = " ", color = "#e0af68" }, -- yellow
-        WARN  = { icon = " ", color = "#ff9e64" }, -- orange
-        PERF  = { icon = " ", color = "#bb9af7" }, -- purple
-        TEST  = { icon = " ", color = "#1abc9c" }, -- teal
-        INFO  = { icon = " ", color = "#C44A3A" }, -- reddish-orange
+        TODO  = { color = "#4fc1ff" }, -- blue
+        FIXME = { color = "#f7768e" }, -- red
+        NOTE  = { color = "#9ece6a", alt = { "INFORMATION" } }, -- green
+        HACK  = { color = "#e0af68" }, -- yellow
+        WARN  = { color = "#ff9e64" }, -- orange
+        PERF  = { color = "#bb9af7" }, -- purple
+        TEST  = { color = "#1abc9c" }, -- teal
+        INFO  = { color = "#C44A3A" }, -- reddish-orange
       },
-    },
-    keys = {
-      { "]t", function() require("todo-comments").jump_next() end, desc = "Next Todo Comment" },
-      { "[t", function() require("todo-comments").jump_prev() end, desc = "Previous Todo Comment" },
     },
   },
 
