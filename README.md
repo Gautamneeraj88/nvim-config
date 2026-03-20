@@ -236,27 +236,41 @@ Space w ...   → Window operations
 
 ## File Explorer — Neo-tree
 
-A VSCode-style file tree on the left side.
+A VSCode-style file tree on the left side. **Hidden files (dotfiles) are always
+visible by default** — press `H` to hide them temporarily if needed.
 
-### Opening & Closing
-
-```
-<leader>e    → toggle explorer (open if closed, close if open)
-<leader>o    → reveal current file in tree + focus explorer
-               press again while inside tree to jump back to editor
-```
-
-> **Tip:** Use `<leader>o` as your main shortcut — it opens the tree, scrolls to
-> your current file, and focuses it so you can quickly see where you are or open
-> a sibling file. Press `<leader>o` again from inside the tree to jump back.
-
-Once the explorer is focused, use these:
-
-### Navigation inside explorer
+### Two modes: Normal and Focus
 
 ```
-j / k        → move up and down
-Enter        → open file / expand folder
+<leader>e    → Normal mode  — toggle tree open/closed, always shows full project root (cwd)
+<leader>o    → Focus mode   — toggle focus on the current package / module
+               1st press  → roots the tree at the nearest package.json / tsconfig.json
+               2nd press  → returns the tree back to the full project root
+```
+
+**When to use which:**
+
+| Situation | Key |
+|---|---|
+| You want to browse the whole project | `<leader>e` |
+| You're deep in a monorepo and want to see only the current package | `<leader>o` |
+| You want to see `package.json`, `.env`, config files for your current package | `<leader>o` |
+| Done with focus, back to full view | `<leader>o` again |
+
+**How focus mode finds the root:**
+It walks up from your current file looking for `package.json`, `tsconfig.json`,
+`Cargo.toml`, `go.mod`, or `pyproject.toml` — whichever is closest. So if you're
+editing `packages/api-gateway/src/routes/workflow.ts`, focus mode roots the tree
+at `packages/api-gateway/` where `package.json` lives — showing all its config
+files, `.env`, `src/`, `__tests__/` etc.
+
+### Navigation inside the tree
+
+Once the tree is open, use these keys:
+
+```
+j / k        → move up / down
+Enter        → open file or expand folder
 l            → expand folder
 h            → collapse folder
 ```
@@ -265,7 +279,7 @@ h            → collapse folder
 
 ```
 a            → create new file (type name + Enter)
-               to create a folder: end the name with /
+               end name with / to create a folder
                e.g. "components/Button.tsx" creates the full path
 d            → delete file (asks for confirmation)
 r            → rename file
@@ -274,15 +288,15 @@ x            → cut file
 p            → paste file
 ```
 
-### Explorer display
+### Display controls
 
 ```
-H            → toggle showing hidden files (dotfiles)
+H            → toggle hidden files (dotfiles shown by default — H hides them)
 R            → refresh the tree
 q            → close explorer
 ```
 
-> **Tip:** The tree auto-follows your current file. When you open a file with `<leader>ff`, the tree will highlight it automatically.
+> **Tip:** The tree auto-follows your current file. When you open a file with `<leader>ff`, the tree highlights it automatically.
 
 ---
 
