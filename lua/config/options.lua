@@ -15,6 +15,7 @@ opt.timeoutlen   = 300   -- faster which-key popup (LazyVim default: 300, explic
 -- Cleaner UI
 opt.cmdheight    = 0     -- hide cmdline when not in use (noice.nvim handles messages)
 opt.pumheight    = 10    -- cap autocomplete menu at 10 items (default: unlimited)
+vim.o.winborder  = "rounded" -- global rounded borders on ALL floating windows (hover, LSP, etc.)
 
 -- File navigation (lets gf find .ts, .py, .go files by extension)
 opt.suffixesadd:append({ ".js", ".ts", ".jsx", ".tsx", ".py", ".go" })

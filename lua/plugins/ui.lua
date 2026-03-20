@@ -1,4 +1,35 @@
 return {
+  -- ─── Sticky Context Header ────────────────────────────────────────────────
+  -- Pins the current function/class signature at the top when you scroll past it
+  -- Like VS Code / Zed's "sticky scroll" feature
+  {
+    "nvim-treesitter/nvim-treesitter-context",
+    event = "BufReadPost",
+    opts = {
+      max_lines      = 3,  -- max lines of context shown at top
+      min_window_height = 20,
+      mode           = "cursor",
+      separator      = "─",
+    },
+  },
+
+  -- ─── LSP Progress Indicator ──────────────────────────────────────────────
+  -- Shows a spinner in the bottom-right while LSP is indexing/loading
+  {
+    "j-hui/fidget.nvim",
+    event = "LspAttach",
+    opts = {
+      progress = {
+        display = { render_limit = 4, done_ttl = 2 },
+      },
+      notification = {
+        override_vim_notify = false, -- let snacks/noice handle vim.notify
+        window = { winblend = 0 },
+      },
+    },
+  },
+
+
   -- ─── Statusline with system time ─────────────────────────────────────────
   {
     "nvim-lualine/lualine.nvim",

@@ -1,4 +1,27 @@
 return {
+  -- ─── Breadcrumbs Bar (dropbar) ────────────────────────────────────────────
+  -- Shows  file > class > function  at the top of each window
+  -- Click any segment to jump there — like VS Code / Zed breadcrumbs
+  {
+    "Bekaboo/dropbar.nvim",
+    event = "BufReadPost",
+    opts = {
+      bar = {
+        sources = function(buf, _)
+          local sources = require("dropbar.sources")
+          local utils   = require("dropbar.utils")
+          if vim.bo[buf].buftype == "terminal" then
+            return { sources.terminal }
+          end
+          return {
+            utils.source.fallback({ sources.lsp, sources.treesitter }),
+          }
+        end,
+      },
+    },
+  },
+
+
   -- ─── Color Highlighter ────────────────────────────────────────────────────────
   -- Shows hex/rgb/hsl/css/tailwind colors as colored backgrounds inline
   -- e.g. #ff0000 shows with a red background, "red" shows red, bg-red-500 shows red
