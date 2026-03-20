@@ -1,6 +1,7 @@
 return {
   -- ─── Yank History — cycle through past yanks after pasting ───────────────────
-  -- Press p to paste, then <C-p>/<C-n> to cycle through yank ring
+  -- Press p to paste, then <M-p>/<M-n> to cycle through yank ring
+  -- (<C-n>/<C-p> moved to Alt to avoid conflict with vim-visual-multi)
   {
     "gbprod/yanky.nvim",
     event = "VeryLazy",
@@ -11,10 +12,38 @@ return {
     keys = {
       { "p",          "<Plug>(YankyPutAfter)",      mode = { "n", "x" }, desc = "Put after" },
       { "P",          "<Plug>(YankyPutBefore)",     mode = { "n", "x" }, desc = "Put before" },
-      { "<C-p>",      "<Plug>(YankyCycleForward)",  desc = "Cycle yank forward" },
-      { "<C-n>",      "<Plug>(YankyCycleBackward)", desc = "Cycle yank backward" },
+      { "<M-p>",      "<Plug>(YankyCycleForward)",  desc = "Cycle yank forward" },
+      { "<M-n>",      "<Plug>(YankyCycleBackward)", desc = "Cycle yank backward" },
       { "<leader>fy", "<cmd>YankyRingHistory<cr>",  desc = "Yank History" },
     },
+  },
+
+  -- ─── Multi-cursor (VS Code Ctrl+D style) ─────────────────────────────────────
+  -- <C-n>     select word under cursor, then keep pressing to select next match
+  -- <C-Down>  add a cursor on the line below
+  -- <C-Up>    add a cursor on the line above
+  -- After selecting cursors: type normally — all cursors edit simultaneously
+  -- \\        VM leader — prefix for extra commands (\\A = select all matches)
+  {
+    "mg979/vim-visual-multi",
+    event = "VeryLazy",
+    init = function()
+      vim.g.VM_leader = "\\"
+      vim.g.VM_maps = {
+        -- Keep <C-n> as the primary select-next key (VS Code Ctrl+D equivalent)
+        ["Find Under"]         = "<C-n>",
+        ["Find Subword Under"] = "<C-n>",
+        -- Add cursors vertically with Ctrl+arrow (free in our config)
+        ["Select Cursor Down"] = "<C-Down>",
+        ["Select Cursor Up"]   = "<C-Up>",
+        -- Skip current match and jump to next
+        ["Skip Region"]        = "<C-x>",
+        -- Remove last added cursor
+        ["Remove Region"]      = "<C-q>",
+      }
+      -- Don't remap <C-h/j/k/l> — those belong to smart-splits navigation
+      vim.g.VM_add_cursor_at_pos_no_mappings = 1
+    end,
   },
 
   -- ─── Better Quickfix — fzf preview inside quickfix list ──────────────────────

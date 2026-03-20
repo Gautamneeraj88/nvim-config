@@ -1358,10 +1358,13 @@ P            → paste before cursor
 ### Cycling through history
 
 ```
-<C-p>        → after pasting: replace with previous yank
-<C-n>        → after pasting: replace with next yank (forward)
+<M-p>        → after pasting: replace with previous yank   (Alt+p)
+<M-n>        → after pasting: replace with next yank        (Alt+n)
 <leader>fy   → browse full yank history in a picker
 ```
+
+> **Note:** Cycle keys use `Alt` (not `Ctrl`) to avoid conflicting with
+> `<C-n>` which is used by the multi-cursor plugin.
 
 ### Example workflow
 
@@ -1370,8 +1373,8 @@ P            → paste before cursor
 2. Yank "world"    (saved to ring)
 3. Yank "foo"      (saved to ring — this is now what p pastes)
 4. Press p         → pastes "foo"
-5. Press <C-p>     → replaces with "world"
-6. Press <C-p>     → replaces with "hello"
+5. Press <M-p>     → replaces with "world"
+6. Press <M-p>     → replaces with "hello"
 ```
 
 ---
@@ -1631,54 +1634,79 @@ Look for `pyright` in the active clients list. The Python path should show your 
 
 ---
 
-## Multi-cursor
+## Multi-cursor — vim-visual-multi
 
-Select a word and keep adding the next occurrence — then edit all of them simultaneously. Like VS Code's `Ctrl+D`.
+Works exactly like VS Code's `Ctrl+D` — select a word and keep adding the next
+occurrence, then type once and all cursors edit simultaneously.
 
-### Basic workflow
+### Selecting occurrences (the main workflow)
 
 ```
-<C-n>          → select word under cursor, then press again for next occurrence
-n              → add next occurrence (after first <C-n>)
-N              → add previous occurrence
-q              → skip current and go to next
-Q              → remove current cursor
+<C-n>          → select word under cursor
+               → press again to add the NEXT occurrence
+               → keep pressing to keep adding more
+<C-x>          → skip current occurrence, jump to next  (like VS Code Ctrl+K Ctrl+D)
+<C-q>          → remove the last added cursor / deselect current
+\\A            → select ALL occurrences at once          (\\ is the VM leader)
+```
+
+### Add cursors vertically (column editing)
+
+```
+<C-Down>       → add a cursor on the line below
+<C-Up>         → add a cursor on the line above
+```
+
+Great for adding the same text to multiple lines at once.
+
+### Once cursors are active
+
+All standard Neovim editing works on every cursor simultaneously:
+
+```
+i              → insert mode at all cursors
+a              → append at all cursors
+c              → change (delete + insert) at all cursors
+d              → delete at all cursors
+I              → insert at start of all lines
+A              → append at end of all lines
 <Esc>          → exit multi-cursor mode
 ```
 
-### Select all at once
+### Navigation inside multi-cursor mode
 
 ```
-<leader>ma     → select ALL occurrences of word at once
+n / N          → move to next / previous match
 ```
 
-### Add cursors vertically
+### Example: rename a variable
+
+You're editing a function and want to rename `userData` → `userInfo`:
 
 ```
-<C-Down>       → add cursor on line below
-<C-Up>         → add cursor on line above
+1. Put cursor on userData
+2. Press <C-n>               → selects first "userData"
+3. Press <C-n> again         → adds next "userData" match
+4. Press <C-n> until all are selected  (or \\A to grab all at once)
+5. Press c                   → deletes all and enters insert mode
+6. Type userInfo             → all cursors type simultaneously
+7. Press <Esc>               → done, all renamed
 ```
 
-### Once cursors are placed
+### Example: add a property to multiple objects
 
-All normal editing commands work on every cursor simultaneously:
-
-```
-i              → insert at all cursors
-A              → append at end of all lines
-c              → change at all cursors
-d              → delete at all cursors
+```javascript
+const a = { name: "foo" }
+const b = { name: "bar" }
+const c = { name: "baz" }
 ```
 
-### Example workflow
+1. Press `<C-Down>` three times to place cursors on all three lines
+2. Press `A` to append at end of each line
+3. Type `, active: true }` — all three lines updated at once
 
-Want to rename a variable `userData` to `userInfo` in the current function:
-
-1. Place cursor on `userData`
-2. Press `<C-n>` — first one selected
-3. Press `n` repeatedly to add each occurrence (or `<leader>ma` for all)
-4. Press `c` then type `userInfo`
-5. Press `Esc` — done
+> **Keybinding note:** `<C-n>` is reserved for multi-cursor. Yanky's yank-cycle
+> uses `<M-p>` / `<M-n>` (Alt) instead to avoid conflict.
 
 ---
 
