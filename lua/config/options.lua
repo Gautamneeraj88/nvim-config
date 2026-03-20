@@ -19,12 +19,15 @@ opt.pumheight    = 10    -- cap autocomplete menu at 10 items (default: unlimite
 -- File navigation (lets gf find .ts, .py, .go files by extension)
 opt.suffixesadd:append({ ".js", ".ts", ".jsx", ".tsx", ".py", ".go" })
 
--- Cleaner diagnostics: source shown, messages truncated, most severe per line first
+-- Cleaner diagnostics: no inline clutter — underline highlights the problem,
+-- message appears only on the current cursor line, full details via <leader>cd
 vim.diagnostic.config({
-  severity_sort  = true,
-  virtual_text   = {
+  severity_sort = true,
+  underline     = true,
+  virtual_text  = {
+    only_current_line = true, -- show text only on the line cursor is on
+    source  = "if_many",      -- show source when multiple (eslint vs ts)
     spacing = 2,
-    source  = "if_many",   -- show source only when multiple sources on same line
     prefix  = "●",
     format  = function(d)
       local msg = d.message
@@ -32,5 +35,6 @@ vim.diagnostic.config({
       return msg
     end,
   },
+  float = { source = true, border = "rounded" },
 })
 
