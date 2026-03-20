@@ -3,7 +3,7 @@ return {
   {
     "folke/todo-comments.nvim",
     opts = {
-      signs = true,
+      signs = false,       -- we take over sign placement via extmarks (nvim 0.11 compat)
       sign_priority = 8,
       keywords = {
         TODO  = { icon = " ", color = "#4fc1ff" }, -- blue
@@ -23,16 +23,18 @@ return {
     config = function(_, opts)
       require("todo-comments").setup(opts)
 
-      -- Patch: the plugin skips signs for multiline block comments (is_multiline guard).
-      -- Wrap highlight() to do an extra sign-placement pass covering block comment lines.
+      -- The plugin uses legacy vim.fn.sign_place which is unreliable in nvim 0.11.
+      -- We replace it with nvim_buf_set_extmark (sign_text), which:
+      --   1. Works reliably in nvim 0.10+/0.11
+      --   2. Also covers block comments (/* TODO: */) that the plugin skips
       local hl_mod = require("todo-comments.highlight")
       local Config = require("todo-comments.config")
+      local ns = vim.api.nvim_create_namespace("todo-comments-signs")
       local orig = hl_mod.highlight
 
       hl_mod.highlight = function(buf, first, last, event)
         orig(buf, first, last, event)
-        -- Extra pass: place signs for any line that matches a keyword,
-        -- regardless of whether it was skipped as a multiline continuation.
+        vim.api.nvim_buf_clear_namespace(buf, ns, first, last + 1)
         local lines = vim.api.nvim_buf_get_lines(buf, first, last + 1, false)
         for l, line in ipairs(lines) do
           local lnum = first + l - 1
@@ -40,16 +42,12 @@ return {
           if ok and start and kw then
             kw = Config.keywords[kw] or kw
             local kopts = Config.options.keywords[kw]
-            if kopts then
-              local show_sign = Config.options.signs
-              if kopts.signs ~= nil then show_sign = kopts.signs end
-              if show_sign then
-                local placed = vim.fn.sign_getplaced(buf, { group = "todo-signs", lnum = lnum + 1 })
-                if not placed[1] or #placed[1].signs == 0 then
-                  vim.fn.sign_place(0, "todo-signs", "todo-sign-" .. kw, buf,
-                    { lnum = lnum + 1, priority = Config.options.sign_priority })
-                end
-              end
+            if kopts and kopts.icon then
+              vim.api.nvim_buf_set_extmark(buf, ns, lnum, 0, {
+                sign_text      = kopts.icon,
+                sign_hl_group  = "TodoSign" .. kw,
+                priority       = Config.options.sign_priority,
+              })
             end
           end
         end
