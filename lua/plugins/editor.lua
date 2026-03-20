@@ -37,6 +37,19 @@ return {
     },
   },
 
+  -- ─── Inline Git Blame (GitLens-style) ───────────────────────────────────────
+  {
+    "lewis6991/gitsigns.nvim",
+    opts = {
+      current_line_blame = true, -- show blame at end of current line
+      current_line_blame_opts = {
+        delay = 500,
+        virt_text_pos = "eol",
+      },
+      current_line_blame_formatter = "  <author>, <author_time:%d %b %Y> · <summary>",
+    },
+  },
+
   -- ─── File Explorer (neo-tree only, no double explorer) ───────────────────────
   {
     "nvim-neo-tree/neo-tree.nvim",

@@ -30,7 +30,7 @@ return {
   },
 
 
-  -- ─── Statusline with system time ─────────────────────────────────────────
+  -- ─── Statusline ───────────────────────────────────────────────────────────
   {
     "nvim-lualine/lualine.nvim",
     opts = function(_, opts)
@@ -39,10 +39,23 @@ return {
       end
 
       opts.sections = opts.sections or {}
-      opts.sections.lualine_z = { clock }
+      -- location (line:col) + clock in the right corner
+      opts.sections.lualine_z = { "location", clock }
 
       return opts
     end,
+  },
+
+  -- ─── Code Action Lightbulb ────────────────────────────────────────────────
+  -- Shows 󰌶 in the sign column when LSP code actions are available on this line
+  {
+    "kosayoda/nvim-lightbulb",
+    event = "LspAttach",
+    opts = {
+      autocmd  = { enabled = true },
+      sign     = { enabled = true, text = "󰌶" },
+      virtual_text = { enabled = false },
+    },
   },
 
   -- ─── Better UI for inputs & selects (vim.ui.input / vim.ui.select) ─────────
