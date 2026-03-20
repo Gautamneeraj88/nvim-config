@@ -32,7 +32,7 @@ return {
   -- ─── Indent guides ────────────────────────────────────────────────────────
   -- LazyVim includes mini.indentscope — this just tweaks the style
   {
-    "nvim-mini/mini.indentscope",
+    "echasnovski/mini.indentscope",
     opts = {
       symbol = "│",
       options = { try_as_border = true },

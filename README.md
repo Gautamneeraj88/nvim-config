@@ -306,7 +306,7 @@ gr           → find all places where current symbol is used
 ### Other search
 
 ```
-<leader>st   → search all TODO/FIXME/NOTE comments in project
+<leader>ft   → search all TODO/FIXME/NOTE comments in project
 <leader>sk   → search all keymaps (useful when you forget a shortcut)
 <leader>:    → browse command history
 <leader>uT   → switch theme with live preview
@@ -724,8 +724,8 @@ Run tests without leaving Neovim. Supports Jest, Vitest, pytest, and Go test. Au
 ```
 <leader>ts   → toggle test summary panel (tree of all tests, pass/fail)
 <leader>to   → toggle test output panel (full output, stdout, errors)
-]t           → jump to next FAILED test
-[t           → jump to previous FAILED test
+]f           → jump to next FAILED test
+[f           → jump to previous FAILED test
 ```
 
 ### Result icons shown in your code
@@ -976,7 +976,7 @@ These work in all languages (Python `#`, JavaScript `//`, Go `//`, Lua `--`, etc
 ### Navigating TODOs
 
 ```
-<leader>st   → search all TODOs in project (fzf)
+<leader>ft   → search all TODOs in project (fzf)
 <leader>sT   → search TODO/FIX/FIXME only
 ]t           → jump to next TODO in current file
 [t           → jump to previous TODO in current file
@@ -1755,7 +1755,7 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>fb`  | Open buffers                         |
 | `<leader>/`   | Live grep                            |
 | `<leader>fw`  | Search word under cursor             |
-| `<leader>st`  | Search TODOs                         |
+| `<leader>ft`  | Search TODOs                         |
 | `<leader>ss`  | Document symbols                     |
 | `<leader>sS`  | Workspace symbols                    |
 | `<leader>sk`  | Search keymaps                       |

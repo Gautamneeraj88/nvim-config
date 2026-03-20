@@ -45,6 +45,9 @@ require("lazy").setup({
 
     -- Your personal tweaks (lua/plugins/)
     { import = "plugins" },
+
+    -- Disable LazyVim defaults we don't want
+    { "folke/flash.nvim", enabled = false }, -- not used; keep nav simple
   },
   defaults = { lazy = false, version = false },
   install = { colorscheme = { "catppuccin", "tokyonight", "rose-pine", "kanagawa" } },

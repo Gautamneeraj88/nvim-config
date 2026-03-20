@@ -11,7 +11,7 @@ return {
       "nvim-neotest/neotest-jest",       -- TypeScript / JavaScript (Jest)
       "marilari88/neotest-vitest",       -- TypeScript / JavaScript (Vitest)
       "nvim-neotest/neotest-python",     -- Python (pytest)
-      "nvim-neotest/neotest-go",         -- Go
+      "fredrikaverpil/neotest-golang",   -- Go (newer, replaces neotest-go)
     },
     opts = {
       adapters = {
@@ -38,9 +38,8 @@ return {
           runner = "pytest",
         },
         -- Go
-        ["neotest-go"] = {
-          experimental = { test_table = true },
-          args = { "-count=1", "-timeout=60s", "-race" },
+        ["neotest-golang"] = {
+          go_test_args = { "-count=1", "-timeout=60s", "-race" },
         },
       },
       -- Show output in a floating window
@@ -61,8 +60,8 @@ return {
       { "<leader>ts", function() require("neotest").summary.toggle() end,             desc = "Toggle test summary" },
       { "<leader>to", function() require("neotest").output_panel.toggle() end,        desc = "Toggle test output" },
       { "<leader>tS", function() require("neotest").run.stop() end,                   desc = "Stop test" },
-      { "]t",         function() require("neotest").jump.next({ status = "failed" }) end, desc = "Next failed test" },
-      { "[t",         function() require("neotest").jump.prev({ status = "failed" }) end, desc = "Prev failed test" },
+      { "]f",         function() require("neotest").jump.next({ status = "failed" }) end, desc = "Next failed test" },
+      { "[f",         function() require("neotest").jump.prev({ status = "failed" }) end, desc = "Prev failed test" },
     },
   },
 }
