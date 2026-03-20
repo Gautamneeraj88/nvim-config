@@ -52,9 +52,11 @@ map("t", "<C-l>", "<cmd>wincmd l<cr>", { desc = "Go to right window" })
 -- <leader>e  → toggle tree open/closed (shows full project root)
 -- <leader>o  → toggle focus mode: narrows tree to current file's directory
 --              press again to go back to full project root
-map("n", "<leader>e", "<cmd>Neotree toggle<cr>", { desc = "Toggle Explorer" })
-
 local _neo_focus = false
+map("n", "<leader>e", function()
+  _neo_focus = false -- always reset to full project root
+  vim.cmd("Neotree toggle dir=" .. vim.fn.getcwd())
+end, { desc = "Toggle Explorer" })
 map("n", "<leader>o", function()
   _neo_focus = not _neo_focus
   if _neo_focus then
