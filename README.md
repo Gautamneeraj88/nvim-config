@@ -296,6 +296,19 @@ R            → refresh the tree
 q            → close explorer
 ```
 
+### Resizing the explorer
+
+The explorer is managed by edgy.nvim (the panel layout engine), so standard
+window resize keys like `<leader>w>` don't work inside it. Use these instead:
+
+```
+>            → widen the explorer by 5 columns   (press while inside the tree)
+<            → narrow the explorer by 5 columns  (press while inside the tree)
+```
+
+Default width is **40 columns**. The minimum is clamped at 20 so it never
+collapses too small. Press `>` a few times to make it wider on large monitors.
+
 > **Tip:** The tree auto-follows your current file. When you open a file with `<leader>ff`, the tree highlights it automatically.
 
 ---

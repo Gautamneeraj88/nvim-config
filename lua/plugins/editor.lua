@@ -63,9 +63,18 @@ return {
         follow_current_file = { enabled = true }, -- auto-reveal file in tree
       },
       window = {
-        width = 32,
+        width = 40,
         mappings = {
           ["<space>"] = "none", -- don't conflict with leader key
+          -- Resize the explorer panel with > / < while inside the tree
+          [">"] = function()
+            local win = vim.api.nvim_get_current_win()
+            vim.api.nvim_win_set_width(win, vim.api.nvim_win_get_width(win) + 5)
+          end,
+          ["<"] = function()
+            local win = vim.api.nvim_get_current_win()
+            vim.api.nvim_win_set_width(win, math.max(20, vim.api.nvim_win_get_width(win) - 5))
+          end,
         },
       },
     },

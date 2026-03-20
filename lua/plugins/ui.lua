@@ -75,7 +75,7 @@ return {
           filter = function(buf)
             return vim.b[buf].neo_tree_source == "filesystem"
           end,
-          size = { width = 32 },
+          size = { width = 40 },
         },
       },
       right = {
