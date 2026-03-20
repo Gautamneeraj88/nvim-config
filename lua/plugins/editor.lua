@@ -3,8 +3,7 @@ return {
   {
     "folke/todo-comments.nvim",
     opts = {
-      signs = false,       -- we take over sign placement via extmarks (nvim 0.11 compat)
-      sign_priority = 8,
+      signs = true,
       keywords = {
         TODO  = { icon = " ", color = "#4fc1ff" }, -- blue
         FIXME = { icon = " ", color = "#f7768e" }, -- red
@@ -20,39 +19,6 @@ return {
       { "]t", function() require("todo-comments").jump_next() end, desc = "Next Todo Comment" },
       { "[t", function() require("todo-comments").jump_prev() end, desc = "Previous Todo Comment" },
     },
-    config = function(_, opts)
-      require("todo-comments").setup(opts)
-
-      -- The plugin uses legacy vim.fn.sign_place which is unreliable in nvim 0.11.
-      -- We replace it with nvim_buf_set_extmark (sign_text), which:
-      --   1. Works reliably in nvim 0.10+/0.11
-      --   2. Also covers block comments (/* TODO: */) that the plugin skips
-      local hl_mod = require("todo-comments.highlight")
-      local Config = require("todo-comments.config")
-      local ns = vim.api.nvim_create_namespace("todo-comments-signs")
-      local orig = hl_mod.highlight
-
-      hl_mod.highlight = function(buf, first, last, event)
-        orig(buf, first, last, event)
-        vim.api.nvim_buf_clear_namespace(buf, ns, first, last + 1)
-        local lines = vim.api.nvim_buf_get_lines(buf, first, last + 1, false)
-        for l, line in ipairs(lines) do
-          local lnum = first + l - 1
-          local ok, start, _, kw = pcall(hl_mod.match, line)
-          if ok and start and kw then
-            kw = Config.keywords[kw] or kw
-            local kopts = Config.options.keywords[kw]
-            if kopts and kopts.icon then
-              vim.api.nvim_buf_set_extmark(buf, ns, lnum, 0, {
-                sign_text      = kopts.icon,
-                sign_hl_group  = "TodoSign" .. kw,
-                priority       = Config.options.sign_priority,
-              })
-            end
-          end
-        end
-      end
-    end,
   },
 
   -- ─── File Explorer (neo-tree only, no double explorer) ───────────────────────
