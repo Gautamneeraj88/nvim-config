@@ -961,14 +961,14 @@ Special comment keywords are **highlighted in distinct colors** automatically in
 ### Keywords and colors
 
 ```python
-# TODO: something to do later                  → Blue
-# FIXME: this is broken, needs fixing           → Red
-# NOTE: important context for this code         → Green
-# HACK: workaround, not the right solution      → Yellow
-# WARN: be careful, edge case here              → Orange
-# PERF: opportunity to improve performance      → Purple
-# TEST: note about testing this                 → Teal
-# INFO: information comment                     -> Redish-orange
+#  TODO: something to do later                  → Blue
+#  FIXME: this is broken, needs fixing           → Red
+#  NOTE: important context for this code         → Green
+#  HACK: workaround, not the right solution      → Yellow
+#  WARN: be careful, edge case here              → Orange
+#  PERF: opportunity to improve performance      → Purple
+#  TEST: note about testing this                 → Teal
+#  INFO: informational note about the code       → Reddish-orange
 ```
 
 These work in all languages (Python `#`, JavaScript `//`, Go `//`, Lua `--`, etc.)
