@@ -55,7 +55,7 @@ return {
       { "<leader>gB", "<cmd>FzfLua git_branches<cr>",            desc = "Git Branches" },
 
       -- TODOs / FIXMEs across the project
-      { "<leader>ft", "<cmd>TodoFzfLua<cr>",                     desc = "Search TODOs" },
+      { "<leader>ft", function() require("todo-comments.fzf").todo() end, desc = "Search TODOs" },
 
       -- Misc
       { "<leader>:",  "<cmd>FzfLua command_history<cr>",         desc = "Command History" },
