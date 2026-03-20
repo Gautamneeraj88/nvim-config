@@ -53,26 +53,45 @@ return {
   -- ─── File Explorer (neo-tree only, no double explorer) ───────────────────────
   {
     "nvim-neo-tree/neo-tree.nvim",
-    opts = {
-      filesystem = {
+    opts = function(_, opts)
+      -- Resize helper: update edgy's stored size so it survives layout events.
+      -- Direct nvim_win_set_width gets reverted by edgy's WinResized autocmd.
+      local function neo_resize(delta)
+        local ok, state = pcall(require, "edgy.state")
+        if ok and state.sidebars then
+          local sidebar = state.sidebars.left
+          if sidebar then
+            for _, win in ipairs(sidebar.wins or {}) do
+              if win.view and win.view.ft == "neo-tree" then
+                win.view.size.width = math.max(20, (win.view.size.width or 40) + delta)
+                sidebar:layout()
+                return
+              end
+            end
+          end
+        end
+        -- Fallback when edgy is not active
+        vim.cmd("vertical resize " .. math.max(20, vim.fn.winwidth(0) + delta))
+      end
+
+      opts.filesystem = vim.tbl_deep_extend("force", opts.filesystem or {}, {
         filtered_items = {
-          visible = true, -- show dotfiles dimmed, not hidden
+          visible       = true,
           hide_dotfiles = false,
           hide_gitignored = true,
         },
-        follow_current_file = { enabled = true }, -- auto-reveal file in tree
-      },
-      window = {
+        follow_current_file = { enabled = true },
+      })
+      opts.window = vim.tbl_deep_extend("force", opts.window or {}, {
         width = 40,
         mappings = {
-          ["<space>"] = "none", -- don't conflict with leader key
-          -- Resize via smart-splits (has edgy integration — direct nvim_win_set_width
-          -- gets overridden by edgy's layout engine on the next event)
-          [">"] = function() require("smart-splits").resize_right(5) end,
-          ["<"] = function() require("smart-splits").resize_left(5) end,
+          ["<space>"] = "none",
+          [">"]       = function() neo_resize(5) end,
+          ["<"]       = function() neo_resize(-5) end,
         },
-      },
-    },
+      })
+      return opts
+    end,
   },
 
   -- Disable snacks.explorer so only neo-tree is used
