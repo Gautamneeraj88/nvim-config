@@ -20,6 +20,41 @@ return {
       { "]t", function() require("todo-comments").jump_next() end, desc = "Next Todo Comment" },
       { "[t", function() require("todo-comments").jump_prev() end, desc = "Previous Todo Comment" },
     },
+    config = function(_, opts)
+      require("todo-comments").setup(opts)
+
+      -- Patch: the plugin skips signs for multiline block comments (is_multiline guard).
+      -- Wrap highlight() to do an extra sign-placement pass covering block comment lines.
+      local hl_mod = require("todo-comments.highlight")
+      local Config = require("todo-comments.config")
+      local orig = hl_mod.highlight
+
+      hl_mod.highlight = function(buf, first, last, event)
+        orig(buf, first, last, event)
+        -- Extra pass: place signs for any line that matches a keyword,
+        -- regardless of whether it was skipped as a multiline continuation.
+        local lines = vim.api.nvim_buf_get_lines(buf, first, last + 1, false)
+        for l, line in ipairs(lines) do
+          local lnum = first + l - 1
+          local ok, start, _, kw = pcall(hl_mod.match, line)
+          if ok and start and kw then
+            kw = Config.keywords[kw] or kw
+            local kopts = Config.options.keywords[kw]
+            if kopts then
+              local show_sign = Config.options.signs
+              if kopts.signs ~= nil then show_sign = kopts.signs end
+              if show_sign then
+                local placed = vim.fn.sign_getplaced(buf, { group = "todo-signs", lnum = lnum + 1 })
+                if not placed[1] or #placed[1].signs == 0 then
+                  vim.fn.sign_place(0, "todo-signs", "todo-sign-" .. kw, buf,
+                    { lnum = lnum + 1, priority = Config.options.sign_priority })
+                end
+              end
+            end
+          end
+        end
+      end
+    end,
   },
 
   -- ─── File Explorer (neo-tree only, no double explorer) ───────────────────────
