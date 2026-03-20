@@ -66,15 +66,10 @@ return {
         width = 40,
         mappings = {
           ["<space>"] = "none", -- don't conflict with leader key
-          -- Resize the explorer panel with > / < while inside the tree
-          [">"] = function()
-            local win = vim.api.nvim_get_current_win()
-            vim.api.nvim_win_set_width(win, vim.api.nvim_win_get_width(win) + 5)
-          end,
-          ["<"] = function()
-            local win = vim.api.nvim_get_current_win()
-            vim.api.nvim_win_set_width(win, math.max(20, vim.api.nvim_win_get_width(win) - 5))
-          end,
+          -- Resize via smart-splits (has edgy integration — direct nvim_win_set_width
+          -- gets overridden by edgy's layout engine on the next event)
+          [">"] = function() require("smart-splits").resize_right(5) end,
+          ["<"] = function() require("smart-splits").resize_left(5) end,
         },
       },
     },
