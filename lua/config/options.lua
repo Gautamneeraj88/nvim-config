@@ -19,21 +19,3 @@ opt.pumheight    = 10    -- cap autocomplete menu at 10 items (default: unlimite
 -- File navigation (lets gf find .ts, .py, .go files by extension)
 opt.suffixesadd:append({ ".js", ".ts", ".jsx", ".tsx", ".py", ".go" })
 
--- Cleaner diagnostics — show only the first error per line, no source prefix
-vim.diagnostic.config({
-  virtual_text = {
-    spacing  = 2,
-    source   = false,   -- hide "eslint:" / "ts:" prefix
-    prefix   = "●",
-    severity = { min = vim.diagnostic.severity.HINT },
-    format   = function(d)
-      -- truncate long messages at 80 chars
-      local msg = d.message
-      if #msg > 80 then msg = msg:sub(1, 77) .. "..." end
-      return msg
-    end,
-  },
-  -- Only show the most severe diagnostic per line (no duplicate stacking)
-  severity_sort = true,
-  virtual_lines = false,
-})
