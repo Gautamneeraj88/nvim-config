@@ -58,6 +58,47 @@ return {
     },
   },
 
+  -- ─── Panel Layout (edgy) — VS Code-style persistent sidebars ────────────────
+  -- neo-tree always opens left, aerial right, quickfix/trouble/help bottom
+  {
+    "folke/edgy.nvim",
+    event = "VeryLazy",
+    init = function()
+      vim.opt.splitkeep = "screen"
+    end,
+    opts = {
+      animate = { enabled = false }, -- mini.animate handles window animations
+      left = {
+        {
+          title = " Explorer",
+          ft = "neo-tree",
+          filter = function(buf)
+            return vim.b[buf].neo_tree_source == "filesystem"
+          end,
+          size = { width = 32 },
+        },
+      },
+      right = {
+        {
+          title = " Outline",
+          ft = "aerial",
+          size = { width = 30 },
+        },
+      },
+      bottom = {
+        { ft = "qf",      title = " QuickFix",    size = { height = 0.3 } },
+        { ft = "trouble", title = " Diagnostics", size = { height = 0.3 } },
+        {
+          ft = "help",
+          size = { height = 0.4 },
+          filter = function(buf)
+            return vim.bo[buf].buftype == "help"
+          end,
+        },
+      },
+    },
+  },
+
   -- ─── Better UI for inputs & selects (vim.ui.input / vim.ui.select) ─────────
   {
     "stevearc/dressing.nvim",

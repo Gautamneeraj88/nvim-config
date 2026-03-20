@@ -1,4 +1,36 @@
 return {
+  -- ─── Yank History — cycle through past yanks after pasting ───────────────────
+  -- Press p to paste, then <C-p>/<C-n> to cycle through yank ring
+  {
+    "gbprod/yanky.nvim",
+    event = "VeryLazy",
+    opts = {
+      ring = { storage = "memory" },
+      highlight = { on_put = true, on_yank = true, timer = 200 },
+    },
+    keys = {
+      { "p",          "<Plug>(YankyPutAfter)",      mode = { "n", "x" }, desc = "Put after" },
+      { "P",          "<Plug>(YankyPutBefore)",     mode = { "n", "x" }, desc = "Put before" },
+      { "<C-p>",      "<Plug>(YankyCycleForward)",  desc = "Cycle yank forward" },
+      { "<C-n>",      "<Plug>(YankyCycleBackward)", desc = "Cycle yank backward" },
+      { "<leader>fy", "<cmd>YankyRingHistory<cr>",  desc = "Yank History" },
+    },
+  },
+
+  -- ─── Better Quickfix — fzf preview inside quickfix list ──────────────────────
+  {
+    "kevinhwang91/nvim-bqf",
+    ft = "qf",
+    opts = {
+      auto_enable = true,
+      preview = {
+        win_height = 12,
+        border = "rounded",
+        show_title = true,
+      },
+    },
+  },
+
   -- ─── Project-wide Find & Replace (Spectre) ───────────────────────────────────
   {
     "nvim-pack/nvim-spectre",

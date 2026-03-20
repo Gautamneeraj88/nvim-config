@@ -1,4 +1,25 @@
 return {
+  -- ─── Octo — GitHub PRs and Issues inside Neovim ──────────────────────────────
+  -- Browse, review, and merge PRs without leaving the editor
+  -- Requires: gh CLI installed and authenticated (`gh auth login`)
+  {
+    "pwntester/octo.nvim",
+    cmd = "Octo",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons",
+    },
+    opts = {
+      enable_builtin = true,
+    },
+    keys = {
+      { "<leader>gop", "<cmd>Octo pr list<cr>",      desc = "List PRs" },
+      { "<leader>goi", "<cmd>Octo issue list<cr>",   desc = "List Issues" },
+      { "<leader>gor", "<cmd>Octo review start<cr>", desc = "Start PR Review" },
+      { "<leader>gom", "<cmd>Octo pr merge<cr>",     desc = "Merge PR" },
+    },
+  },
+
   -- ─── Diffview — side-by-side diffs, file history, merge conflicts ────────────
   {
     "sindrets/diffview.nvim",
