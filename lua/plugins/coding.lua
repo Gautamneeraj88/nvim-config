@@ -22,8 +22,8 @@ return {
         end
         -- Only use treesitter if a parser is actually installed — avoids UfoFallbackException
         -- for filetypes like 'http', 'rest', etc. that have no treesitter parser
-        local ok, parsers = pcall(require, "nvim-treesitter.parsers")
-        if ok and parsers.has_parser(filetype) then
+        -- vim.treesitter.language.inspect() errors when parser is missing — pcall gives us a boolean
+        if pcall(vim.treesitter.language.inspect, filetype) then
           return { "treesitter", "indent" }
         end
         return { "indent" }

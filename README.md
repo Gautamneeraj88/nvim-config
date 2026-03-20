@@ -242,8 +242,13 @@ A VSCode-style file tree on the left side.
 
 ```
 <leader>e    → toggle explorer (open if closed, close if open)
-<leader>o    → focus explorer (move your cursor into the tree)
+<leader>o    → reveal current file in tree + focus explorer
+               press again while inside tree to jump back to editor
 ```
+
+> **Tip:** Use `<leader>o` as your main shortcut — it opens the tree, scrolls to
+> your current file, and focuses it so you can quickly see where you are or open
+> a sibling file. Press `<leader>o` again from inside the tree to jump back.
 
 Once the explorer is focused, use these:
 
@@ -873,73 +878,151 @@ q            → close Spectre
 
 ## REST Client — Kulala
 
-Write and run HTTP requests directly in Neovim — like Postman/Insomnia but in a `.http` file you can commit to your repo.
+Write and run HTTP requests directly in Neovim — like Postman/Insomnia but in a `.http` file you can commit to your repo. The response opens in a **vertical split on the right**, JSON is auto-formatted with `jq`.
 
 ### Create a request file
 
-Create any file ending in `.http`:
+Create any file ending in `.http`. You can define variables at the top with `@`:
 
 ```http
+@baseUrl = http://localhost:3000
+@token   = my-jwt-token
+
 ### Health check
-GET https://api.example.com/health
+GET {{baseUrl}}/health
 
-### Get all users
-GET https://api.example.com/users
-Authorization: Bearer {{TOKEN}}
+### Get all workflows
+GET {{baseUrl}}/workflows
+Authorization: Bearer {{token}}
 
-### Create user
-POST https://api.example.com/users
+### Create workflow
+POST {{baseUrl}}/workflows
 Content-Type: application/json
 
 {
-  "name": "John Doe",
-  "email": "john@example.com"
+  "name": "charge-card",
+  "steps": []
 }
 
-### Update user
-PUT https://api.example.com/users/{{USER_ID}}
+### Update workflow
+PUT {{baseUrl}}/workflows/{{workflowId}}
 Content-Type: application/json
 
 {
-  "name": "Jane Doe"
+  "name": "updated-workflow"
 }
+
+### Delete workflow
+DELETE {{baseUrl}}/workflows/{{workflowId}}
 ```
+
+Variables defined with `@` show their values inline in the file automatically.
 
 ### Running requests
 
 Place cursor inside any request block and press:
 
 ```
-<leader>rr   → run request under cursor
-<leader>ra   → run ALL requests in the file
-<leader>rp   → replay the last request
-<leader>ri   → inspect request (see full headers, body before sending)
-<leader>rc   → copy request as cURL command
-<leader>re   → switch environment (dev / staging / prod)
+<leader>rr   → run request under cursor (response opens on the right)
+<leader>ra   → run ALL requests in the file sequentially
+<leader>rp   → replay the last request (re-run without moving cursor)
+<leader>ri   → inspect request (see full URL, headers, body before sending)
+<leader>rc   → copy request as a cURL command (paste in terminal)
 ]r           → jump to next request in file
 [r           → jump to previous request in file
 ```
 
+### Viewing the response
+
+After running a request the response opens in a split. Toggle between views:
+
+```
+<leader>rv   → cycle through: Body → Headers → Stats
+<leader>rS   → show timing stats (time to first byte, total duration)
+```
+
+**Body view** — the actual response content, JSON auto-formatted:
+
+```json
+{
+  "id": "wf-123",
+  "name": "charge-card",
+  "status": "active"
+}
+```
+
+**Headers view** — all response headers:
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+X-Request-Id: abc-123
+```
+
+**Stats view** — timing breakdown (useful for performance testing).
+
 ### Environments
 
-Create a `kulala.env.json` file in your project root:
+Create a `kulala.env.json` file in your project root to manage different environments:
 
 ```json
 {
   "dev": {
-    "TOKEN": "dev-token-123",
-    "BASE_URL": "http://localhost:8000",
-    "USER_ID": "1"
+    "baseUrl": "http://localhost:3000",
+    "token": "dev-secret-token",
+    "workflowId": "wf-001"
+  },
+  "staging": {
+    "baseUrl": "https://staging-api.example.com",
+    "token": "staging-secret-token",
+    "workflowId": "wf-staging-001"
   },
   "prod": {
-    "TOKEN": "prod-token-abc",
-    "BASE_URL": "https://api.example.com",
-    "USER_ID": "42"
+    "baseUrl": "https://api.example.com",
+    "token": "prod-secret-token",
+    "workflowId": "wf-prod-001"
   }
 }
 ```
 
-Then use `{{TOKEN}}` and `{{BASE_URL}}` in your `.http` file. Switch between environments with `<leader>re`.
+Switch environment:
+
+```
+<leader>re   → open environment picker → select dev / staging / prod
+```
+
+All `{{variables}}` in your `.http` file update to the selected environment's values.
+
+### Scratchpad
+
+A temporary request file for quick testing — no need to create a real file:
+
+```
+<leader>rs   → open scratchpad (temporary .http buffer, not saved to disk)
+```
+
+### Import from cURL
+
+If you have a cURL command (e.g. copied from browser DevTools → Copy as cURL), you can convert it to a `.http` request:
+
+```
+<leader>rf   → paste a cURL command → converts it to kulala format automatically
+```
+
+### Full API testing workflow
+
+```
+1. Create requests/api-gateway.http in your project
+2. @baseUrl = http://localhost:3000
+3. Write your requests with ### separators
+4. Press <leader>rr to run the request under cursor
+5. Response appears on the right — JSON is formatted automatically
+6. <leader>rv to see headers if needed
+7. <leader>re to switch to staging and test there
+8. Commit the .http file with your code — it's documentation too
+```
+
+> **Tip:** Keep a `.http` file per service in your project. They're readable, committable, and replace Postman collections entirely.
 
 ---
 

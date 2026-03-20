@@ -49,8 +49,20 @@ map("t", "<C-l>", "<cmd>wincmd l<cr>", { desc = "Go to right window" })
 -- ─── File Explorer ───────────────────────────────────────────────────────────
 
 -- Use neo-tree as the only file explorer (left sidebar, VSCode-style)
+-- <leader>e  → toggle tree open/closed
+-- <leader>o  → reveal current file in tree and focus it; press again to jump back
 map("n", "<leader>e", "<cmd>Neotree toggle<cr>", { desc = "Toggle Explorer" })
-map("n", "<leader>o", "<cmd>Neotree focus<cr>", { desc = "Focus Explorer" })
+map("n", "<leader>o", function()
+  local manager = require("neo-tree.sources.manager")
+  local renderer = require("neo-tree.ui.renderer")
+  local state = manager.get_state("filesystem")
+  local is_visible = renderer.tree_is_visible(state)
+  if is_visible and vim.bo.filetype == "neo-tree" then
+    vim.cmd("wincmd p") -- already in tree → jump back to editor
+  else
+    vim.cmd("Neotree reveal") -- open tree and highlight current file
+  end
+end, { desc = "Focus Explorer (reveal file)" })
 
 -- ─── Git ──────────────────────────────────────────────────────────────────────
 
