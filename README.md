@@ -298,16 +298,25 @@ q            → close explorer
 
 ### Resizing the explorer
 
-The explorer is managed by edgy.nvim (the panel layout engine), so standard
-window resize keys like `<leader>w>` don't work inside it. Use these instead:
+The explorer is managed by **edgy.nvim** (the panel layout engine). Standard
+Neovim resize commands like `<leader>w>` don't work here because edgy re-applies
+its stored sizes on every layout event, reverting any direct window resize.
+
+The fix: these keys update edgy's internal size value directly, so the resize
+sticks permanently until you resize again.
 
 ```
->            → widen the explorer by 5 columns   (press while inside the tree)
-<            → narrow the explorer by 5 columns  (press while inside the tree)
+Shift+>   (i.e. >)   → widen the explorer by 5 columns
+Shift+<   (i.e. <)   → narrow the explorer by 5 columns
 ```
 
-Default width is **40 columns**. The minimum is clamped at 20 so it never
-collapses too small. Press `>` a few times to make it wider on large monitors.
+Both keys only work **while your cursor is inside the Neo-tree panel**.
+Press `<leader>e` or `<leader>o` first to open the tree, then use `>` / `<`.
+
+Default width is **40 columns**. Minimum is clamped at 20 so it can't collapse.
+
+> **Example:** On a large monitor press `>` four or five times to get ~60 columns,
+> giving enough room to read long nested paths without truncation.
 
 > **Tip:** The tree auto-follows your current file. When you open a file with `<leader>ff`, the tree highlights it automatically.
 
