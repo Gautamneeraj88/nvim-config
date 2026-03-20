@@ -1,7 +1,23 @@
 -- Multiple themes available — switch with <leader>uT
--- Current default: catppuccin-mocha
+-- Current default: oxocarbon
 return {
-  -- Catppuccin (default)
+  -- Oxocarbon (IBM Carbon design — near-black bg, electric blue accents)
+  {
+    "nyoom-engineering/oxocarbon.nvim",
+    priority = 1000,
+  },
+
+  -- Cyberdream (cyberpunk neon, vibrant)
+  {
+    "scottmckendry/cyberdream.nvim",
+    priority = 1000,
+    opts = {
+      italic_comments = true,
+      transparent = false,
+    },
+  },
+
+  -- Catppuccin
   {
     "catppuccin/nvim",
     name = "catppuccin",
@@ -43,9 +59,9 @@ return {
     opts = { theme = "wave" }, -- wave, dragon, lotus
   },
 
-  -- Set catppuccin as the default
+  -- Set oxocarbon as the default
   {
     "LazyVim/LazyVim",
-    opts = { colorscheme = "catppuccin" },
+    opts = { colorscheme = "oxocarbon" },
   },
 }
