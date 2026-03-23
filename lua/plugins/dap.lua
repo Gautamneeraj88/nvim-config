@@ -148,6 +148,9 @@ return {
 
       -- ─── TypeScript / JavaScript adapter ────────────────────────────────────────
       local js_debug = vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js"
+      -- Only register if mason has already installed the adapter; on first launch
+      -- mason-nvim-dap installs it automatically before any debug session starts.
+      if vim.fn.filereadable(js_debug) == 0 then return end
       for _, adapter in ipairs({ "pwa-node", "pwa-chrome", "node-terminal" }) do
         dap.adapters[adapter] = {
           type = "server",

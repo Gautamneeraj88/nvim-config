@@ -17,7 +17,7 @@ return {
       condition = function(buf)
         if vim.bo[buf].buftype ~= "" then return false end          -- skip special buffers (terminal, prompt, etc.)
         if not vim.bo[buf].modifiable then return false end          -- skip read-only buffers
-        local excluded_filetypes = { "oil", "neo-tree", "lazy", "mason", "gitcommit", "gitrebase" }
+        local excluded_filetypes = { "oil", "neo-tree", "lazy", "mason", "gitcommit", "gitrebase", "dap-repl" }
         if vim.tbl_contains(excluded_filetypes, vim.bo[buf].filetype) then return false end
         return true
       end,

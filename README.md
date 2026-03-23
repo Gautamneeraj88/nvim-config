@@ -914,11 +914,11 @@ q            → close Spectre
 
 ## REST Client — Kulala
 
-Write and run HTTP requests directly in Neovim — like Postman/Insomnia but in a `.http` file you can commit to your repo. The response opens in a **vertical split on the right**, JSON is auto-formatted with `jq`.
+Write and run HTTP requests directly in Neovim — like Postman/Insomnia but in a `.http` or `.rest` file you can commit to your repo. The response opens in a **vertical split on the right**, JSON is auto-formatted with `jq`.
 
 ### Create a request file
 
-Create any file ending in `.http`. You can define variables at the top with `@`:
+Create any file ending in `.http` or `.rest`. You can define variables at the top with `@`:
 
 ```http
 @baseUrl = http://localhost:3000
@@ -1647,7 +1647,7 @@ occurrence, then type once and all cursors edit simultaneously.
                → keep pressing to keep adding more
 <C-x>          → skip current occurrence, jump to next  (like VS Code Ctrl+K Ctrl+D)
 <C-q>          → remove the last added cursor / deselect current
-\\A            → select ALL occurrences at once          (\\ is the VM leader)
+<leader>ma     → select ALL occurrences at once
 ```
 
 ### Add cursors vertically (column editing)

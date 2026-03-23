@@ -29,7 +29,7 @@ return {
         which_key = true,
         fzf = true,
         mason = true,
-        cmp = true,
+        blink_cmp = true,
         gitsigns = true,
         treesitter = true,
         mini = { enabled = true },

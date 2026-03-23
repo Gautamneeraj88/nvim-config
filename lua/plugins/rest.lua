@@ -54,28 +54,28 @@ return {
     },
     keys = {
       -- Run requests
-      { "<leader>rr", function() require("kulala").run() end,              ft = "http", desc = "Run request" },
-      { "<leader>ra", function() require("kulala").run_all() end,          ft = "http", desc = "Run all requests" },
-      { "<leader>rp", function() require("kulala").replay() end,           ft = "http", desc = "Replay last request" },
+      { "<leader>rr", function() require("kulala").run() end,              ft = { "http", "rest" }, desc = "Run request" },
+      { "<leader>ra", function() require("kulala").run_all() end,          ft = { "http", "rest" }, desc = "Run all requests" },
+      { "<leader>rp", function() require("kulala").replay() end,           ft = { "http", "rest" }, desc = "Replay last request" },
 
       -- Inspect & copy
-      { "<leader>ri", function() require("kulala").inspect() end,          ft = "http", desc = "Inspect request" },
-      { "<leader>rc", function() require("kulala").copy() end,             ft = "http", desc = "Copy as cURL" },
+      { "<leader>ri", function() require("kulala").inspect() end,          ft = { "http", "rest" }, desc = "Inspect request" },
+      { "<leader>rc", function() require("kulala").copy() end,             ft = { "http", "rest" }, desc = "Copy as cURL" },
 
       -- View response
-      { "<leader>rv", function() require("kulala").toggle_view() end,      ft = "http", desc = "Toggle body/headers/stats" },
-      { "<leader>rS", function() require("kulala").show_stats() end,       ft = "http", desc = "Show response stats" },
+      { "<leader>rv", function() require("kulala").toggle_view() end,      ft = { "http", "rest" }, desc = "Toggle body/headers/stats" },
+      { "<leader>rS", function() require("kulala").show_stats() end,       ft = { "http", "rest" }, desc = "Show response stats" },
 
       -- Environment & scratchpad
-      { "<leader>re", function() require("kulala").set_selected_env() end, ft = "http", desc = "Switch environment" },
-      { "<leader>rs", function() require("kulala").scratchpad() end,       ft = "http", desc = "Open scratchpad" },
+      { "<leader>re", function() require("kulala").set_selected_env() end, ft = { "http", "rest" }, desc = "Switch environment" },
+      { "<leader>rs", function() require("kulala").scratchpad() end,       ft = { "http", "rest" }, desc = "Open scratchpad" },
 
       -- Import from cURL (paste a curl command, convert to .http)
-      { "<leader>rf", function() require("kulala").from_curl() end,        ft = "http", desc = "Import from cURL" },
+      { "<leader>rf", function() require("kulala").from_curl() end,        ft = { "http", "rest" }, desc = "Import from cURL" },
 
       -- Navigation
-      { "]r",         function() require("kulala").jump_next() end,        ft = "http", desc = "Next request" },
-      { "[r",         function() require("kulala").jump_prev() end,        ft = "http", desc = "Prev request" },
+      { "]r",         function() require("kulala").jump_next() end,        ft = { "http", "rest" }, desc = "Next request" },
+      { "[r",         function() require("kulala").jump_prev() end,        ft = { "http", "rest" }, desc = "Prev request" },
     },
   },
 }

@@ -48,6 +48,10 @@ return {
   {
     "petertriho/nvim-scrollbar",
     event = "BufReadPost",
+    config = function(_, opts)
+      require("scrollbar").setup(opts)
+      require("scrollbar.handlers.gitsigns").setup()
+    end,
     opts = {
       hide_if_all_visible = true, -- hide scrollbar if entire file is visible
       throttle_ms    = 100,

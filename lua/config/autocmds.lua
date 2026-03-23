@@ -10,21 +10,6 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Flash the yanked region so you can see what was copied
-vim.api.nvim_create_autocmd("TextYankPost", {
-  callback = function()
-    vim.highlight.on_yank({ higroup = "Visual", timeout = 200 })
-  end,
-})
-
--- Show JSON without hiding quotes (conceallevel 0 = no hiding)
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "json", "jsonc" },
-  callback = function()
-    vim.opt_local.conceallevel = 0
-  end,
-})
-
 -- Python: disable pydoc fallback for K — use LSP hover instead
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "python",
