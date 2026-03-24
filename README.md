@@ -61,8 +61,13 @@ Everything is documented here so you can learn and use every feature.
 52. [Function Arg Highlight — Hlargs](#function-arg-highlight--hlargs)
 53. [Floating Split Labels — Incline](#floating-split-labels--incline)
 54. [Mode Colors — Modes](#mode-colors--modes)
-55. [How to Customize](#how-to-customize)
-56. [Complete Keybinding Reference](#complete-keybinding-reference)
+55. [Noice — Centered Cmdline](#noice--centered-cmdline)
+56. [LSP Lens — Reference Counts](#lsp-lens--reference-counts)
+57. [Biscuits — Closing Brace Labels](#biscuits--closing-brace-labels)
+58. [Twilight — Dim Inactive Code](#twilight--dim-inactive-code)
+59. [Virt-column — Line Length Guide](#virt-column--line-length-guide)
+60. [How to Customize](#how-to-customize)
+61. [Complete Keybinding Reference](#complete-keybinding-reference)
 
 ---
 
@@ -2345,6 +2350,138 @@ No keypress needed — changes automatically as you switch modes.
 
 ---
 
+## Noice — Centered Cmdline
+
+LazyVim includes `noice.nvim` which replaces Neovim's built-in command line with a floating UI. This config repositions it from the bottom of the screen to a **centered floating dialog**.
+
+### What changes
+
+Pressing `:` or `/` opens a rounded popup in the center of the screen instead of typing in the status bar at the bottom:
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  :                                                           │
+└──────────────────────────────────────────────────────────────┘
+```
+
+When you press `Tab` for completion, the popup menu appears just below it, also centered and rounded.
+
+No keybinding — the cmdline is always this way. `Esc` cancels as normal.
+
+---
+
+## LSP Lens — Reference Counts
+
+Shows reference and implementation counts as dim virtual text above every function and class, similar to VS Code's CodeLens.
+
+```typescript
+// 6 references  2 implementations
+async function createUser(data: CreateUserDto): Promise<User> {
+  // ...
+}
+```
+
+```python
+# 3 references
+def process_items(items: list) -> dict:
+    pass
+```
+
+Works for TypeScript, JavaScript, Python, and Go — any language where the LSP supports `textDocument/references`.
+
+```
+<leader>ll   → toggle LSP Lens on/off
+```
+
+> **Tip:** Toggle it off with `<leader>ll` when you need a clean view (e.g. during a presentation or code review).
+
+---
+
+## Biscuits — Closing Brace Labels
+
+Shows virtual text at the end of closing braces and brackets telling you what scope they close. Only appears when the block is **8 or more lines tall** — short blocks don't get a label since the opening is already visible.
+
+```typescript
+function processOrders(orders: Order[]) {
+  return orders
+    .filter(order => order.status === "pending")
+    .map(order => {
+      const total = order.items.reduce((sum, item) => {
+        return sum + item.price * item.quantity
+      }, 0) // order.items.reduce
+      return { ...order, total }
+    }) // orders.map
+} // processOrders
+```
+
+```python
+class OrderService:
+    def process_batch(self, orders: list) -> dict:
+        results = {}
+        for order in orders:
+            if order.get("status") == "pending":
+                results[order["id"]] = self._process(order)
+            # if order.get
+        return results
+    # process_batch
+# OrderService
+```
+
+Comment style matches the language (`//` for TypeScript/Go, `#` for Python, `--` for Lua).
+
+No keybinding — always active.
+
+---
+
+## Twilight — Dim Inactive Code
+
+Dims everything outside your current function or block to 25% opacity. Keeps your focus on the code you're actively editing without hiding it entirely.
+
+```
+<leader>tw   → toggle Twilight on/off
+```
+
+### Example
+
+```typescript
+// these functions are dimmed to 25% opacity ↓
+async function getUser(id: string) { ... }
+async function deleteUser(id: string) { ... }
+
+// only this function is fully lit ↓
+async function updateUser(id: string, data: UpdateDto) {
+  const user = await this.userRepo.findById(id)
+  if (!user) throw new NotFoundException()
+  return this.userRepo.save({ ...user, ...data })
+}
+
+// dimmed again ↓
+async function listUsers(query: QueryDto) { ... }
+```
+
+Uses treesitter to detect block boundaries, so it understands functions, methods, classes, and conditionals — not just `{}` braces.
+
+> **Tip:** Combine with Zen Mode (`<leader>z`) for maximum focus — Twilight dims inactive blocks while Zen Mode hides UI chrome.
+
+---
+
+## Virt-column — Line Length Guide
+
+Renders a faint `│` character at columns 80 and 120 as virtual text. Much subtler than Neovim's `colorcolumn` which highlights the entire column — this is just a single character hairline.
+
+```
+function processLargeDataset(input: DatasetInput, options: ProcessOptions): Result {
+                                                                            │       │
+                                                                           80     120
+```
+
+- **Column 80** — classic terminal width, used by many older style guides
+- **Column 120** — modern hard limit used by most TypeScript/Go linters
+
+No keybinding — always visible. Uses `NonText` highlight so it blends with your theme.
+
+---
+
 ## How to Customize
 
 ### Add a new plugin
@@ -2467,6 +2604,8 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>ni`  | Install npm package                  |
 | `<leader>nc`  | Change package version               |
 | `<leader>ng`  | Generate doc comment (neogen)        |
+| `<leader>ll`  | Toggle LSP Lens (reference counts)   |
+| `<leader>tw`  | Toggle Twilight (dim inactive code)  |
 | `<leader>Re`  | Refactor: extract function (visual)  |
 | `<leader>Rv`  | Refactor: extract variable (visual)  |
 | `<leader>Ri`  | Refactor: inline variable            |
