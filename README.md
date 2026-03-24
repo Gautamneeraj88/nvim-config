@@ -54,8 +54,15 @@ Everything is documented here so you can learn and use every feature.
 45. [Editing Shortcuts](#editing-shortcuts)
 46. [Statusline](#statusline)
 47. [Python — Virtual Environment](#python--virtual-environment)
-48. [How to Customize](#how-to-customize)
-49. [Complete Keybinding Reference](#complete-keybinding-reference)
+48. [Auto-tag — nvim-ts-autotag](#auto-tag--nvim-ts-autotag)
+49. [Doc Comments — Neogen](#doc-comments--neogen)
+50. [Marks](#marks)
+51. [Refactoring](#refactoring)
+52. [Function Arg Highlight — Hlargs](#function-arg-highlight--hlargs)
+53. [Floating Split Labels — Incline](#floating-split-labels--incline)
+54. [Mode Colors — Modes](#mode-colors--modes)
+55. [How to Customize](#how-to-customize)
+56. [Complete Keybinding Reference](#complete-keybinding-reference)
 
 ---
 
@@ -2092,6 +2099,252 @@ code:  result = calculate(x, y)
 
 ---
 
+## Auto-tag — nvim-ts-autotag
+
+Automatically closes and renames HTML/JSX/TSX tags as you type. Works in `.html`, `.jsx`, `.tsx`, `.vue`, `.svelte`, `.xml`, and `.md` files.
+
+### Auto-close
+
+Type the opening tag and it closes itself:
+
+```tsx
+// type: <div      → becomes: <div></div>   cursor lands inside
+// type: <Button   → becomes: <Button></Button>
+// type: <img      → becomes: <img /> (self-closing)
+```
+
+### Auto-rename
+
+Rename the opening tag and the closing tag updates automatically:
+
+```tsx
+// change <div> to <section> → </div> becomes </section> instantly
+// change <Button> to <Link> → </Button> becomes </Link>
+```
+
+No keybinding needed — works transparently whenever you're in insert mode.
+
+---
+
+## Doc Comments — Neogen
+
+Generate documentation comment templates from function/class signatures with a single keypress.
+
+```
+<leader>ng   → generate doc comment for function/class under cursor
+```
+
+### TypeScript / JavaScript → JSDoc / TSDoc
+
+```typescript
+// cursor anywhere inside this function, press <leader>ng:
+function createUser(name: string, age: number): Promise<User> {
+  // ...
+}
+
+// becomes:
+/**
+ * @param {string} name -
+ * @param {number} age -
+ * @returns {Promise<User>}
+ */
+function createUser(name: string, age: number): Promise<User> {
+  // ...
+}
+```
+
+### Python → Google-style docstring
+
+```python
+# press <leader>ng inside this function:
+def process_data(items: list, limit: int) -> dict:
+    pass
+
+# becomes:
+def process_data(items: list, limit: int) -> dict:
+    """Summary line.
+
+    Args:
+        items (list):
+        limit (int):
+
+    Returns:
+        dict:
+    """
+    pass
+```
+
+### Go → godoc comment
+
+```go
+// press <leader>ng above this function:
+func FetchUser(id string) (*User, error) {
+    // ...
+}
+
+// becomes:
+// FetchUser -
+func FetchUser(id string) (*User, error) {
+    // ...
+}
+```
+
+Tab through the placeholder fields to fill them in.
+
+---
+
+## Marks
+
+Marks let you bookmark positions in a file and jump back to them instantly. Neovim has marks built-in but they're invisible — this plugin shows them as colored indicators in the sign column.
+
+### Setting marks
+
+```
+m{a-z}       → set a named mark at current line (e.g. ma, mb, mc)
+m,           → automatically place the next available mark (no need to pick a letter)
+```
+
+### Navigating marks
+
+```
+m]           → jump to next mark in this buffer
+m[           → jump to previous mark in this buffer
+m:           → show all marks in a popup list
+```
+
+### Deleting marks
+
+```
+dm{a-z}      → delete a specific mark (e.g. dma removes mark a)
+dm-          → delete all marks on the current line
+dm<Space>    → delete all marks in the current buffer
+```
+
+> **Tip:** Use `m,` instead of manually picking letters — it picks the next free one automatically.
+
+---
+
+## Refactoring
+
+Extract functions, variables, and blocks from selected code. Works in TypeScript, JavaScript, Python, Go, and Lua.
+
+Uses `<leader>R` prefix (capital R, different from REST client's `<leader>r`).
+
+### Extract Function
+
+Select code in visual mode → `<leader>Re` → enter a name → the selection becomes a new function and is replaced with a call to it.
+
+```typescript
+// BEFORE: select the validation block in visual mode, press <leader>Re
+function createUser(data: any) {
+  if (!data.name || data.name.length < 2) {   // ← select
+    throw new Error("Invalid name")           // ← these
+  }                                            // ← lines
+  return db.save(data)
+}
+
+// AFTER: extracted to its own function automatically
+function validateName(data: any) {
+  if (!data.name || data.name.length < 2) {
+    throw new Error("Invalid name")
+  }
+}
+
+function createUser(data: any) {
+  validateName(data)
+  return db.save(data)
+}
+```
+
+### Extract Variable
+
+Select an expression in visual mode → `<leader>Rv` → enter a name → the expression is assigned to a new variable.
+
+```typescript
+// BEFORE: select the long expression, press <leader>Rv
+const total = items.reduce((sum, i) => sum + i.price * i.qty, 0) * (1 - discount)
+
+// AFTER:
+const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0)
+const total = subtotal * (1 - discount)
+```
+
+### Inline Variable
+
+Cursor on a variable → `<leader>Ri` → the variable is removed and its value is inlined at every usage.
+
+### Extract Block
+
+Cursor inside a block of statements → `<leader>Rb` → the block is extracted to a new function.
+
+| Key | Mode | Action |
+| --- | ---- | ------ |
+| `<leader>Re` | visual | Extract selection to new function |
+| `<leader>Rv` | visual | Extract expression to new variable |
+| `<leader>Ri` | normal/visual | Inline variable into usages |
+| `<leader>Rb` | normal | Extract block to new function |
+
+---
+
+## Function Arg Highlight — Hlargs
+
+Function parameters are highlighted in **warm amber**, visually distinct from regular local variables. No keypress needed — works automatically on every file.
+
+```typescript
+// parameters (name, age, role) → amber color
+// local variables (user, result) → normal variable color
+function createUser(name: string, age: number, role: string) {
+  const user = { name, age, role }   // user → normal color
+  const result = db.save(user)       // result → normal color
+  return result
+}
+```
+
+Makes it immediately obvious at a glance what came in as a parameter vs what was created inside the function. Especially useful in longer functions.
+
+`self`, `cls`, and `_` are excluded in Python and Lua since they are not real parameters.
+
+---
+
+## Floating Split Labels — Incline
+
+When you open two or more splits side by side, each window shows a small floating label in its top-right corner with the file icon and name.
+
+```
+┌─────────────────────────────┬────────────────────────────────┐
+│                  📄 api.ts  │                 📄 types.ts    │
+│                             │                                │
+│  export async function      │  export interface User {       │
+│    createUser(...) {        │    id: string                  │
+│    ...                      │    name: string                │
+│  }                          │  }                             │
+└─────────────────────────────┴────────────────────────────────┘
+```
+
+- Modified files show a red `●` next to the filename
+- The label disappears automatically when you have only one window open
+- Hidden in all panel types (explorer, aerial, DAP, terminals) so it never interferes with prompts
+
+No keypress needed — appears automatically when you split.
+
+---
+
+## Mode Colors — Modes
+
+The cursor line tints to a different color depending on your current Vim mode. Very subtle (15% opacity) — just enough to know your mode at a glance without being distracting.
+
+| Mode | Color |
+| ---- | ----- |
+| Normal | no tint (default) |
+| Insert | teal-green |
+| Visual | purple |
+| Delete (`d`, `c`, `x`) | red |
+| Yank (`y`) | amber |
+
+No keypress needed — changes automatically as you switch modes.
+
+---
+
 ## How to Customize
 
 ### Add a new plugin
@@ -2210,8 +2463,14 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>cs`  | Code outline (Aerial)                |
 | `<leader>np`  | Toggle package versions              |
 | `<leader>nu`  | Update npm package                   |
+| `<leader>nd`  | Delete npm package                   |
 | `<leader>ni`  | Install npm package                  |
 | `<leader>nc`  | Change package version               |
+| `<leader>ng`  | Generate doc comment (neogen)        |
+| `<leader>Re`  | Refactor: extract function (visual)  |
+| `<leader>Rv`  | Refactor: extract variable (visual)  |
+| `<leader>Ri`  | Refactor: inline variable            |
+| `<leader>Rb`  | Refactor: extract block              |
 | `zR`          | Open all folds                       |
 | `zM`          | Close all folds                      |
 | `zp`          | Peek inside fold                     |
@@ -2269,7 +2528,8 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<C-Down>` | Multi-cursor: add cursor below                  |
 | `<C-Up>`   | Multi-cursor: add cursor above                  |
 | `n`        | Multi-cursor: add next match                    |
-| `q`        | Multi-cursor: skip current match                |
+| `<C-x>`    | Multi-cursor: skip current match                |
+| `<C-q>`    | Multi-cursor: remove last cursor                |
 | `Esc`      | Exit multi-cursor mode                          |
 
 ### LSP & Peek keys (no leader)
@@ -2300,6 +2560,10 @@ opt.relativenumber = false  -- use absolute line numbers
 | `[f`  | Previous failed test             |
 | `]q`  | Next quickfix                    |
 | `[q`  | Previous quickfix                |
+| `m]`  | Next mark in buffer              |
+| `m[`  | Previous mark in buffer          |
+| `m,`  | Auto-place next available mark   |
+| `m:`  | Preview all marks                |
 
 ### Window & Split keys
 
