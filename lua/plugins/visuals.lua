@@ -79,6 +79,77 @@ return {
     },
   },
 
+  -- ─── Incline — floating filename labels per split ─────────────────────────────
+  -- When you have multiple windows open side by side, each window shows a small
+  -- floating label in its top-right corner with the file icon and name.
+  -- Only appears when there is more than one window — invisible in single-pane mode.
+  -- Excluded from all panel types so neo-tree file prompts are never affected.
+  {
+    "b0o/incline.nvim",
+    event = "BufReadPre",
+    opts = {
+      window = {
+        padding      = 1,
+        margin       = { vertical = 0, horizontal = 1 },
+        placement    = { vertical = "top", horizontal = "right" },
+        zindex       = 49, -- below floating inputs (which start at 50+)
+      },
+      hide = {
+        only_win  = true,  -- invisible when only one window is open
+        cursorline = false,
+        focused_win = false,
+      },
+      ignore = {
+        buftypes  = { "terminal", "nofile", "prompt", "quickfix" },
+        filetypes = {
+          "neo-tree", "aerial", "undotree", "lazy", "mason",
+          "trouble", "qf", "help", "man",
+          "dap-repl", "dapui_scopes", "dapui_breakpoints",
+          "dapui_stacks", "dapui_watches", "dapui_console",
+          "DiffviewFiles", "DiffviewFileHistory",
+        },
+        wintypes  = { "popup" },
+      },
+      render = function(props)
+        local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
+        if filename == "" then filename = "[No Name]" end
+        local ok, devicons = pcall(require, "nvim-web-devicons")
+        local icon, icon_color = "", nil
+        if ok then
+          icon, icon_color = devicons.get_icon_color(filename)
+        end
+        local modified = vim.bo[props.buf].modified
+        local result = {}
+        if icon then
+          result[#result + 1] = { icon .. " ", guifg = icon_color }
+        end
+        result[#result + 1] = { filename, gui = "bold" }
+        if modified then
+          result[#result + 1] = { " ●", guifg = "#f7768e" }
+        end
+        return result
+      end,
+    },
+  },
+
+  -- ─── Modes — mode-aware cursorline color ──────────────────────────────────────
+  -- The cursorline tints to a different color based on current Vim mode:
+  --   normal → subtle blue   insert → green   visual → purple   delete → red
+  -- Very subtle (15% opacity) — just enough to know which mode you are in at a glance.
+  {
+    "mvllow/modes.nvim",
+    event = "BufReadPre",
+    opts = {
+      colors = {
+        copy   = "#f5c359", -- yank → amber
+        delete = "#c75c6a", -- delete → red
+        insert = "#78ccc5", -- insert → teal-green
+        visual = "#9745be", -- visual → purple
+      },
+      line_opacity = 0.15, -- very subtle tint, not distracting
+    },
+  },
+
   -- ─── Smooth animations (mini.animate) ─────────────────────────────────────────
   -- Animates: cursor movement, window resize, window open/close
   -- NOTE: scroll animation is disabled since neoscroll handles that already
