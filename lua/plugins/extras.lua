@@ -115,6 +115,33 @@ return {
     },
   },
 
+  -- ─── Twilight — dim inactive code ────────────────────────────────────────
+  -- Dims everything outside your current function/block to ~25% opacity.
+  -- Keeps your focus on the active code without going full zen mode.
+  -- Already installed as a zen-mode dependency — just adding a standalone toggle.
+  {
+    "folke/twilight.nvim",
+    cmd  = { "Twilight", "TwilightEnable", "TwilightDisable" },
+    keys = {
+      { "<leader>tw", "<cmd>Twilight<cr>", desc = "Toggle Twilight (dim inactive code)" },
+    },
+    opts = {
+      dimming = {
+        alpha    = 0.25,  -- 25% opacity for dimmed code (0 = black, 1 = no dim)
+        inactive = false, -- dim inactive windows; false = dim inactive blocks within same window
+      },
+      context  = 15,     -- lines of context kept bright around cursor
+      treesitter = true, -- use treesitter to detect function/block boundaries
+      expand = {         -- node types that count as a "context" to keep lit
+        "function",
+        "method",
+        "table",
+        "if_statement",
+        "arrow_function",
+      },
+    },
+  },
+
   -- ─── Zen Mode ─────────────────────────────────────────────────────────────────
   {
     "folke/zen-mode.nvim",

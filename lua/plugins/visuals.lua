@@ -150,6 +150,43 @@ return {
     },
   },
 
+  -- ─── Biscuits — closing brace labels ─────────────────────────────────────
+  -- Shows virtual text at closing braces telling you what they close.
+  -- Only appears when the opening is 8+ lines away (not on tiny blocks).
+  -- Prevents the "which } is this?" problem in long TypeScript/Go files.
+  {
+    "code-biscuits/nvim-biscuits",
+    event = "BufReadPost",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    opts = {
+      show_on_start    = true,
+      cursor_line_only = false,
+      prefix_string    = "  ",  -- small arrow before the label
+      max_length       = 50,    -- truncate long labels
+      min_distance     = 8,     -- only show when block is 8+ lines tall
+      language_config  = {
+        python     = { prefix_string = "  # " },
+        go         = { prefix_string = "  // " },
+        typescript = { prefix_string = "  // " },
+        javascript = { prefix_string = "  // " },
+        lua        = { prefix_string = "  -- " },
+      },
+    },
+  },
+
+  -- ─── Virt-column — soft line-length guide ────────────────────────────────
+  -- Renders a faint │ character at column 80 and 120 as virtual text.
+  -- Much subtler than Neovim's harsh colorcolumn highlight.
+  {
+    "lukas-reineke/virt-column.nvim",
+    event = "BufReadPost",
+    opts = {
+      char       = "│",
+      virtcolumn = "80,120",  -- guides at 80 (classic) and 120 (modern hard limit)
+      highlight  = "NonText", -- same dim color as other virtual text
+    },
+  },
+
   -- ─── Hlargs — highlight function arguments ────────────────────────────────────
   -- Function parameters get their own warm-amber color, visually distinct from
   -- regular local variables. Makes it immediately obvious what's a param vs a local.

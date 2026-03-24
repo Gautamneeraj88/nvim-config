@@ -30,6 +30,52 @@ return {
   },
 
 
+  -- ─── Noice — centered floating cmdline popup ─────────────────────────────
+  -- LazyVim already enables noice — this just repositions the command-line
+  -- from the default bottom position to a centered floating dialog.
+  -- Pressing : or / now opens a clean popup in the middle of the screen.
+  {
+    "folke/noice.nvim",
+    opts = function(_, opts)
+      opts.views = vim.tbl_deep_extend("force", opts.views or {}, {
+        cmdline_popup = {
+          position = { row = "40%", col = "50%" }, -- centered in screen
+          size     = { width = 60, height = "auto" },
+          border   = { style = "rounded", padding = { 0, 1 } },
+        },
+        popupmenu = {                              -- completion dropdown below cmdline
+          relative = "editor",
+          position = { row = "57%", col = "50%" },
+          size     = { width = 60, height = 10 },
+          border   = { style = "rounded", padding = { 0, 1 } },
+        },
+      })
+      return opts
+    end,
+  },
+
+  -- ─── LSP Lens — reference & implementation counts above functions ─────────
+  -- Shows  ● 4 references   ⚡ 2 implementations  above each function/class.
+  -- Like VS Code's CodeLens — requires the LSP to support it (TS, Python, Go all do).
+  -- Toggle with <leader>ll if you need a clean view temporarily.
+  {
+    "VidocqH/lsp-lens.nvim",
+    event = "LspAttach",
+    opts = {
+      enable           = true,
+      include_declaration = false,
+      sections = {
+        definition  = false, -- skip "1 definition" (not useful)
+        references  = true,  -- show "X references"
+        implements  = true,  -- show "X implementations"
+        git_authors = false, -- skip git authors (noisy)
+      },
+    },
+    keys = {
+      { "<leader>ll", "<cmd>LspLensToggle<cr>", desc = "Toggle LSP Lens" },
+    },
+  },
+
   -- ─── Statusline ───────────────────────────────────────────────────────────
   {
     "nvim-lualine/lualine.nvim",
