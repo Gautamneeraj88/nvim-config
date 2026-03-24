@@ -64,6 +64,30 @@ return {
     },
   },
 
+  -- ─── Refactoring — extract function / variable / block ───────────────────────
+  -- Select code in visual mode and extract it into a new function or variable.
+  -- Works for TypeScript, JavaScript, Python, Go, Lua.
+  -- Uses <leader>R prefix to avoid conflict with REST client's <leader>r prefix.
+  {
+    "ThePrimeagen/refactoring.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    event = "BufReadPre",
+    opts = {},
+    keys = {
+      -- Visual: select code → extract to a named function
+      { "<leader>Re", function() require("refactoring").refactor("Extract Function") end, mode = "v", desc = "Refactor: Extract Function" },
+      -- Visual: select expression → extract to a named variable
+      { "<leader>Rv", function() require("refactoring").refactor("Extract Variable") end, mode = "v", desc = "Refactor: Extract Variable" },
+      -- Normal/Visual: inline a variable back into its usages
+      { "<leader>Ri", function() require("refactoring").refactor("Inline Variable") end,  mode = { "n", "v" }, desc = "Refactor: Inline Variable" },
+      -- Normal: extract a block of statements into its own function
+      { "<leader>Rb", function() require("refactoring").refactor("Extract Block") end,    mode = "n", desc = "Refactor: Extract Block" },
+    },
+  },
+
   -- ─── Tabout — Tab key jumps out of brackets/quotes ───────────────────────────
   -- When cursor is inside brackets/quotes, Tab jumps to after the closing symbol
   -- e.g. inside "hello|" → press Tab → cursor moves after the closing "

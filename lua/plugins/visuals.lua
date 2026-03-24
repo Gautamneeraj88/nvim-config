@@ -150,6 +150,24 @@ return {
     },
   },
 
+  -- ─── Hlargs — highlight function arguments ────────────────────────────────────
+  -- Function parameters get their own warm-amber color, visually distinct from
+  -- regular local variables. Makes it immediately obvious what's a param vs a local.
+  {
+    "m-demare/hlargs.nvim",
+    event = "BufReadPost",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    opts = {
+      color = "#e3b96f", -- warm amber — visible on all dark themes, not too loud
+      excluded_argnames = {
+        usages = {
+          python = { "self", "cls", "_" },
+          lua    = { "self", "_" },
+        },
+      },
+    },
+  },
+
   -- ─── Smooth animations (mini.animate) ─────────────────────────────────────────
   -- Animates: cursor movement, window resize, window open/close
   -- NOTE: scroll animation is disabled since neoscroll handles that already
