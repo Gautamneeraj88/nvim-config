@@ -84,6 +84,37 @@ return {
     },
   },
 
+  -- ─── Marks — visual marks in the gutter ──────────────────────────────────────
+  -- Shows colored indicators in the sign column for every mark you set with m{a-z}.
+  -- Makes marks visible and navigable instead of invisible and forgotten.
+  --
+  -- Setting/deleting marks:
+  --   m{a-z}       set mark (standard vim)
+  --   m,           place the next available mark automatically
+  --   dm{a-z}      delete a specific mark
+  --   dm-          delete all marks on current line
+  --   dm<space>    delete all marks in buffer
+  --
+  -- Navigating marks:
+  --   m]  /  m[    next / previous mark in current buffer
+  --   m:           preview all marks in a popup list
+  {
+    "chentoast/marks.nvim",
+    event = "BufReadPost",
+    opts = {
+      default_mappings = true,
+      builtin_marks    = { ".", "<", ">", "^" }, -- also show built-in vim marks
+      cyclic           = true,                   -- wrap around when navigating
+      refresh_interval = 250,
+      sign_priority    = { lower = 10, upper = 15, builtin = 8, bookmark = 20 },
+      excluded_filetypes = {
+        "neo-tree", "aerial", "lazy", "mason", "trouble", "qf",
+        "dap-repl", "dapui_scopes", "dapui_breakpoints",
+        "dapui_stacks", "dapui_watches", "dapui_console",
+      },
+    },
+  },
+
   -- ─── Zen Mode ─────────────────────────────────────────────────────────────────
   {
     "folke/zen-mode.nvim",

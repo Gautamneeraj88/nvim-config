@@ -88,6 +88,40 @@ return {
     },
   },
 
+  -- ─── Auto-tag — auto-close and auto-rename HTML/JSX tags ─────────────────────
+  -- Type <div → becomes <div></div> with cursor inside.
+  -- Rename the opening tag → closing tag renames automatically.
+  -- Works in: html, jsx, tsx, vue, svelte, xml, markdown, php.
+  {
+    "windwp/nvim-ts-autotag",
+    event = "InsertEnter",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    opts = {},
+  },
+
+  -- ─── Neogen — generate doc comments from function signatures ──────────────────
+  -- Press <leader>nd on any function, class, or type to generate the full
+  -- doc comment template for the language automatically.
+  -- TypeScript → TSDoc (@param, @returns)
+  -- Python     → Google-style docstring (Args:, Returns:)
+  -- Go         → godoc comment
+  {
+    "danymat/neogen",
+    cmd  = "Neogen",
+    keys = {
+      { "<leader>nd", function() require("neogen").generate() end, desc = "Generate doc comment" },
+    },
+    opts = {
+      snippet_engine = "luasnip",
+      languages = {
+        python     = { template = { annotation_convention = "google_docstrings" } },
+        typescript = { template = { annotation_convention = "tsdoc" } },
+        javascript = { template = { annotation_convention = "jsdoc" } },
+        go         = { template = { annotation_convention = "godoc" } },
+      },
+    },
+  },
+
   -- ─── Tabout — Tab key jumps out of brackets/quotes ───────────────────────────
   -- When cursor is inside brackets/quotes, Tab jumps to after the closing symbol
   -- e.g. inside "hello|" → press Tab → cursor moves after the closing "
