@@ -46,6 +46,9 @@ require("lazy").setup({
     -- Your personal tweaks (lua/plugins/)
     { import = "plugins" },
 
+    -- mason-nvim-dap moved repos — redirect to correct location
+    { "mason-org/mason-nvim-dap.nvim", url = "https://github.com/jay-babu/mason-nvim-dap.nvim.git" },
+
     -- Disable LazyVim defaults we don't want
     { "folke/flash.nvim",      enabled = false }, -- not used; keep nav simple
     { "MagicDuck/grug-far.nvim", enabled = false }, -- using spectre instead (<leader>sr)
