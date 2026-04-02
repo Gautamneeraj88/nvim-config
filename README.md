@@ -316,12 +316,13 @@ The explorer is managed by **edgy.nvim** (the panel layout engine). Standard
 Neovim resize commands like `<leader>w>` don't work here because edgy re-applies
 its stored sizes on every layout event, reverting any direct window resize.
 
-The fix: these keys update edgy's internal size value directly, so the resize
-sticks permanently until you resize again.
+The fix: `>` and `<` are registered as **buffer-local keymaps** inside the Neo-tree
+panel. They update edgy's internal size value directly, so the resize sticks
+permanently until you resize again.
 
 ```
-Shift+>   (i.e. >)   → widen the explorer by 5 columns
-Shift+<   (i.e. <)   → narrow the explorer by 5 columns
+>   → widen the explorer by 5 columns
+<   → narrow the explorer by 5 columns
 ```
 
 Both keys only work **while your cursor is inside the Neo-tree panel**.
