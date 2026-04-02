@@ -67,8 +67,9 @@ Everything is documented here so you can learn and use every feature.
 58. [Biscuits — Closing Brace Labels](#biscuits--closing-brace-labels)
 59. [Twilight — Dim Inactive Code](#twilight--dim-inactive-code)
 60. [Virt-column — Line Length Guide](#virt-column--line-length-guide)
-61. [How to Customize](#how-to-customize)
-62. [Complete Keybinding Reference](#complete-keybinding-reference)
+61. [Smooth Scrolling](#smooth-scrolling)
+62. [How to Customize](#how-to-customize)
+63. [Complete Keybinding Reference](#complete-keybinding-reference)
 
 ---
 
@@ -136,8 +137,13 @@ $            → go to end of line
 gg           → go to top of file
 G            → go to bottom of file
 5j           → move 5 lines down (any number + motion)
-Ctrl+d       → scroll half page down (smooth)
-Ctrl+u       → scroll half page up (smooth)
+Ctrl+d       → scroll half page down (smooth animated)
+Ctrl+u       → scroll half page up (smooth animated)
+Ctrl+f       → scroll full page down
+Ctrl+b       → scroll full page up
+Ctrl+e       → scroll viewport down 1 line (cursor stays)
+Ctrl+y       → scroll viewport up 1 line (cursor stays)
+Mouse wheel  → scroll viewport smoothly (cursor stays put)
 ```
 
 ### Operators (actions in Normal mode)
@@ -179,14 +185,15 @@ Ctrl+r       → redo
     │   ├── lazy.lua          ← Plugin manager setup + LazyVim extras enabled
     │   ├── options.lua       ← Editor settings (line numbers, tabs, etc.)
     │   ├── keymaps.lua       ← Custom keybindings
-    │   └── autocmds.lua      ← Automatic actions (save cursor pos, etc.)
+    │   ├── autocmds.lua      ← Automatic actions (scroll-past-EOF, word wrap, etc.)
+    │   └── explorer.lua      ← Neo-tree <leader>e / <leader>o keymap logic (isolated)
     │
     └── plugins/
         ├── autosave.lua      ← Auto-save configuration
         ├── coding.lua        ← Better folds (UFO), tabout, refactoring, auto-tag, doc comments
         ├── colorscheme.lua   ← Themes: catppuccin mocha (default), oxocarbon, cyberdream, tokyonight, rose-pine, kanagawa
         ├── dap.lua           ← Debugger (Python, Go, TypeScript/JS, IoT: probe-rs + OpenOCD)
-        ├── editor.lua        ← neo-tree, gitsigns blame, peek definition, smooth scroll, TODO colors, diagnostics
+        ├── editor.lua        ← neo-tree, gitsigns blame, peek definition, cinnamon smooth scroll, TODO colors, diagnostics
         ├── extras.lua        ← Spectre, persistence, zen mode, yank history, better quickfix
         ├── git-advanced.lua  ← Diffview, git-conflict, Octo (GitHub)
         ├── markdown.lua      ← Markdown browser preview
@@ -2672,6 +2679,34 @@ function processLargeDataset(input: DatasetInput, options: ProcessOptions): Resu
 - **Column 120** — modern hard limit used by most TypeScript/Go linters
 
 No keybinding — always visible. Uses `NonText` highlight so it blends with your theme.
+
+---
+
+## Smooth Scrolling
+
+Powered by **cinnamon.nvim** — all scroll commands are animated with a quadratic easing curve.
+
+### Keyboard
+
+| Key | Action |
+|-----|--------|
+| `<C-d>` | Scroll down half page (smooth) |
+| `<C-u>` | Scroll up half page (smooth) |
+| `<C-f>` | Scroll down full page (smooth) |
+| `<C-b>` | Scroll up full page (smooth) |
+| `<C-e>` | Scroll viewport down 1 line — cursor stays put |
+| `<C-y>` | Scroll viewport up 1 line — cursor stays put |
+| `zz` | Center current line on screen (smooth) |
+| `zt` | Move current line to top (smooth) |
+| `zb` | Move current line to bottom (smooth) |
+
+### Mouse
+
+Mouse wheel scrolls the **viewport only** — the cursor does not follow. This matches VSCode's default mouse behaviour.
+
+### Scroll-past-EOF
+
+When your cursor moves within half a screen of the last line, `scrolloff` automatically increases so the last line stays near the center with empty space below — equivalent to VSCode's `scrollBeyondLastLine`. When you move back up into the file it resets to normal.
 
 ---
 
