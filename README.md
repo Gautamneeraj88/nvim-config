@@ -1,6 +1,6 @@
 # Neovim Config — Complete Guide
 
-A modern, minimal Neovim setup built on **LazyVim** for TypeScript/JavaScript, Python, and Go.
+A modern, minimal Neovim setup built on **LazyVim** for TypeScript/JavaScript, Python, Go, and **C/C++ IoT/Embedded**.
 Everything is documented here so you can learn and use every feature.
 
 ---
@@ -38,36 +38,37 @@ Everything is documented here so you can learn and use every feature.
 29. [Package Info](#package-info)
 30. [Wakatime — Coding Time Tracker](#wakatime--coding-time-tracker)
 31. [Debugger — DAP](#debugger--dap)
-32. [Auto-save](#auto-save)
-33. [TODO Comments](#todo-comments)
-34. [Markdown](#markdown)
-35. [Themes](#themes)
-36. [Panel Layout — Edgy](#panel-layout--edgy)
-37. [Breadcrumbs — Dropbar](#breadcrumbs--dropbar)
-38. [Sticky Context Header](#sticky-context-header)
-39. [Inline Git Blame](#inline-git-blame)
-40. [Code Action Lightbulb](#code-action-lightbulb)
-41. [Yank History — Yanky](#yank-history--yanky)
-42. [Better Quickfix — nvim-bqf](#better-quickfix--nvim-bqf)
-43. [Smarter Word Motions — Spider](#smarter-word-motions--spider)
-44. [Buffers & Windows](#buffers--windows)
-45. [Editing Shortcuts](#editing-shortcuts)
-46. [Statusline](#statusline)
-47. [Python — Virtual Environment](#python--virtual-environment)
-48. [Auto-tag — nvim-ts-autotag](#auto-tag--nvim-ts-autotag)
-49. [Doc Comments — Neogen](#doc-comments--neogen)
-50. [Marks](#marks)
-51. [Refactoring](#refactoring)
-52. [Function Arg Highlight — Hlargs](#function-arg-highlight--hlargs)
-53. [Floating Split Labels — Incline](#floating-split-labels--incline)
-54. [Mode Colors — Modes](#mode-colors--modes)
-55. [Noice — Centered Cmdline](#noice--centered-cmdline)
-56. [LSP Lens — Reference Counts](#lsp-lens--reference-counts)
-57. [Biscuits — Closing Brace Labels](#biscuits--closing-brace-labels)
-58. [Twilight — Dim Inactive Code](#twilight--dim-inactive-code)
-59. [Virt-column — Line Length Guide](#virt-column--line-length-guide)
-60. [How to Customize](#how-to-customize)
-61. [Complete Keybinding Reference](#complete-keybinding-reference)
+32. [IoT / Embedded Development — PlatformIO](#iot--embedded-development--platformio)
+33. [Auto-save](#auto-save)
+34. [TODO Comments](#todo-comments)
+35. [Markdown](#markdown)
+36. [Themes](#themes)
+37. [Panel Layout — Edgy](#panel-layout--edgy)
+38. [Breadcrumbs — Dropbar](#breadcrumbs--dropbar)
+39. [Sticky Context Header](#sticky-context-header)
+40. [Inline Git Blame](#inline-git-blame)
+41. [Code Action Lightbulb](#code-action-lightbulb)
+42. [Yank History — Yanky](#yank-history--yanky)
+43. [Better Quickfix — nvim-bqf](#better-quickfix--nvim-bqf)
+44. [Smarter Word Motions — Spider](#smarter-word-motions--spider)
+45. [Buffers & Windows](#buffers--windows)
+46. [Editing Shortcuts](#editing-shortcuts)
+47. [Statusline](#statusline)
+48. [Python — Virtual Environment](#python--virtual-environment)
+49. [Auto-tag — nvim-ts-autotag](#auto-tag--nvim-ts-autotag)
+50. [Doc Comments — Neogen](#doc-comments--neogen)
+51. [Marks](#marks)
+52. [Refactoring](#refactoring)
+53. [Function Arg Highlight — Hlargs](#function-arg-highlight--hlargs)
+54. [Floating Split Labels — Incline](#floating-split-labels--incline)
+55. [Mode Colors — Modes](#mode-colors--modes)
+56. [Noice — Centered Cmdline](#noice--centered-cmdline)
+57. [LSP Lens — Reference Counts](#lsp-lens--reference-counts)
+58. [Biscuits — Closing Brace Labels](#biscuits--closing-brace-labels)
+59. [Twilight — Dim Inactive Code](#twilight--dim-inactive-code)
+60. [Virt-column — Line Length Guide](#virt-column--line-length-guide)
+61. [How to Customize](#how-to-customize)
+62. [Complete Keybinding Reference](#complete-keybinding-reference)
 
 ---
 
@@ -182,9 +183,9 @@ Ctrl+r       → redo
     │
     └── plugins/
         ├── autosave.lua      ← Auto-save configuration
-        ├── coding.lua        ← Better folds (UFO), tabout
-        ├── colorscheme.lua   ← Themes: oxocarbon (default), cyberdream, catppuccin, tokyonight, rose-pine, kanagawa
-        ├── dap.lua           ← Debugger (Python, Go, TypeScript/JS)
+        ├── coding.lua        ← Better folds (UFO), tabout, refactoring, auto-tag, doc comments
+        ├── colorscheme.lua   ← Themes: catppuccin mocha (default), oxocarbon, cyberdream, tokyonight, rose-pine, kanagawa
+        ├── dap.lua           ← Debugger (Python, Go, TypeScript/JS, IoT: probe-rs + OpenOCD)
         ├── editor.lua        ← neo-tree, gitsigns blame, peek definition, smooth scroll, TODO colors, diagnostics
         ├── extras.lua        ← Spectre, persistence, zen mode, yank history, better quickfix
         ├── git-advanced.lua  ← Diffview, git-conflict, Octo (GitHub)
@@ -197,6 +198,7 @@ Ctrl+r       → redo
         ├── testing.lua       ← Neotest (Jest, Vitest, pytest, Go test)
         ├── ui.lua            ← Edgy panels, treesitter-context, fidget, lualine, lightbulb, dressing, indent guides
         ├── ui-extras.lua     ← Dropbar breadcrumbs, color highlighter, package info, wakatime
+        ├── iot.lua           ← PlatformIO (ESP32, Arduino, STM32, RP2040) + C/C++ LSP/treesitter
         ├── undotree.lua      ← Undo history tree
         └── visuals.lua       ← Smear cursor, rainbow brackets, scrollbar, animations
 ```
@@ -351,6 +353,7 @@ Find anything instantly. This is one of the most important tools.
 ```
 <leader>/    → live grep — search for text across ALL project files
 <leader>fw   → search the exact word your cursor is on
+<leader>fs   → search the visual selection (select text first, then press)
 ```
 
 **How live grep works:**
@@ -1169,14 +1172,14 @@ Special comment keywords are **highlighted in distinct colors** automatically in
 ### Keywords and colors
 
 ```python
-#  TODO: something to do later                  → Blue
-#  FIXME: this is broken, needs fixing           → Red
-#  NOTE: important context for this code         → Green
-#  HACK: workaround, not the right solution      → Yellow
-#  WARN: be careful, edge case here              → Orange
-#  PERF: opportunity to improve performance      → Purple
-#  TEST: note about testing this                 → Teal
-#  INFO: informational note about the code       → Reddish-orange
+#  TODO: something to do later                  → Blue   (#89b4fa)
+#  FIXME: this is broken, needs fixing           → Red    (#f38ba8)
+#  NOTE: important context for this code         → Green  (#a6e3a1) — also matches INFORMATION
+#  HACK: workaround, not the right solution      → Yellow (#f9e2af)
+#  WARN: be careful, edge case here              → Peach  (#fab387)
+#  PERF: opportunity to improve performance      → Mauve  (#cba6f7)
+#  TEST: note about testing this                 → Teal   (#94e2d5)
+#  INFO: informational note about the code       → Sky    (#89dceb)
 ```
 
 These work in all languages (Python `#`, JavaScript `//`, Go `//`, Lua `--`, etc.)
@@ -1232,14 +1235,14 @@ When you open a `.md` file, Neovim **renders it visually**:
 
 ### Available themes
 
-| Theme                | Command                      | Style                                        |
-| -------------------- | ---------------------------- | -------------------------------------------- |
-| **Oxocarbon**        | `:colorscheme oxocarbon`     | **Default** — IBM Carbon, near-black + electric blue |
-| **Cyberdream**       | `:colorscheme cyberdream`    | Cyberpunk neon, vibrant dark                 |
-| **Catppuccin Mocha** | `:colorscheme catppuccin`    | Dark, purple/pink tones                      |
-| **Tokyonight Night** | `:colorscheme tokyonight`    | Dark blue/purple                             |
-| **Rose Pine**        | `:colorscheme rose-pine`     | Warm, earthy, rose tones                     |
-| **Kanagawa Wave**    | `:colorscheme kanagawa`      | Dark Japanese ink aesthetic                  |
+| Theme                | Command                      | Style                                          |
+| -------------------- | ---------------------------- | ---------------------------------------------- |
+| **Catppuccin Mocha** | `:colorscheme catppuccin`    | **Default** — dark, pastel purple/pink tones. Full integrations (LSP, DAP, fzf, gitsigns, neo-tree, noice, snacks…) with italic comments, bold keywords/functions/types |
+| **Oxocarbon**        | `:colorscheme oxocarbon`     | IBM Carbon, near-black + electric blue         |
+| **Cyberdream**       | `:colorscheme cyberdream`    | Cyberpunk neon, vibrant dark                   |
+| **Tokyonight Night** | `:colorscheme tokyonight`    | Dark blue/purple                               |
+| **Rose Pine**        | `:colorscheme rose-pine`     | Warm, earthy, rose tones                       |
+| **Kanagawa Wave**    | `:colorscheme kanagawa`      | Dark Japanese ink aesthetic                    |
 
 ### Variants within themes
 
@@ -1262,8 +1265,8 @@ opts = { theme = "wave" }
 Edit `lua/plugins/colorscheme.lua`, find this line and change the value:
 
 ```lua
-{ "LazyVim/LazyVim", opts = { colorscheme = "oxocarbon" } }
--- change to: "cyberdream", "catppuccin", "tokyonight", "rose-pine", or "kanagawa"
+{ "LazyVim/LazyVim", opts = { colorscheme = "catppuccin" } }
+-- change to: "oxocarbon", "cyberdream", "tokyonight", "rose-pine", or "kanagawa"
 ```
 
 ---
@@ -1804,6 +1807,8 @@ Esc          → cancel
 
 Smarter code folding using LSP and treesitter. Fold entire functions, classes, or import blocks. Shows a hint of how many lines are folded.
 
+The fold gutter column is disabled — UFO's inline virtual text (`  47 lines`) makes the gutter redundant, keeping the display clean.
+
 ```
 za           → toggle fold under cursor (open if closed, close if open)
 zo           → open fold under cursor
@@ -1866,6 +1871,8 @@ No keymaps needed — it's always on automatically.
 ## Package Info
 
 When you open `package.json`, shows the **current installed version** of each package inline, and highlights outdated ones.
+
+> **Note:** This plugin activates only when opening a file named `package.json` — it does not load for any other JSON files, keeping startup fast.
 
 ```
 <leader>np   → toggle showing package versions
@@ -2100,6 +2107,191 @@ code:  result = calculate(x, y)
 <F10> step OVER → runs calculate() completely, moves to next line
 <F11> step INTO  → enters calculate() function, debugs inside it
 <F12> step OUT   → finishes current function, returns to caller
+```
+
+### IoT / Embedded debugging
+
+On-chip debugging for microcontrollers using probe-rs (CMSIS-DAP / DAPLink probes) and OpenOCD (JTAG/SWD):
+
+```
+:Mason
+```
+
+Press `i` to install:
+
+- `probe-rs-tools` — debugger for ARM Cortex-M (STM32, RP2040, RP2350) via CMSIS-DAP
+- `openocd` — debugger for ESP32 / ESP32-S3 via JTAG (or use the built-in USB-JTAG on later ESP32-S3 boards)
+
+#### Supported targets
+
+| Board family | Adapter | Mason package |
+|---|---|---|
+| STM32 (all variants) | ST-Link v2/v3 (CMSIS-DAP) | `probe-rs-tools` |
+| Raspberry Pi Pico / RP2040 | Picoprobe (CMSIS-DAP) | `probe-rs-tools` |
+| Raspberry Pi Pico 2 / RP2350 | Picoprobe (CMSIS-DAP) | `probe-rs-tools` |
+| ESP32 / ESP32-S3 | ESP-Prog JTAG or built-in USB-JTAG | `openocd` |
+
+#### DAP configurations available (auto-detected per project)
+
+| Config | Trigger |
+|---|---|
+| **STM32 — probe-rs** | when `dap.json` contains `probe-rs` or project has `.cargo/config.toml` |
+| **RP2040 — probe-rs** | same probe-rs adapter, chip `RP2040` |
+| **ESP32 — OpenOCD** | when `openocd.cfg` or `sdkconfig` exists in project root |
+| **ESP32-S3 — OpenOCD** | same; OpenOCD config targets `esp32s3` |
+
+#### Typical workflow
+
+```
+1. Flash your firmware first (probe-rs flash / idf.py flash)
+2. Connect your debug probe
+3. Set a breakpoint with <leader>db
+4. Press <F5>  → connects to the chip and halts at the breakpoint
+5. Use F10/F11/F12 to step — Variables panel shows register / memory values
+6. <leader>dq to detach
+```
+
+> **Note:** For PlatformIO projects, use `<leader>iob` to build and `<leader>iou` to upload first.
+> The full PlatformIO workflow is in the [IoT / Embedded Development](#iot--embedded-development--platformio) section below.
+
+---
+
+## IoT / Embedded Development — PlatformIO
+
+Full embedded development workflow inside Neovim. Supports **ESP32** (all variants), **Arduino** (Uno, Mega, Nano), **STM32**, and **Raspberry Pi Pico / RP2040 / RP2350**.
+
+### Requirements
+
+```bash
+# Install PlatformIO CLI
+pip install platformio
+
+# Verify
+pio --version
+```
+
+### First-time project setup (step by step)
+
+```
+1. <leader>ioi  → Init project — opens a board picker (fuzzy search ~1000 boards)
+                  Select your board → PlatformIO creates the project structure:
+                  ├── platformio.ini   ← board + framework config
+                  ├── src/
+                  │   └── main.cpp    ← your code goes here
+                  └── lib/
+
+2. Write your code in src/main.cpp
+
+3. <leader>ioc  → Generate compile_commands.json
+                  clangd uses this to understand include paths, defines, macros.
+                  Run once, then again whenever you add a new library.
+
+4. <leader>iog  → Generate .clangd config
+                  Cross-compilers pass flags that host clangd doesn't understand
+                  (e.g. -mlongcalls for Xtensa, -mmcu=* for AVR).
+                  This writes a .clangd that strips those flags so you don't get
+                  thousands of false red errors.
+                  Run once per project.
+
+5. :LspRestart  → Pick up the new .clangd config
+
+6. Now you have full LSP: autocomplete, hover docs, go-to-definition for all
+   ESP32 / Arduino / CMSIS headers.
+```
+
+### Build, upload, monitor
+
+```
+<leader>iob  → Build (compile) — shows errors with file + line
+<leader>iou  → Upload to device (auto-detects connected USB)
+<leader>iom  → Serial monitor — open interactive serial console
+<leader>iod  → List connected devices (shows port, vendor, description)
+```
+
+### Library manager
+
+```
+<leader>iol  → Library manager — search and install libraries from the PlatformIO registry
+               (e.g. search "ArduinoJson", press Enter to install)
+```
+
+### Board search
+
+```
+<leader>ios  → Search boards — browse the full PlatformIO board catalog
+               (useful when you forget the exact board ID, e.g. "esp32dev", "teensy41")
+```
+
+### Project structure
+
+```
+my-project/
+├── .clangd                ← generated by <leader>iog — strips cross-compiler flags
+├── .vscode/
+│   └── compile_commands.json  ← generated by <leader>ioc — tells clangd include paths
+├── platformio.ini         ← board + framework + upload port config
+├── src/
+│   └── main.cpp           ← your firmware
+└── lib/
+    └── MyLib/             ← local libraries
+```
+
+### Example: ESP32 blink
+
+```cpp
+#include <Arduino.h>
+
+void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(1000);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(1000);
+}
+```
+
+```
+<leader>iob  → builds successfully (no red LSP errors thanks to .clangd)
+<leader>iou  → flashes to ESP32 over USB
+<leader>iom  → open serial monitor to see output
+```
+
+### Why you need both compile_commands.json and .clangd
+
+| File | Purpose |
+|---|---|
+| `compile_commands.json` | Tells clangd **where** headers live (ESP32 SDK paths, toolchain includes) |
+| `.clangd` | Tells clangd to **ignore** cross-compiler flags it doesn't understand (-mlongcalls, -mmcu=avr, etc.) |
+
+Without `compile_commands.json`: clangd can't find `Arduino.h`, `esp32-hal.h`, etc. — everything shows as "not found".
+Without `.clangd`: clangd complains about every `-mlongcalls` and `-mtext-section-literals` flag — hundreds of false errors.
+
+### Supported cross-compiler flags stripped by .clangd
+
+| Toolchain | Flags removed |
+|---|---|
+| ESP32 Xtensa (ESP32, ESP32-S2) | `-mlongcalls`, `-mtext-section-literals`, `-mfix-esp32-psram-cache-issue` |
+| ESP32 RISC-V (ESP32-C3, ESP32-H2) | `-mabi=ilp32` |
+| ARM Cortex-M (STM32, RP2040) | `-mthumb-interwork`, `-mstrict-align` |
+| AVR (Arduino Uno, Mega, Nano) | `-mmcu=*` |
+| Generic embedded | `-fno-tree-switch-conversion`, `-fno-jump-tables`, `--param=*` |
+
+### All IoT keymaps
+
+```
+<leader>io   → IoT / PlatformIO group (press and wait to see all)
+<leader>ioi  → Init project (board picker)
+<leader>iob  → Build
+<leader>iou  → Upload to device
+<leader>iom  → Serial monitor
+<leader>iod  → List connected devices
+<leader>iol  → Library manager
+<leader>ios  → Search boards
+<leader>ioc  → Generate compile_commands.json (for LSP)
+<leader>iog  → Generate .clangd (suppress cross-compiler errors)
 ```
 
 ---
@@ -2563,6 +2755,7 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>fb`  | Open buffers                         |
 | `<leader>/`   | Live grep                            |
 | `<leader>fw`  | Search word under cursor             |
+| `<leader>fs`  | Search visual selection (grep)       |
 | `<leader>ft`  | Search TODOs                         |
 | `<leader>ss`  | Document symbols                     |
 | `<leader>sS`  | Workspace symbols                    |
@@ -2606,6 +2799,15 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>ng`  | Generate doc comment (neogen)        |
 | `<leader>ll`  | Toggle LSP Lens (reference counts)   |
 | `<leader>tw`  | Toggle Twilight (dim inactive code)  |
+| `<leader>ioi` | IoT: Init PlatformIO project         |
+| `<leader>iob` | IoT: Build                           |
+| `<leader>iou` | IoT: Upload to device                |
+| `<leader>iom` | IoT: Serial monitor                  |
+| `<leader>iod` | IoT: List connected devices          |
+| `<leader>iol` | IoT: Library manager                 |
+| `<leader>ios` | IoT: Search boards                   |
+| `<leader>ioc` | IoT: Generate compile_commands.json  |
+| `<leader>iog` | IoT: Generate .clangd                |
 | `<leader>Re`  | Refactor: extract function (visual)  |
 | `<leader>Rv`  | Refactor: extract variable (visual)  |
 | `<leader>Ri`  | Refactor: inline variable            |

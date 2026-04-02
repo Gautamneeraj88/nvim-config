@@ -1,67 +1,86 @@
 -- Multiple themes available — switch with <leader>uT
--- Current default: oxocarbon
+-- Current default: catppuccin mocha
 return {
-  -- Oxocarbon (IBM Carbon design — near-black bg, electric blue accents)
-  {
-    "nyoom-engineering/oxocarbon.nvim",
-    priority = 1000,
-  },
-
-  -- Cyberdream (cyberpunk neon, vibrant)
-  {
-    "scottmckendry/cyberdream.nvim",
-    priority = 1000,
-    opts = {
-      italic_comments = true,
-      transparent = false,
-    },
-  },
-
-  -- Catppuccin
+  -- ─── Catppuccin Mocha — default (vibrant dark, full integrations) ─────────
   {
     "catppuccin/nvim",
-    name = "catppuccin",
-    priority = 1000,
+    name     = "catppuccin",
+    priority = 1000,           -- load first so other plugins pick up highlights
     opts = {
-      flavour = "mocha",                   -- mocha=dark, macchiato, frappe, latte=light
+      flavour    = "mocha",    -- mocha=dark | macchiato | frappe | latte=light
+      term_colors = true,      -- set terminal colors to catppuccin palette
+
+      styles = {
+        comments     = { "italic" },
+        conditionals = { "italic" },
+        keywords     = { "bold" },
+        functions    = { "bold" },
+        types        = { "bold" },
+        operators    = {},
+        strings      = {},
+        variables    = {},
+        numbers      = {},
+        booleans     = {},
+        properties   = {},
+        loops        = {},
+      },
+
       integrations = {
-        neo_tree = true,
-        which_key = true,
-        fzf = true,
-        mason = true,
-        blink_cmp = true,
-        gitsigns = true,
-        treesitter = true,
-        mini = { enabled = true },
+        -- Editor
+        aerial           = true,
+        blink_cmp        = true,
+        diffview         = true,
+        fidget           = true,
+        fzf              = true,
+        gitsigns         = true,
+        lsp_trouble      = true,
+        markdown         = true,
+        mason            = true,
+        neo_tree         = true,
+        neotest          = true,
+        noice            = true,
+        notify           = true,
+        rainbow_delimiters = true,
+        snacks           = { enabled = true, indent = true },
+        treesitter       = true,
+        treesitter_context = true,
+        which_key        = true,
+        -- mini
+        mini             = { enabled = true, indentscope_color = "lavender" },
+        -- DAP
+        dap              = true,
+        dap_ui           = true,
       },
     },
   },
 
-  -- Tokyonight (classic, clean)
+  -- ─── Other themes (lazy — load on demand via <leader>uT) ─────────────────
+  { "nyoom-engineering/oxocarbon.nvim" },  -- near-black IBM Carbon
+
   {
-    "folke/tokyonight.nvim",
-    priority = 1000,
-    opts = { style = "night" }, -- night, storm, moon, day
+    "scottmckendry/cyberdream.nvim",
+    opts = { italic_comments = true, transparent = false },
   },
 
-  -- Rose Pine (warm, elegant)
+  {
+    "folke/tokyonight.nvim",
+    opts = { style = "night" },
+  },
+
   {
     "rose-pine/neovim",
     name = "rose-pine",
-    priority = 1000,
-    opts = { variant = "main" }, -- main, moon, dawn
+    opts = { variant = "main" },
   },
 
-  -- Kanagawa (dark Japanese aesthetic)
   {
     "rebelot/kanagawa.nvim",
-    priority = 1000,
-    opts = { theme = "wave" }, -- wave, dragon, lotus
+    opts = { theme = "wave" },
   },
 
-  -- Set oxocarbon as the default
+  -- ─── Set catppuccin mocha as the default ─────────────────────────────────
   {
     "LazyVim/LazyVim",
-    opts = { colorscheme = "oxocarbon" },
+    opts = { colorscheme = "catppuccin" },
   },
 }

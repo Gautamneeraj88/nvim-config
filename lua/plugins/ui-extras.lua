@@ -49,8 +49,7 @@ return {
   {
     "vuki656/package-info.nvim",
     dependencies = { "MunifTanjim/nui.nvim" },
-    event = "BufReadPost",
-    cond = function() return vim.fn.expand("%:t") == "package.json" end,
+    event = { "BufReadPost */package.json" },
     config = function()
       require("package-info").setup({
         package_manager = "npm", -- change to "yarn" or "pnpm" if needed

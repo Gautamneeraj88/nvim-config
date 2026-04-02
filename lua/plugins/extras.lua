@@ -1,4 +1,5 @@
 return {
+
   -- ─── Yank History — cycle through past yanks after pasting ───────────────────
   -- Press p to paste, then <M-p>/<M-n> to cycle through yank ring
   -- (<C-n>/<C-p> moved to Alt to avoid conflict with vim-visual-multi)
@@ -7,7 +8,7 @@ return {
     event = "VeryLazy",
     opts = {
       ring = { storage = "memory" },
-      highlight = { on_put = true, on_yank = true, timer = 200 },
+      highlight = { on_put = false, on_yank = false }, -- Snacks handles yank highlight
     },
     keys = {
       { "p",          "<Plug>(YankyPutAfter)",      mode = { "n", "x" }, desc = "Put after" },
@@ -111,6 +112,7 @@ return {
         "neo-tree", "aerial", "lazy", "mason", "trouble", "qf",
         "dap-repl", "dapui_scopes", "dapui_breakpoints",
         "dapui_stacks", "dapui_watches", "dapui_console",
+        "toggleterm",
       },
     },
   },

@@ -101,8 +101,8 @@ return {
       },
       -- Auto-installs debug adapters via Mason
       {
-        "jay-babu/mason-nvim-dap.nvim",
-        dependencies = { "mason.nvim" },
+        "mason-org/mason-nvim-dap.nvim",
+        dependencies = { "mason-org/mason.nvim" },
         opts = {
           automatic_installation = true,
           ensure_installed = { "python", "delve", "js" },
@@ -145,6 +145,77 @@ return {
       vim.fn.sign_define("DapBreakpointRejected",  { text = "○", texthl = "DapBreakpointRejected",  linehl = "", numhl = "" })
       vim.fn.sign_define("DapLogPoint",            { text = "◎", texthl = "DapLogPoint",            linehl = "", numhl = "" })
       vim.fn.sign_define("DapStopped",             { text = "▶", texthl = "DapStopped", linehl = "DapStoppedLine", numhl = "" })
+
+      -- ─── Embedded / IoT adapters ──────────────────────────────────────────────────
+      -- Adapters:
+      --   probe-rs  → STM32, Raspberry Pi Pico (RP2040/RP2350) — plug-and-play via USB
+      --              Install: https://probe.rs/docs/getting-started/installation/
+      --   openocd   → ESP32 (JTAG), legacy STM32 — start OpenOCD separately first
+      --              Install: brew install open-ocd
+      --
+      -- For probe-rs: just plug in your ST-Link / CMSIS-DAP / picoprobe and run F5.
+      -- For OpenOCD (ESP32 example):
+      --   openocd -f board/esp32-wrover.cfg          (in a terminal)
+      --   then F5 → pick "ESP32 — OpenOCD"
+      dap.adapters["probe-rs"] = {
+        type = "server",
+        port = "${port}",
+        executable = {
+          command = "probe-rs",
+          args    = { "dap-server", "--port", "${port}" },
+        },
+      }
+      -- Connects to an already-running OpenOCD process (default DAP port 50001)
+      dap.adapters.openocd = {
+        type = "server",
+        host = "localhost",
+        port = 50001,
+      }
+      -- Edit the `chip` field to match your exact part number.
+      local embedded = {
+        -- ── STM32 (probe-rs, automatic — just plug in ST-Link) ──────────────
+        {
+          name      = "STM32 — probe-rs  [edit chip name]",
+          type      = "probe-rs",
+          request   = "attach",
+          chip      = "STM32F103C8",  -- change: STM32F401CC, STM32H743ZI, etc.
+          speed     = 4000,
+          coreIndex = 0,
+        },
+        -- ── Raspberry Pi Pico / RP2040 (probe-rs, use picoprobe or SWD) ─────
+        {
+          name      = "Raspberry Pi Pico — probe-rs",
+          type      = "probe-rs",
+          request   = "attach",
+          chip      = "RP2040",
+          speed     = 4000,
+          coreIndex = 0,
+        },
+        -- ── Raspberry Pi Pico 2 / RP2350 ────────────────────────────────────
+        {
+          name      = "Raspberry Pi Pico 2 — probe-rs",
+          type      = "probe-rs",
+          request   = "attach",
+          chip      = "RP2350",
+          speed     = 4000,
+          coreIndex = 0,
+        },
+        -- ── ESP32 via OpenOCD (start openocd separately first) ───────────────
+        {
+          name    = "ESP32 — OpenOCD  [start openocd first]",
+          type    = "openocd",
+          request = "launch",
+          program = "${workspaceFolder}/.pio/build/esp32dev/firmware.elf",
+        },
+        {
+          name    = "ESP32-S3 — OpenOCD  [start openocd first]",
+          type    = "openocd",
+          request = "launch",
+          program = "${workspaceFolder}/.pio/build/esp32-s3/firmware.elf",
+        },
+      }
+      dap.configurations.c   = embedded
+      dap.configurations.cpp = embedded
 
       -- ─── TypeScript / JavaScript adapter ────────────────────────────────────────
       local js_debug = vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js"
@@ -220,5 +291,4 @@ return {
       { "<leader>dgl", function() require("dap-go").debug_last_test() end,      ft = "go", desc = "Debug: Go Last Test" },
     },
   },
-
 }

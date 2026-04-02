@@ -7,7 +7,7 @@ return {
     dependencies = { "kevinhwang91/promise-async" },
     event = "BufReadPost",
     init = function()
-      vim.opt.foldcolumn    = "1"   -- show fold indicators in gutter
+      vim.opt.foldcolumn    = "0"   -- no gutter column; UFO virtual text shows fold counts instead
       vim.opt.foldlevel     = 99    -- open all folds by default
       vim.opt.foldlevelstart = 99
       vim.opt.foldenable    = true
@@ -74,7 +74,6 @@ return {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
     },
-    event = "BufReadPre",
     opts = {},
     keys = {
       -- Visual: select code → extract to a named function
@@ -129,6 +128,8 @@ return {
     "abecodes/tabout.nvim",
     event = "InsertEnter",
     dependencies = { "nvim-treesitter/nvim-treesitter" },
-    opts = {},
+    opts = {
+      act_as_tab = true, -- pass Tab through to blink.cmp when completion is active
+    },
   },
 }

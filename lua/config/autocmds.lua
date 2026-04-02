@@ -10,12 +10,12 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Python: disable pydoc fallback for K — use LSP hover instead
+-- Enable word wrap only for prose — code files stay unwrapped
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "python",
+  pattern = { "markdown", "text", "gitcommit", "gitrebase" },
   callback = function()
-    -- Override K to always use LSP hover (instead of pydoc)
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = true, desc = "LSP Hover" })
+    vim.opt_local.wrap     = true
+    vim.opt_local.linebreak = true  -- break at word boundaries
   end,
 })
 

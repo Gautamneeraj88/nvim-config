@@ -40,14 +40,16 @@ return {
       opts.views = vim.tbl_deep_extend("force", opts.views or {}, {
         cmdline_popup = {
           position = { row = "40%", col = "50%" }, -- centered in screen
-          size     = { width = 60, height = "auto" },
+          size     = { width = 90, height = "auto" }, -- 90 wide so neo-tree prompts aren't cut off
           border   = { style = "rounded", padding = { 0, 1 } },
+          zindex   = 200, -- above neo-tree and other panels
         },
         popupmenu = {                              -- completion dropdown below cmdline
           relative = "editor",
           position = { row = "57%", col = "50%" },
-          size     = { width = 60, height = 10 },
+          size     = { width = 90, height = 10 },
           border   = { style = "rounded", padding = { 0, 1 } },
+          zindex   = 200,
         },
       })
       return opts
@@ -85,7 +87,6 @@ return {
       end
 
       opts.sections = opts.sections or {}
-      -- location (line:col) + clock in the right corner
       opts.sections.lualine_z = { "location", clock }
 
       return opts

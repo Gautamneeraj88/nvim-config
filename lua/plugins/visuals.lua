@@ -1,14 +1,15 @@
 return {
   -- ─── Smear Cursor — animated cursor trail ─────────────────────────────────────
-  -- The cursor leaves a smooth smear/trail as it moves around the screen.
-  -- One of the most satisfying visual effects you can add to Neovim.
   {
     "sphamba/smear-cursor.nvim",
     event = "VeryLazy",
     opts = {
-      stiffness               = 0.8,  -- cursor spring stiffness (0-1, higher = snappier)
-      trailing_stiffness      = 0.5,  -- tail follows more slowly
+      stiffness               = 0.8,
+      trailing_stiffness      = 0.5,
       distance_stop_animating = 0.5,
+      -- catppuccin mocha: pink accent cursor trail
+      cursor_color            = "#cba6f7", -- mauve
+      stiffness_insert_mode   = 0.6,
     },
   },
 
@@ -140,13 +141,14 @@ return {
     "mvllow/modes.nvim",
     event = "BufReadPre",
     opts = {
+      -- catppuccin mocha palette
       colors = {
-        copy   = "#f5c359", -- yank → amber
-        delete = "#c75c6a", -- delete → red
-        insert = "#78ccc5", -- insert → teal-green
-        visual = "#9745be", -- visual → purple
+        copy   = "#f9e2af", -- yellow  — yank
+        delete = "#f38ba8", -- red     — delete
+        insert = "#a6e3a1", -- green   — insert
+        visual = "#cba6f7", -- mauve   — visual
       },
-      line_opacity = 0.15, -- very subtle tint, not distracting
+      line_opacity = 0.15,
     },
   },
 
@@ -195,7 +197,7 @@ return {
     event = "BufReadPost",
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     opts = {
-      color = "#e3b96f", -- warm amber — visible on all dark themes, not too loud
+      color = "#fab387", -- catppuccin mocha peach — warm, distinct from variables
       excluded_argnames = {
         usages = {
           python = { "self", "cls", "_" },
@@ -223,8 +225,9 @@ return {
         close = {
           timing = animate.gen_timing.linear({ duration = 80, unit = "total" }),
         },
-        -- Disable scroll animation — neoscroll handles this
-        scroll = { enable = false },
+        scroll = {
+          timing = animate.gen_timing.linear({ duration = 80, unit = "total" }),
+        },
         -- Cursor animation disabled — smear-cursor.nvim handles this
         cursor = { enable = false },
       }

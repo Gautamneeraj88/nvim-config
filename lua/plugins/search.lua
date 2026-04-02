@@ -1,5 +1,7 @@
 -- fzf-lua: fast fuzzy search powered by fzf
--- This replaces telescope with a faster, fzf-based picker
+-- LazyVim's fzf extra (imported in lazy.lua) already handles the standard keymaps
+-- (<leader>ff, <leader>fr, <leader>fb, <leader>/, <leader>ss, gr, etc.)
+-- This file only configures appearance and adds keymaps the extra doesn't provide.
 return {
   {
     "ibhagwan/fzf-lua",
@@ -35,31 +37,17 @@ return {
       },
     },
     keys = {
-      -- File search
-      { "<leader>ff", "<cmd>FzfLua files<cr>",                   desc = "Find Files (fzf)" },
-      { "<leader>fr", "<cmd>FzfLua oldfiles<cr>",                desc = "Recent Files" },
-      { "<leader>fb", "<cmd>FzfLua buffers<cr>",                 desc = "Open Buffers" },
-
-      -- Search in files
-      { "<leader>/",  "<cmd>FzfLua live_grep<cr>",               desc = "Live Grep" },
+      -- Grep word under cursor / visual selection (LazyVim uses <leader>sw/<leader>sW)
       { "<leader>fw", "<cmd>FzfLua grep_cword<cr>",              desc = "Search Word Under Cursor" },
-      { "<leader>fs", "<cmd>FzfLua grep_visual<cr>",   mode = "v", desc = "Search Selection" },
+      { "<leader>fs", "<cmd>FzfLua grep_visual<cr>", mode = "v", desc = "Search Selection" },
 
-      -- LSP
-      { "<leader>ss", "<cmd>FzfLua lsp_document_symbols<cr>",    desc = "Document Symbols" },
-      { "<leader>sS", "<cmd>FzfLua lsp_workspace_symbols<cr>",   desc = "Workspace Symbols" },
-      { "gr",         "<cmd>FzfLua lsp_references<cr>",          desc = "LSP References" },
-
-      -- Git
-      { "<leader>gc", "<cmd>FzfLua git_commits<cr>",             desc = "Git Commits" },
+      -- Git branches (not in LazyVim fzf extra)
       { "<leader>gB", "<cmd>FzfLua git_branches<cr>",            desc = "Git Branches" },
 
-      -- TODOs / FIXMEs across the project
+      -- TODOs / FIXMEs across the project (todo-comments integration)
       { "<leader>ft", function() require("todo-comments.fzf").todo() end, desc = "Search TODOs" },
 
-      -- Misc
-      { "<leader>:",  "<cmd>FzfLua command_history<cr>",         desc = "Command History" },
-      { "<leader>sk", "<cmd>FzfLua keymaps<cr>",                 desc = "Search Keymaps" },
+      -- Switch colorscheme (LazyVim uses <leader>uC; keep <leader>uT as alias)
       { "<leader>uT", "<cmd>FzfLua colorschemes<cr>",            desc = "Switch Theme" },
     },
   },

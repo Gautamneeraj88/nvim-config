@@ -50,8 +50,8 @@ require("lazy").setup({
     { "folke/flash.nvim",      enabled = false }, -- not used; keep nav simple
     { "MagicDuck/grug-far.nvim", enabled = false }, -- using spectre instead (<leader>sr)
   },
-  defaults = { lazy = false, version = false },
-  install = { colorscheme = { "oxocarbon", "catppuccin", "tokyonight", "rose-pine", "kanagawa" } },
+  defaults = { lazy = true, version = false },
+  install = { colorscheme = { "catppuccin", "tokyonight", "rose-pine", "kanagawa" } },
   checker = { enabled = true, notify = false },
   performance = {
     rtp = {
