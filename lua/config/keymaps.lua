@@ -40,6 +40,85 @@ map("n", "<leader>w<", "<cmd>vertical resize -5<cr>", { desc = "Decrease window 
 -- Also map Esc Esc as convenience (may not work if noice intercepts Esc)
 map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode", nowait = true })
 
+-- ─── File Explorer ───────────────────────────────────────────────────────────
+-- <leader>e  → toggle explorer (full project root / cwd)
+-- <leader>o  → toggle focus mode (roots tree at nearest package root)
+--
+-- These keymaps live here (VeryLazy) AND are re-applied on the LazyLoad event
+-- for neo-tree.nvim, so they survive lazy.nvim's per-plugin key re-registration.
+
+local function _find_pkg_root(file)
+  local markers = { "package.json", "tsconfig.json", "Cargo.toml", "go.mod", "pyproject.toml", ".git" }
+  local dir = vim.fn.fnamemodify(file, ":p:h")
+  while true do
+    for _, m in ipairs(markers) do
+      if vim.fn.filereadable(dir .. "/" .. m) == 1 or vim.fn.isdirectory(dir .. "/" .. m) == 1 then
+        return dir
+      end
+    end
+    local parent = vim.fn.fnamemodify(dir, ":h")
+    if parent == dir then break end
+    dir = parent
+  end
+  return vim.fn.getcwd()
+end
+
+-- Opens neo-tree via the MAIN filesystem state (not an extra-state) so that
+-- filtered_items = { hide_dotfiles = false } is always respected.
+local function _neo_open(dir)
+  local reveal = vim.fn.expand("%:p")
+  vim.cmd("Neotree filesystem reveal")
+  vim.schedule(function()
+    local ok, manager = pcall(require, "neo-tree.sources.manager")
+    if not ok then return end
+    local state = manager.get_state("filesystem")
+    if not state then return end
+    if state.filtered_items then
+      state.filtered_items.hide_dotfiles = false
+    end
+    local ok2, fs = pcall(require, "neo-tree.sources.filesystem")
+    if ok2 and type(fs.navigate) == "function" then
+      fs.navigate(state, dir, reveal)
+    end
+  end)
+end
+
+local _neo_focus = false
+
+local function _set_explorer_keys()
+  map("n", "<leader>e", function()
+    _neo_focus = false
+    local ok1, renderer = pcall(require, "neo-tree.ui.renderer")
+    local ok2, manager  = pcall(require, "neo-tree.sources.manager")
+    if ok1 and ok2 and renderer.tree_is_visible(manager.get_state("filesystem")) then
+      require("neo-tree.command").execute({ action = "close", source = "filesystem" })
+      return
+    end
+    _neo_open(vim.fn.getcwd())
+  end, { desc = "Toggle Explorer", nowait = true, silent = true })
+
+  map("n", "<leader>o", function()
+    _neo_focus = not _neo_focus
+    _neo_open(_neo_focus and _find_pkg_root(vim.fn.expand("%:p")) or vim.fn.getcwd())
+  end, { desc = "Toggle Explorer Focus Mode", nowait = true, silent = true })
+end
+
+-- Set on VeryLazy (initial registration)
+_set_explorer_keys()
+
+-- Re-apply after neo-tree loads — lazy.nvim re-registers all plugin `keys`
+-- at that point, which can override our VeryLazy bindings. vim.schedule ensures
+-- our re-registration runs AFTER lazy.nvim's synchronous key setup.
+vim.api.nvim_create_autocmd("User", {
+  pattern = "LazyLoad",
+  once = false,
+  callback = function(event)
+    if event.data == "neo-tree.nvim" then
+      vim.schedule(_set_explorer_keys)
+    end
+  end,
+})
+
 -- ─── Git ──────────────────────────────────────────────────────────────────────
 
 -- <leader>gg is LazyVim default for lazygit — kept as-is

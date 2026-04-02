@@ -1,50 +1,16 @@
 -- ─── Neo-tree explorer helpers ───────────────────────────────────────────────
--- Defined at module level so both keymaps (<leader>e / <leader>o) share state.
--- NOTE: these keymaps live in the neo-tree `keys` spec (not keymaps.lua) so
--- lazy.nvim registers them AFTER LazyVim's defaults in the merged key list —
--- last registration wins, which is why this approach reliably overrides <leader>e.
-local _neo_focus = false
+-- Defined at module level so keymaps.lua and the FileType autocmd can share them.
 
-local function _find_pkg_root(file)
-  local markers = { "package.json", "tsconfig.json", "Cargo.toml", "go.mod", "pyproject.toml", ".git" }
-  local dir = vim.fn.fnamemodify(file, ":p:h")
-  while true do
-    for _, m in ipairs(markers) do
-      if vim.fn.filereadable(dir .. "/" .. m) == 1 or vim.fn.isdirectory(dir .. "/" .. m) == 1 then
-        return dir
-      end
-    end
-    local parent = vim.fn.fnamemodify(dir, ":h")
-    if parent == dir then break end
-    dir = parent
+-- Update edgy's left panel width (persists across layout redraws).
+-- Falls back to a direct window resize when edgy is not active.
+local function neo_resize(delta)
+  local ok, cfg = pcall(require, "edgy.config")
+  if ok and cfg.layout and cfg.layout.left then
+    cfg.layout.left.size = math.max(20, cfg.layout.left.size + delta)
+    require("edgy.layout").update()
+    return
   end
-  return vim.fn.getcwd()
-end
-
--- Opens/navigates neo-tree to `dir` using the MAIN filesystem state so that
--- filtered_items (hide_dotfiles=false) from plugin config is always active.
--- Using cmd.execute({ dir = ... }) creates a separate extra-state that ignores
--- those opts and can accidentally open a second panel — avoid that by navigating
--- the existing state in-place via fs.navigate() instead.
-local function _neo_open(dir)
-  local reveal = vim.fn.expand("%:p")
-  -- Open/focus the main filesystem state (lazy.nvim loads neo-tree if needed)
-  vim.cmd("Neotree filesystem reveal")
-  vim.schedule(function()
-    local ok, manager = pcall(require, "neo-tree.sources.manager")
-    if not ok then return end
-    local state = manager.get_state("filesystem")
-    if not state then return end
-    -- Ensure dotfiles stay visible (H key can toggle this at runtime)
-    if state.filtered_items then
-      state.filtered_items.hide_dotfiles = false
-    end
-    -- Navigate the existing state to the target root without opening a second tree
-    local ok2, fs = pcall(require, "neo-tree.sources.filesystem")
-    if ok2 and type(fs.navigate) == "function" then
-      fs.navigate(state, dir, reveal)
-    end
-  end)
+  vim.cmd("vertical resize " .. math.max(20, vim.fn.winwidth(0) + delta))
 end
 
 return {
@@ -100,53 +66,13 @@ return {
   },
 
   -- ─── File Explorer (neo-tree only, no double explorer) ───────────────────────
+  -- <leader>e / <leader>o are registered in keymaps.lua (VeryLazy + LazyLoad re-apply).
+  -- > / < resize keys are set in opts.window.mappings AND in a FileType autocmd
+  -- so they work regardless of load order.
   {
     "nvim-neo-tree/neo-tree.nvim",
-    -- <leader>e  → toggle explorer (cwd root, reveals current file)
-    -- <leader>o  → toggle focus mode (roots tree at nearest package root)
-    -- <leader>fe / <leader>fE still work via LazyVim defaults
-    keys = {
-      {
-        "<leader>e",
-        function()
-          _neo_focus = false
-          local ok1, renderer = pcall(require, "neo-tree.ui.renderer")
-          local ok2, manager  = pcall(require, "neo-tree.sources.manager")
-          if ok1 and ok2 and renderer.tree_is_visible(manager.get_state("filesystem")) then
-            require("neo-tree.command").execute({ action = "close" })
-            return
-          end
-          _neo_open(vim.fn.getcwd())
-        end,
-        desc = "Toggle Explorer",
-      },
-      {
-        "<leader>o",
-        function()
-          _neo_focus = not _neo_focus
-          local dir = _neo_focus and _find_pkg_root(vim.fn.expand("%:p")) or vim.fn.getcwd()
-          _neo_open(dir)
-        end,
-        desc = "Toggle Explorer Focus Mode",
-      },
-    },
     opts = function(_, opts)
-      -- Resize helper: update edgy.config.layout.left.size (the edgebar's total
-      -- width) then call layout.update() — this is the only way that persists.
-      -- Direct nvim_win_set_width gets reverted by edgy on its next layout pass.
-      local function neo_resize(delta)
-        local ok, cfg = pcall(require, "edgy.config")
-        if ok and cfg.layout and cfg.layout.left then
-          cfg.layout.left.size = math.max(20, cfg.layout.left.size + delta)
-          require("edgy.layout").update()
-          return
-        end
-        -- Fallback when edgy is not active
-        vim.cmd("vertical resize " .. math.max(20, vim.fn.winwidth(0) + delta))
-      end
-
       -- Use nui.nvim floating popups for create/rename input and delete confirm
-      -- This bypasses noice/cmdheight entirely so prompts are always visible
       opts.use_popups_for_input = true
       opts.popup_border_style   = "rounded"
 
@@ -156,7 +82,7 @@ return {
           hide_dotfiles = false,
           hide_gitignored = true,
         },
-        follow_current_file = { enabled = false }, -- handled manually above to avoid handle_reveal crash
+        follow_current_file = { enabled = true },
       })
       opts.window = vim.tbl_deep_extend("force", opts.window or {}, {
         width = 40,
@@ -167,6 +93,41 @@ return {
         },
       })
       return opts
+    end,
+    config = function(_, opts)
+      -- Standard neo-tree setup (mirrors LazyVim's config + our opts)
+      local function on_move(data)
+        Snacks.rename.on_rename_file(data.source, data.destination)
+      end
+      local events = require("neo-tree.events")
+      opts.event_handlers = opts.event_handlers or {}
+      vim.list_extend(opts.event_handlers, {
+        { event = events.FILE_MOVED,   handler = on_move },
+        { event = events.FILE_RENAMED, handler = on_move },
+      })
+      require("neo-tree").setup(opts)
+
+      -- Belt-and-suspenders: also register > / < as buffer-local keymaps
+      -- every time a neo-tree buffer opens, so they survive any opts ordering.
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "neo-tree",
+        callback = function()
+          local buf = vim.api.nvim_get_current_buf()
+          vim.keymap.set("n", ">", function() neo_resize(5) end,
+            { buffer = buf, nowait = true, silent = true, desc = "Widen explorer" })
+          vim.keymap.set("n", "<", function() neo_resize(-5) end,
+            { buffer = buf, nowait = true, silent = true, desc = "Narrow explorer" })
+        end,
+      })
+
+      vim.api.nvim_create_autocmd("TermClose", {
+        pattern = "*lazygit",
+        callback = function()
+          if package.loaded["neo-tree.sources.git_status"] then
+            require("neo-tree.sources.git_status").refresh()
+          end
+        end,
+      })
     end,
   },
 
