@@ -19,6 +19,23 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- Scroll-past-EOF: when cursor is near the last line, increase scrolloff so
+-- the last line stays centered with empty space below (VSCode scrollBeyondLastLine).
+vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+  callback = function()
+    local ft = vim.bo.filetype
+    if ft == "neo-tree" or ft == "lazy" or ft == "mason" or ft == "help" then return end
+    local last   = vim.fn.line("$")
+    local cur    = vim.fn.line(".")
+    local height = vim.api.nvim_win_get_height(0)
+    if last - cur < math.floor(height / 2) then
+      vim.opt_local.scrolloff = math.floor(height / 2)
+    else
+      vim.opt_local.scrolloff = 8
+    end
+  end,
+})
+
 -- Help gf (go to file) find TypeScript/JavaScript imports
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
