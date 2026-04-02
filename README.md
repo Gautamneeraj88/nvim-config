@@ -67,10 +67,9 @@ Everything is documented here so you can learn and use every feature.
 58. [Biscuits — Closing Brace Labels](#biscuits--closing-brace-labels)
 59. [Twilight — Dim Inactive Code](#twilight--dim-inactive-code)
 60. [Virt-column — Line Length Guide](#virt-column--line-length-guide)
-61. [Cinnamon — Smooth Scroll](#cinnamon--smooth-scroll)
-62. [Scroll-past-EOF — Dynamic Scrolloff](#scroll-past-eof--dynamic-scrolloff)
-63. [How to Customize](#how-to-customize)
-64. [Complete Keybinding Reference](#complete-keybinding-reference)
+61. [Smooth Scrolling](#smooth-scrolling)
+62. [How to Customize](#how-to-customize)
+63. [Complete Keybinding Reference](#complete-keybinding-reference)
 
 ---
 
@@ -138,8 +137,13 @@ $            → go to end of line
 gg           → go to top of file
 G            → go to bottom of file
 5j           → move 5 lines down (any number + motion)
-Ctrl+d       → scroll half page down (smooth)
-Ctrl+u       → scroll half page up (smooth)
+Ctrl+d       → scroll half page down (smooth animated)
+Ctrl+u       → scroll half page up (smooth animated)
+Ctrl+f       → scroll full page down
+Ctrl+b       → scroll full page up
+Ctrl+e       → scroll viewport down 1 line (cursor stays)
+Ctrl+y       → scroll viewport up 1 line (cursor stays)
+Mouse wheel  → scroll viewport smoothly (cursor stays put)
 ```
 
 ### Operators (actions in Normal mode)
@@ -181,14 +185,15 @@ Ctrl+r       → redo
     │   ├── lazy.lua          ← Plugin manager setup + LazyVim extras enabled
     │   ├── options.lua       ← Editor settings (line numbers, tabs, etc.)
     │   ├── keymaps.lua       ← Custom keybindings
-    │   └── autocmds.lua      ← Automatic actions (save cursor pos, etc.)
+    │   ├── autocmds.lua      ← Automatic actions (scroll-past-EOF, word wrap, etc.)
+    │   └── explorer.lua      ← Neo-tree <leader>e / <leader>o keymap logic (isolated)
     │
     └── plugins/
         ├── autosave.lua      ← Auto-save configuration
         ├── coding.lua        ← Better folds (UFO), tabout, refactoring, auto-tag, doc comments
         ├── colorscheme.lua   ← Themes: catppuccin mocha (default), oxocarbon, cyberdream, tokyonight, rose-pine, kanagawa
         ├── dap.lua           ← Debugger (Python, Go, TypeScript/JS, IoT: probe-rs + OpenOCD)
-        ├── editor.lua        ← neo-tree, gitsigns blame, peek definition, smooth scroll, TODO colors, diagnostics
+        ├── editor.lua        ← neo-tree, gitsigns blame, peek definition, cinnamon smooth scroll, TODO colors, diagnostics
         ├── extras.lua        ← Spectre, persistence, zen mode, yank history, better quickfix
         ├── git-advanced.lua  ← Diffview, git-conflict, Octo (GitHub)
         ├── markdown.lua      ← Markdown browser preview
@@ -700,13 +705,8 @@ When you pull or merge and get conflicts, this plugin highlights them and lets y
 ### What a conflict looks like
 
 ```python
-<<<<<<< HEAD (current branch — YOUR changes)
-def calculate(x):
-    return x * 2
-=======
 def calculate(x, y):
     return x + y
->>>>>>> feature/new-calc (incoming branch — THEIR changes)
 ```
 
 ### Resolving conflicts
@@ -2677,70 +2677,31 @@ No keybinding — always visible. Uses `NonText` highlight so it blends with you
 
 ---
 
-## Cinnamon — Smooth Scroll
+## Smooth Scrolling
 
-Smooth animated scrolling inspired by VSCode. When you use `Ctrl+d`, `Ctrl+u`, `Ctrl+f`, `Ctrl+b`, `gg`, or `G`, the cursor animates smoothly to its destination instead of jumping instantly.
+Powered by **cinnamon.nvim** — all scroll commands are animated with a quadratic easing curve.
 
-### Features
+### Keyboard
 
-- **Smooth cursor movement** — Animated transitions for all jump commands
-- **Mouse wheel scrolling** — Viewport scrolls smoothly with `<ScrollWheelUp>` and `<ScrollWheelDown>`
-- **Cursor modes** — Follows the cursor or centers the viewport
-- **Configurable easing** — Currently set to `quadratic` for natural acceleration
+| Key | Action |
+|-----|--------|
+| `<C-d>` | Scroll down half page (smooth) |
+| `<C-u>` | Scroll up half page (smooth) |
+| `<C-f>` | Scroll down full page (smooth) |
+| `<C-b>` | Scroll up full page (smooth) |
+| `<C-e>` | Scroll viewport down 1 line — cursor stays put |
+| `<C-y>` | Scroll viewport up 1 line — cursor stays put |
+| `zz` | Center current line on screen (smooth) |
+| `zt` | Move current line to top (smooth) |
+| `zb` | Move current line to bottom (smooth) |
 
-### How it works
+### Mouse
 
-```
-:1         → animates from current position to line 1
-G          → animates to end of file with smooth transition
-Ctrl+d     → half-page down with animation
-Ctrl+u     → half-page up with animation
+Mouse wheel scrolls the **viewport only** — the cursor does not follow. This matches VSCode's default mouse behaviour.
 
-# Mouse wheel (viewport only, cursor stays still)
-<ScrollWheelUp>    → smooth scroll up 3 lines
-<ScrollWheelDown>  → smooth scroll down 3 lines
-```
+### Scroll-past-EOF
 
-No custom keybindings required — works automatically on all standard navigation commands.
-
----
-
-## Scroll-past-EOF — Dynamic Scrolloff
-
-When you scroll to the bottom of the file, `scrolloff` dynamically increases so the last line stays centered with empty space below — mimicking VSCode's `scrollBeyondLastLine` behavior.
-
-### How it works
-
-This is implemented as an autocmd in `lua/config/autocmds.lua` that fires on `CursorMoved` and `CursorMovedI`:
-
-```lua
--- When cursor is in the bottom half of the viewport,
--- increase scrolloff so the line stays centered
-if last - cur < math.floor(height / 2) then
-  vim.opt_local.scrolloff = math.floor(height / 2)
-else
-  vim.opt_local.scrolloff = 8  -- default scrolloff
-end
-```
-
-### Example
-
-```
-File with 50 lines, viewport height 20 lines
-
-When at line 45 (near bottom):
-  scrolloff increases to 10 → ensures at least 10 lines of space below cursor
-  Line 45 stays centered vertically
-  Lines 46-50 visible, then empty space
-
-When at line 10 (top half):
-  scrolloff returns to default 8
-  Normal scrolling behavior resumes
-```
-
-- Excluded for UI panels (`neo-tree`, `lazy`, `mason`, `help`) — they have their own scroll behavior
-- No keybinding — always active
-- Creates a more spacious, VSCode-like editing experience
+When your cursor moves within half a screen of the last line, `scrolloff` automatically increases so the last line stays near the center with empty space below — equivalent to VSCode's `scrollBeyondLastLine`. When you move back up into the file it resets to normal.
 
 ---
 

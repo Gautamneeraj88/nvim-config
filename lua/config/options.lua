@@ -3,6 +3,8 @@
 
 local opt = vim.opt
 
+opt.mouse = "a"  -- enable mouse in all modes
+
 opt.scrolloff    = 8     -- keep 8 lines visible above/below cursor (LazyVim default: 4)
 opt.inccommand   = "split" -- show live substitution results in a split (LazyVim default: "nosplit")
 

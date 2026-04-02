@@ -162,6 +162,23 @@ return {
     "declancm/cinnamon.nvim",
     event = "VeryLazy",
     opts = {
+      keymaps  = { basic = true, extra = true },
+      options  = { mode = "cursor", easing = "quadratic", max_delta = { time = 150 } },
+    },
+    config = function(_, opts)
+      require("cinnamon").setup(opts)
+      -- Mouse: scroll viewport only, cursor stays (VSCode behaviour)
+      local modes = { "n", "v", "i" }
+      vim.keymap.set(modes, "<ScrollWheelDown>", "<C-e><C-e><C-e>", { silent = true })
+      vim.keymap.set(modes, "<ScrollWheelUp>",   "<C-y><C-y><C-y>", { silent = true })
+    end,
+  },
+
+  -- ─── VSCode-style smooth scrolling ──────────────────────────────────────────
+  {
+    "declancm/cinnamon.nvim",
+    event = "VeryLazy",
+    opts = {
       keymaps = { basic = true, extra = true },
       options = { mode = "cursor", easing = "quadratic", max_delta = { time = 150 } },
     },
