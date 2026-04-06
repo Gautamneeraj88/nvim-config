@@ -68,8 +68,8 @@ return {
       include_declaration = false,
       sections = {
         definition  = false, -- skip "1 definition" (not useful)
-        references  = true,  -- show "X references"
-        implements  = true,  -- show "X implementations"
+        references  = false, -- disabled — textDocument/references scans the whole project (expensive)
+        implements  = true,  -- show "X implementations" (cheap, single-file lookup)
         git_authors = false, -- skip git authors (noisy)
       },
     },

@@ -5,7 +5,7 @@
 -- detection, and lualine. Fix the root cause first, then wrap the higher-level
 -- fs functions as a safety net.
 do
-  local uv = vim.uv or vim.loop
+  local uv = vim.uv
 
   -- 1. Patch uv.cwd itself: return HOME instead of nil on failure.
   --    This fixes LazyVim root.get(), lualine, and anything else that calls

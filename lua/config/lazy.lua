@@ -52,7 +52,7 @@ require("lazy").setup({
   },
   defaults = { lazy = true, version = false },
   install = { colorscheme = { "catppuccin", "tokyonight", "rose-pine", "kanagawa" } },
-  checker = { enabled = true, notify = false },
+  checker = { enabled = true, notify = false, frequency = 86400 }, -- check once per day, not every launch
   performance = {
     rtp = {
       disabled_plugins = { "gzip", "tarPlugin", "tohtml", "tutor", "zipPlugin" },

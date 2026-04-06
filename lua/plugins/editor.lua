@@ -132,9 +132,12 @@ return {
   },
 
   -- Disable snacks.explorer so only neo-tree is used
+  -- Also lower the big-file threshold — LazyVim default is 1.5MB which is too high;
+  -- at 200KB files start causing noticeable lag with treesitter + biscuits + hlargs running together
   {
     "folke/snacks.nvim",
     opts = {
+      bigfile  = { size = 200 * 1024 }, -- 200KB — disables treesitter/syntax/indentscope automatically
       explorer = { enabled = false },
       dashboard = {
         preset = {
@@ -168,9 +171,10 @@ return {
     config = function(_, opts)
       require("cinnamon").setup(opts)
       -- Mouse: scroll viewport only, cursor stays (VSCode behaviour)
+      -- Use "3<C-e>" not "<C-e><C-e><C-e>" — one command = one cinnamon animation
       local modes = { "n", "v", "i" }
-      vim.keymap.set(modes, "<ScrollWheelDown>", "<C-e><C-e><C-e>", { silent = true })
-      vim.keymap.set(modes, "<ScrollWheelUp>",   "<C-y><C-y><C-y>", { silent = true })
+      vim.keymap.set(modes, "<ScrollWheelDown>", "3<C-e>", { silent = true })
+      vim.keymap.set(modes, "<ScrollWheelUp>",   "3<C-y>", { silent = true })
     end,
   },
 

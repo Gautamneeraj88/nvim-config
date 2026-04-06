@@ -42,8 +42,9 @@ return {
           go_test_args = { "-count=1", "-timeout=60s", "-race" },
         },
       },
-      -- Show output in a floating window
-      output = { open_on_run = true },
+      -- Don't auto-open output panel — use <leader>to to check output when needed
+      -- ("failed" is not a valid value; only true/false/"short" are supported)
+      output = { open_on_run = false },
       status = { virtual_text = true }, -- show pass/fail inline in code
       icons = {
         passed  = " ",

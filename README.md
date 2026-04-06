@@ -483,9 +483,10 @@ Press `<leader>cd` for the full detailed float with source info on any line.
 ### LSP management
 
 ```
-:LspInfo     → show which servers are running for current file
-:LspRestart  → restart all LSP servers (use when they get stuck)
-:Mason       → open Mason to install/uninstall language servers
+:LspInfo       → show which servers are running for current file
+:LspRestart    → restart all LSP servers (use when they get stuck)
+:Mason         → open Mason to install/uninstall language servers
+<leader>lR     → restart LSP (keymap — use when inlay hints or completions stop working)
 ```
 
 ---
@@ -1124,7 +1125,8 @@ Saves your entire workspace state — open files, splits, cursor positions — a
 ### How it works
 
 - When you quit Neovim, the session is **automatically saved**
-- Next time you open Neovim in the same folder, press `<leader>qs` and everything comes back exactly as you left it — same files, same splits, same cursor positions
+- When you open Neovim **with no file arguments** (`nvim .` or bare `nvim`), the last session for that directory is **automatically restored** — no keypress needed
+- You can also manually restore with `<leader>qs` at any time
 
 ### Workflow
 
@@ -1240,12 +1242,12 @@ When you open a `.md` file, Neovim **renders it visually**:
 
 | Theme                | Command                      | Style                                          |
 | -------------------- | ---------------------------- | ---------------------------------------------- |
-| **Catppuccin Mocha** | `:colorscheme catppuccin`    | **Default** — dark, pastel purple/pink tones. Full integrations (LSP, DAP, fzf, gitsigns, neo-tree, noice, snacks…) with italic comments, bold keywords/functions/types |
+| **Kanagawa Wave**    | `:colorscheme kanagawa`      | **Default** — dark Japanese ink aesthetic, compiled bytecode for fast startup |
+| **Catppuccin Mocha** | `:colorscheme catppuccin`    | Dark, pastel purple/pink tones. Full integrations (LSP, DAP, fzf, gitsigns, neo-tree, noice, snacks…) with italic comments, bold keywords/functions/types |
 | **Oxocarbon**        | `:colorscheme oxocarbon`     | IBM Carbon, near-black + electric blue         |
 | **Cyberdream**       | `:colorscheme cyberdream`    | Cyberpunk neon, vibrant dark                   |
 | **Tokyonight Night** | `:colorscheme tokyonight`    | Dark blue/purple                               |
 | **Rose Pine**        | `:colorscheme rose-pine`     | Warm, earthy, rose tones                       |
-| **Kanagawa Wave**    | `:colorscheme kanagawa`      | Dark Japanese ink aesthetic                    |
 
 ### Variants within themes
 
@@ -1268,8 +1270,8 @@ opts = { theme = "wave" }
 Edit `lua/plugins/colorscheme.lua`, find this line and change the value:
 
 ```lua
-{ "LazyVim/LazyVim", opts = { colorscheme = "catppuccin" } }
--- change to: "oxocarbon", "cyberdream", "tokyonight", "rose-pine", or "kanagawa"
+{ "LazyVim/LazyVim", opts = { colorscheme = "kanagawa" } }
+-- change to: "catppuccin", "oxocarbon", "cyberdream", "tokyonight", or "rose-pine"
 ```
 
 ---
@@ -1475,6 +1477,7 @@ Shift+Tab    → go to PREVIOUS open buffer (prev tab)
 H            → previous buffer (same as Shift+Tab)
 L            → next buffer
 <leader>bd   → close current buffer (close this tab)
+<leader>bo   → close all OTHER buffers (keep only the current one)
 <leader>fb   → see all open buffers in fzf (switch by searching)
 ```
 
@@ -1867,7 +1870,9 @@ color: red; /* shows with red background */
 <div class="bg-blue-500 text-red-300"><!-- both colors shown inline --></div>
 ```
 
-No keymaps needed — it's always on automatically.
+Active only in web/style files where color values actually appear: CSS, SCSS, LESS, HTML, JavaScript, TypeScript, JSX, TSX, Svelte, Vue, and JSON. Not loaded in other file types to avoid noise.
+
+No keymaps needed — it's always on automatically in supported files.
 
 ---
 
@@ -1876,6 +1881,8 @@ No keymaps needed — it's always on automatically.
 When you open `package.json`, shows the **current installed version** of each package inline, and highlights outdated ones.
 
 > **Note:** This plugin activates only when opening a file named `package.json` — it does not load for any other JSON files, keeping startup fast.
+
+> **Auto-detection:** The package manager is detected automatically from your lockfile (`pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn, otherwise npm). Commands like update/install use the correct package manager without any configuration.
 
 ```
 <leader>np   → toggle showing package versions
@@ -2588,6 +2595,8 @@ Works for TypeScript, JavaScript, Python, and Go — any language where the LSP 
 <leader>ll   → toggle LSP Lens on/off
 ```
 
+> **Performance note:** Reference counts are **disabled by default** (project-wide LSP scans are expensive). Implementation counts are shown. Toggle references on with `<leader>ll` if you need them.
+
 > **Tip:** Toggle it off with `<leader>ll` when you need a clean view (e.g. during a presentation or code review).
 
 ---
@@ -2623,6 +2632,8 @@ class OrderService:
 ```
 
 Comment style matches the language (`//` for TypeScript/Go, `#` for Python, `--` for Lua).
+
+Labels only appear on the **current cursor line's** closing braces — not on every closing brace in the file. This keeps the display clean and avoids visual clutter on dense files.
 
 No keybinding — always active.
 
@@ -2715,11 +2726,14 @@ This is implemented as an autocmd in `lua/config/autocmds.lua` that fires on `Cu
 
 ```lua
 -- When cursor is in the bottom half of the viewport,
--- increase scrolloff so the line stays centered
-if last - cur < math.floor(height / 2) then
-  vim.opt_local.scrolloff = math.floor(height / 2)
-else
-  vim.opt_local.scrolloff = 8  -- default scrolloff
+-- increase scrolloff so the line stays centered.
+-- Target is cached per-window and only written when it changes,
+-- so the CursorMoved autocmd has minimal overhead.
+local target = (last - cur < math.floor(height / 2))
+  and math.floor(height / 2) or 8
+if _scrolloff_cache[win] ~= target then
+  _scrolloff_cache[win] = target
+  vim.opt_local.scrolloff = target
 end
 ```
 
@@ -2928,6 +2942,8 @@ opt.relativenumber = false  -- use absolute line numbers
 | `<leader>w>`  | Increase window width                |
 | `<leader>w<`  | Decrease window width                |
 | `<leader>bd`  | Close buffer                         |
+| `<leader>bo`  | Close all other buffers              |
+| `<leader>lR`  | Restart LSP servers                  |
 | `<leader>A`   | Select all                           |
 | `<leader>qq`  | Quit all                             |
 

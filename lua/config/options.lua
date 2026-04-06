@@ -10,6 +10,9 @@ opt.inccommand   = "split" -- show live substitution results in a split (LazyVim
 opt.updatetime   = 200   -- faster CursorHold / LSP diagnostics (LazyVim default: 4000ms)
 opt.timeoutlen   = 300   -- faster which-key popup (LazyVim default: 300, explicit for clarity)
 
+-- UX
+opt.confirm      = true  -- ask "Save / Discard / Cancel?" instead of erroring on :q with unsaved changes
+
 -- Cleaner UI
 opt.cmdheight    = 0     -- hide cmdline when not in use (noice.nvim handles messages)
 opt.pumheight    = 10    -- cap autocomplete menu at 10 items (default: unlimited)

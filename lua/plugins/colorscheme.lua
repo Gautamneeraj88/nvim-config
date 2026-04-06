@@ -1,11 +1,10 @@
 -- Multiple themes available — switch with <leader>uT
--- Current default: catppuccin mocha
+-- Current default: kanagawa wave
 return {
-  -- ─── Catppuccin Mocha — default (vibrant dark, full integrations) ─────────
+  -- ─── Catppuccin Mocha ─────────────────────────────────────────────────────
   {
     "catppuccin/nvim",
     name     = "catppuccin",
-    priority = 1000,           -- load first so other plugins pick up highlights
     opts = {
       flavour    = "mocha",    -- mocha=dark | macchiato | frappe | latte=light
       term_colors = true,      -- set terminal colors to catppuccin palette
@@ -73,14 +72,27 @@ return {
     opts = { variant = "main" },
   },
 
+  -- ─── Kanagawa Wave — default ──────────────────────────────────────────────
   {
     "rebelot/kanagawa.nvim",
-    opts = { theme = "wave" },
+    priority = 1000,           -- load first so other plugins pick up highlights
+    opts = {
+      compile      = true,     -- compile to Lua bytecode for faster startup (run :KanagawaCompile once if colors look off)
+      theme        = "wave",   -- wave=dark | dragon=darker | lotus=light
+      background   = { dark = "wave", light = "lotus" },
+      terminalColors = true,
+      styles = {
+        comments   = { italic = true },
+        keywords   = { bold = true },
+        functions  = { bold = true },
+        types      = { bold = true },
+      },
+    },
   },
 
-  -- ─── Set catppuccin mocha as the default ─────────────────────────────────
+  -- ─── Set kanagawa wave as the default ────────────────────────────────────
   {
     "LazyVim/LazyVim",
-    opts = { colorscheme = "catppuccin" },
+    opts = { colorscheme = "kanagawa" },
   },
 }

@@ -25,6 +25,16 @@ map("v", ">", ">gv", { desc = "Indent right" })
 -- Select all
 map("n", "<leader>A", "gg<S-v>G", { desc = "Select all" })
 
+-- Close all buffers except current (Snacks handles modified buffers and adjacent switching)
+map("n", "<leader>bo", function()
+  local current = vim.api.nvim_get_current_buf()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if buf ~= current and vim.bo[buf].buflisted then
+      Snacks.bufdelete(buf)
+    end
+  end
+end, { desc = "Close other buffers" })
+
 -- ─── Navigation ──────────────────────────────────────────────────────────────
 
 -- Window resize (<leader>w + arrow-like keys, step of 5)
@@ -118,6 +128,31 @@ vim.api.nvim_create_autocmd("User", {
     end
   end,
 })
+
+-- ─── LSP ──────────────────────────────────────────────────────────────────────
+
+-- Restart all LSP servers — use when inlay hints / completions stop working
+-- after a long session (tsserver/gopls can degrade without crashing)
+map("n", "<leader>lR", "<cmd>LspRestart<cr>", { desc = "Restart LSP" })
+
+-- ─── Which-key group labels ───────────────────────────────────────────────────
+-- Labels for custom <leader> prefixes so they show up named in the which-key popup.
+-- LazyVim already registers labels for its own groups (f, b, c, g, q, u, x…).
+vim.schedule(function()
+  local ok, wk = pcall(require, "which-key")
+  if not ok then return end
+  wk.add({
+    { "<leader>t",   group = "Test" },
+    { "<leader>d",   group = "Debug" },
+    { "<leader>dt",  group = "Debug Test" },
+    { "<leader>dg",  group = "Debug Go" },
+    { "<leader>r",   group = "REST" },
+    { "<leader>R",   group = "Refactor" },
+    { "<leader>n",   group = "NPM / Package" },
+    { "<leader>go",  group = "Octo (GitHub)" },
+    { "<leader>l",   group = "LSP" },
+  })
+end)
 
 -- ─── Git ──────────────────────────────────────────────────────────────────────
 

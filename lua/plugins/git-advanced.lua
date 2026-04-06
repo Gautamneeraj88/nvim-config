@@ -49,7 +49,7 @@ return {
   -- ─── Git Conflict — highlight & resolve merge conflicts ──────────────────────
   {
     "akinsho/git-conflict.nvim",
-    event = "BufReadPre",
+    event = "BufReadPost", -- BufReadPre fires before content is loaded; Post is correct for conflict detection
     opts = {},
     -- When you open a file with merge conflicts, these keymaps activate:
     -- co  → choose OURS   (current branch)

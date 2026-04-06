@@ -7,8 +7,8 @@ return {
       stiffness               = 0.8,
       trailing_stiffness      = 0.5,
       distance_stop_animating = 0.5,
-      -- catppuccin mocha: pink accent cursor trail
-      cursor_color            = "#cba6f7", -- mauve
+      -- kanagawa wave: violet accent cursor trail
+      cursor_color            = "#957FB8", -- oniViolet
       stiffness_insert_mode   = 0.6,
     },
   },
@@ -75,8 +75,10 @@ return {
       },
       excluded_buftypes = { "terminal" },
       excluded_filetypes = { "neo-tree", "lazy", "mason", "aerial", "trouble" },
+      -- WinScrolled removed — cinnamon fires it on every scroll frame, causing
+      -- the scrollbar to redraw hundreds of times during a single smooth scroll
       autocmd = { render = { "BufWinEnter", "TabEnter", "TermEnter", "WinEnter",
-                             "CmdwinLeave", "VimResized", "WinScrolled" } },
+                             "CmdwinLeave", "VimResized" } },
     },
   },
 
@@ -141,12 +143,12 @@ return {
     "mvllow/modes.nvim",
     event = "BufReadPre",
     opts = {
-      -- catppuccin mocha palette
+      -- kanagawa wave palette
       colors = {
-        copy   = "#f9e2af", -- yellow  — yank
-        delete = "#f38ba8", -- red     — delete
-        insert = "#a6e3a1", -- green   — insert
-        visual = "#cba6f7", -- mauve   — visual
+        copy   = "#E6C384", -- carpYellow  — yank
+        delete = "#E82424", -- samuraiRed  — delete
+        insert = "#98BB6C", -- springGreen — insert
+        visual = "#957FB8", -- oniViolet   — visual
       },
       line_opacity = 0.15,
     },
@@ -162,7 +164,7 @@ return {
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     opts = {
       show_on_start    = true,
-      cursor_line_only = false,
+      cursor_line_only = true,  -- only show label for the block the cursor is in
       prefix_string    = "  ",  -- small arrow before the label
       max_length       = 50,    -- truncate long labels
       min_distance     = 8,     -- only show when block is 8+ lines tall
@@ -197,7 +199,7 @@ return {
     event = "BufReadPost",
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     opts = {
-      color = "#fab387", -- catppuccin mocha peach — warm, distinct from variables
+      color = "#FFA066", -- kanagawa surimiOrange — warm, distinct from variables
       excluded_argnames = {
         usages = {
           python = { "self", "cls", "_" },
@@ -208,8 +210,9 @@ return {
   },
 
   -- ─── Smooth animations (mini.animate) ─────────────────────────────────────────
-  -- Animates: cursor movement, window resize, window open/close
-  -- NOTE: scroll animation is disabled since neoscroll handles that already
+  -- Animates: window resize, window open/close
+  -- Scroll animation is handled by cinnamon.nvim — disabled here to avoid double animation
+  -- Cursor animation is handled by smear-cursor.nvim — disabled here too
   {
     "nvim-mini/mini.animate",
     event = "VeryLazy",
@@ -225,11 +228,8 @@ return {
         close = {
           timing = animate.gen_timing.linear({ duration = 80, unit = "total" }),
         },
-        scroll = {
-          timing = animate.gen_timing.linear({ duration = 80, unit = "total" }),
-        },
-        -- Cursor animation disabled — smear-cursor.nvim handles this
-        cursor = { enable = false },
+        scroll = { enable = false }, -- cinnamon.nvim handles scroll animation
+        cursor = { enable = false }, -- smear-cursor.nvim handles cursor animation
       }
     end,
   },

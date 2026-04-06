@@ -66,18 +66,26 @@ return {
             dapui_console     = "  Console",
             ["dap-repl"]      = "  REPL",
           }
-          vim.api.nvim_create_autocmd({ "FileType", "BufWinEnter" }, {
-            callback = function(args)
-              local ft = vim.bo[args.buf].filetype
-              local title = dap_titles[ft]
-              if not title then return end
-              -- defer so window is fully initialized before setting winbar
-              vim.schedule(function()
-                for _, win in ipairs(vim.fn.win_findbuf(args.buf)) do
-                  vim.api.nvim_set_option_value("winbar", title, { win = win })
-                end
-              end)
-            end,
+          local dap_ft_pattern = vim.tbl_keys(dap_titles)
+
+          local function set_dap_winbar(args)
+            local title = dap_titles[vim.bo[args.buf].filetype]
+            if not title then return end
+            vim.schedule(function()
+              for _, win in ipairs(vim.fn.win_findbuf(args.buf)) do
+                vim.api.nvim_set_option_value("winbar", title, { win = win })
+              end
+            end)
+          end
+
+          -- FileType: pattern-filtered — only fires for DAP buffers, not every file
+          vim.api.nvim_create_autocmd("FileType", {
+            pattern  = dap_ft_pattern,
+            callback = set_dap_winbar,
+          })
+          -- BufWinEnter: can't pattern-filter by filetype, so keep the runtime check
+          vim.api.nvim_create_autocmd("BufWinEnter", {
+            callback = set_dap_winbar,
           })
 
           -- Auto-open UI when debugging starts, auto-close when done

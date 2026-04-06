@@ -77,7 +77,14 @@ return {
   {
     "folke/persistence.nvim",
     event = "BufReadPre",
-    opts  = { options = vim.opt.sessionoptions:get() },
+    opts  = {
+      -- Remove "terminal" from sessionoptions — dead terminal processes can't be
+      -- restored and cause errors when a saved session is loaded in a new Neovim instance
+      options = vim.tbl_filter(
+        function(o) return o ~= "terminal" end,
+        vim.opt.sessionoptions:get()
+      ),
+    },
     keys  = {
       { "<leader>qs", function() require("persistence").load() end,                desc = "Restore session" },
       { "<leader>ql", function() require("persistence").load({ last = true }) end, desc = "Restore last session" },
@@ -106,7 +113,7 @@ return {
       default_mappings = true,
       builtin_marks    = { ".", "<", ">", "^" }, -- also show built-in vim marks
       cyclic           = true,                   -- wrap around when navigating
-      refresh_interval = 250,
+      refresh_interval = 500, -- 250ms was unnecessarily frequent; 500ms is imperceptible
       sign_priority    = { lower = 10, upper = 15, builtin = 8, bookmark = 20 },
       excluded_filetypes = {
         "neo-tree", "aerial", "lazy", "mason", "trouble", "qf",

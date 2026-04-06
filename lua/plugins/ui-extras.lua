@@ -30,8 +30,13 @@ return {
     event = "BufReadPost",
     opts = {
       filetypes = {
-        "*",                              -- enable for all filetypes
-        css = { css = true },
+        -- only web/style filetypes where color values actually appear
+        "css", "scss", "less",
+        "html",
+        "javascript", "typescript", "javascriptreact", "typescriptreact",
+        "svelte", "vue",
+        "json", "jsonc",
+        css  = { css = true },
         html = { names = true },
       },
       user_default_options = {
@@ -51,9 +56,14 @@ return {
     dependencies = { "MunifTanjim/nui.nvim" },
     event = { "BufReadPost */package.json" },
     config = function()
-      require("package-info").setup({
-        package_manager = "npm", -- change to "yarn" or "pnpm" if needed
-      })
+      -- Auto-detect package manager from lockfile in cwd
+      local pm = "npm"
+      if vim.fn.filereadable(vim.fn.getcwd() .. "/pnpm-lock.yaml") == 1 then
+        pm = "pnpm"
+      elseif vim.fn.filereadable(vim.fn.getcwd() .. "/yarn.lock") == 1 then
+        pm = "yarn"
+      end
+      require("package-info").setup({ package_manager = pm })
     end,
     keys = {
       { "<leader>np", function() require("package-info").toggle() end,         desc = "Toggle package versions" },
