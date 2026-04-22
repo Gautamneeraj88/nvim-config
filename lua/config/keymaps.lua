@@ -146,13 +146,33 @@ vim.schedule(function()
     { "<leader>d",   group = "Debug" },
     { "<leader>dt",  group = "Debug Test" },
     { "<leader>dg",  group = "Debug Go" },
-    { "<leader>r",   group = "REST" },
     { "<leader>R",   group = "Refactor" },
     { "<leader>n",   group = "NPM / Package" },
-    { "<leader>go",  group = "Octo (GitHub)" },
+    { "<leader>go",  group = "Octo (GitHub)" }, -- octo.nvim (git-advanced.lua)
     { "<leader>l",   group = "LSP" },
+    { "<leader>a",   group = "Argument" },   -- treesitter-textobjects swap
   })
 end)
+
+-- <leader>p group only registered in Python buffers (iron.nvim keys are also ft-local)
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "python",
+  callback = function()
+    local ok, wk = pcall(require, "which-key")
+    if not ok then return end
+    wk.add({ { "<leader>p", group = "Python REPL", buffer = 0 } })
+  end,
+})
+
+-- <leader>j group only registered in JS/TS buffers
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
+  callback = function()
+    local ok, wk = pcall(require, "which-key")
+    if not ok then return end
+    wk.add({ { "<leader>j", group = "Node REPL", buffer = 0 } })
+  end,
+})
 
 -- ─── Git ──────────────────────────────────────────────────────────────────────
 

@@ -16,7 +16,8 @@ return {
       -- Use LSP first, fall back to treesitter, then indent
       provider_selector = function(_, filetype, _)
         local lsp_filetypes = { "typescript", "javascript", "typescriptreact",
-                                "javascriptreact", "python", "go", "json", "lua", "markdown" }
+                                "javascriptreact", "python", "go", "json", "lua", "markdown",
+                                "c", "cpp" }
         if vim.tbl_contains(lsp_filetypes, filetype) then
           return { "lsp", "treesitter" }
         end
@@ -99,7 +100,7 @@ return {
   },
 
   -- ─── Neogen — generate doc comments from function signatures ──────────────────
-  -- Press <leader>nd on any function, class, or type to generate the full
+  -- Press <leader>cg on any function, class, or type to generate the full
   -- doc comment template for the language automatically.
   -- TypeScript → TSDoc (@param, @returns)
   -- Python     → Google-style docstring (Args:, Returns:)
@@ -108,7 +109,7 @@ return {
     "danymat/neogen",
     cmd  = "Neogen",
     keys = {
-      { "<leader>ng", function() require("neogen").generate() end, desc = "Generate doc comment" },
+      { "<leader>cg", function() require("neogen").generate() end, desc = "Generate doc comment" },
     },
     opts = {
       snippet_engine = "luasnip",
@@ -117,6 +118,8 @@ return {
         typescript = { template = { annotation_convention = "tsdoc" } },
         javascript = { template = { annotation_convention = "jsdoc" } },
         go         = { template = { annotation_convention = "godoc" } },
+        c          = { template = { annotation_convention = "doxygen" } },
+        cpp        = { template = { annotation_convention = "doxygen" } },
       },
     },
   },
@@ -130,6 +133,119 @@ return {
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     opts = {
       act_as_tab = true, -- pass Tab through to blink.cmp when completion is active
+    },
+  },
+
+  -- ─── Treesitter Textobjects — af/if ac/ic aa/ia text objects ─────────────────
+  -- af/if  = around/inside function   ac/ic  = around/inside class
+  -- aa/ia  = around/inside argument   al/il  = around/inside loop
+  --
+  -- Motion: ]m / [m jump to next/prev function,  ]k / [k for class
+  -- Swap:   <leader>as  swap arg right,  <leader>aS  swap arg left
+  {
+    "nvim-treesitter/nvim-treesitter",
+    dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
+    opts = {
+      textobjects = {
+        select = {
+          enable    = true,
+          lookahead = true, -- jump to next textobject if not on one
+          keymaps = {
+            ["af"] = { query = "@function.outer", desc = "Around function" },
+            ["if"] = { query = "@function.inner", desc = "Inside function" },
+            ["ac"] = { query = "@class.outer",    desc = "Around class" },
+            ["ic"] = { query = "@class.inner",    desc = "Inside class" },
+            ["aa"] = { query = "@parameter.outer", desc = "Around argument" },
+            ["ia"] = { query = "@parameter.inner", desc = "Inside argument" },
+            ["al"] = { query = "@loop.outer",      desc = "Around loop" },
+            ["il"] = { query = "@loop.inner",      desc = "Inside loop" },
+          },
+        },
+        move = {
+          enable    = true,
+          set_jumps = true, -- add to jumplist so <C-o>/<C-i> works
+          goto_next_start = {
+            ["]m"] = { query = "@function.outer", desc = "Next function start" },
+            ["]k"] = { query = "@class.outer",    desc = "Next class start" },
+          },
+          goto_next_end = {
+            ["]M"] = { query = "@function.outer", desc = "Next function end" },
+            ["]K"] = { query = "@class.outer",    desc = "Next class end" },
+          },
+          goto_previous_start = {
+            ["[m"] = { query = "@function.outer", desc = "Prev function start" },
+            ["[k"] = { query = "@class.outer",    desc = "Prev class start" },
+          },
+          goto_previous_end = {
+            ["[M"] = { query = "@function.outer", desc = "Prev function end" },
+            ["[K"] = { query = "@class.outer",    desc = "Prev class end" },
+          },
+        },
+        swap = {
+          enable = true,
+          swap_next     = { ["<leader>as"] = { query = "@parameter.inner", desc = "Swap arg right" } },
+          swap_previous = { ["<leader>aS"] = { query = "@parameter.inner", desc = "Swap arg left" } },
+        },
+      },
+    },
+  },
+
+  -- ─── Various Textobjects — URL, number, indent, markdown, Python docstring ───
+  -- Complements treesitter-textobjects (which handles functions/classes/args/loops).
+  -- New textobjects (o/x mode):
+  --   au/iu  = URL                    an/in  = number
+  --   ai/ii  = indentation block      aV/iV  = value in assignment (x = |val|)
+  --   am/im  = markdown link          aP/iP  = Python triple-quote string
+  {
+    "chrisgrieser/nvim-various-textobjs",
+    event = "BufReadPost",
+    opts = { keymaps = { useDefaults = false } },
+    config = function(_, opts)
+      require("various-textobjs").setup(opts)
+      local vt = require("various-textobjs")
+      local map = function(lhs, fn, desc)
+        vim.keymap.set({ "o", "x" }, lhs, fn, { desc = desc })
+      end
+      -- URL (open/yank a URL cleanly)
+      map("au", function() vt.url("outer") end,          "Around URL")
+      map("iu", function() vt.url("inner") end,          "Inner URL")
+      -- Number
+      map("an", function() vt.number("outer") end,       "Around number")
+      map("in", function() vt.number("inner") end,       "Inner number")
+      -- Indentation block (especially useful in Python)
+      map("ai", function() vt.indentation("outer", "outer") end, "Around indent")
+      map("ii", function() vt.indentation("inner", "inner") end, "Inner indent")
+      -- Assignment value  x = |value|
+      map("aV", function() vt.value("outer") end,        "Around value")
+      map("iV", function() vt.value("inner") end,        "Inner value")
+      -- Markdown link
+      map("am", function() vt.mdLink("outer") end,       "Around md link")
+      map("im", function() vt.mdLink("inner") end,       "Inner md link (URL part)")
+      -- Python triple-quoted string / docstring
+      map("aP", function() vt.pyTripleQuotes("outer") end, "Around Python triple-string")
+      map("iP", function() vt.pyTripleQuotes("inner") end, "Inner Python triple-string")
+    end,
+  },
+
+  -- ─── TypeScript Error Translator — human-readable TS errors ──────────────────
+  -- TypeScript errors like "Type 'X' is not assignable to type 'Y' …" become
+  -- plain English explanations inline in the diagnostic float.
+  -- No keymaps needed — replaces the diagnostic text automatically.
+  {
+    "dmmulroy/ts-error-translator.nvim",
+    ft = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
+    opts = { auto_override_publish_diagnostics = true },
+  },
+
+  -- ─── Completion ghost text — inline suggestion preview ───────────────────────
+  -- Shows the top completion candidate greyed-out as you type (like VS Code inline).
+  -- Accept with Tab (tabout.nvim already wires Tab → blink → tabout fallback).
+  {
+    "saghen/blink.cmp",
+    opts = {
+      completion = {
+        ghost_text = { enabled = true },
+      },
     },
   },
 }

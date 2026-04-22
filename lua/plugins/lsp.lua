@@ -11,7 +11,7 @@ return {
           settings = {
             vtsls = {
               tsserver = {
-                maxTsServerMemory = 4096, -- prevent OOM on large monorepos
+                maxTsServerMemory = 3072, -- 3GB: enough for large monorepos, less wasteful on small projects
               },
             },
             typescript = {
@@ -74,19 +74,46 @@ return {
           },
         },
 
-        -- ── Python (pyright) — merges with venv detection in python.lua ──────
-        pyright = {
+        -- ── Python: disable pyright, use basedpyright (stricter, faster, maintained) ──
+        pyright = { enabled = false },
+        basedpyright = {
           settings = {
-            python = {
+            basedPyright = {
               analysis = {
-                typeCheckingMode      = "standard", -- real type errors (default is "off")
+                typeCheckingMode      = "standard",
                 reportUnusedImport    = "warning",
                 reportUnusedVariable  = "warning",
+                autoSearchPaths       = true,
+                useLibraryCodeForTypes = true,
+                diagnosticMode        = "openFilesOnly",
               },
             },
           },
         },
 
+      },
+    },
+  },
+
+  -- Install basedpyright via mason
+  {
+    "mason-org/mason-lspconfig.nvim",
+    opts = { ensure_installed = { "basedpyright" } },
+  },
+
+  -- ─── Go: wire gofumpt in conform (gopls alone won't override conform's formatter) ─
+  -- LazyVim's lang.go extra defaults to gofmt. Override to gofumpt so
+  -- <leader>cf and format-on-save both use the stricter formatter.
+  {
+    "mason-org/mason.nvim",
+    opts = { ensure_installed = { "gofumpt", "stylua" } },
+  },
+  {
+    "stevearc/conform.nvim",
+    opts = {
+      formatters_by_ft = {
+        go  = { "goimports", "gofumpt" },
+        lua = { "stylua" },
       },
     },
   },

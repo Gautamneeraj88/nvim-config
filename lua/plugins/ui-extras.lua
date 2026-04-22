@@ -56,11 +56,13 @@ return {
     dependencies = { "MunifTanjim/nui.nvim" },
     event = { "BufReadPost */package.json" },
     config = function()
-      -- Auto-detect package manager from lockfile in cwd
+      -- Detect package manager from the package.json's own directory (not cwd).
+      -- Triggered on BufReadPost, so the current buffer IS the package.json.
+      local dir = vim.fn.expand("%:p:h")
       local pm = "npm"
-      if vim.fn.filereadable(vim.fn.getcwd() .. "/pnpm-lock.yaml") == 1 then
+      if vim.fn.filereadable(dir .. "/pnpm-lock.yaml") == 1 then
         pm = "pnpm"
-      elseif vim.fn.filereadable(vim.fn.getcwd() .. "/yarn.lock") == 1 then
+      elseif vim.fn.filereadable(dir .. "/yarn.lock") == 1 then
         pm = "yarn"
       end
       require("package-info").setup({ package_manager = pm })

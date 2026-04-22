@@ -3,6 +3,7 @@ return {
   {
     "folke/snacks.nvim",
     opts = {
+      input = { enabled = true }, -- replaces dressing.nvim for vim.ui.input
       terminal = {
         win = {
           style    = "terminal",

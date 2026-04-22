@@ -4,12 +4,12 @@ return {
     "sphamba/smear-cursor.nvim",
     event = "VeryLazy",
     opts = {
-      stiffness               = 0.8,
-      trailing_stiffness      = 0.5,
-      distance_stop_animating = 0.5,
+      stiffness               = 0.9,   -- catch up fast → shorter overlap with cinnamon scroll
+      trailing_stiffness      = 0.6,
+      distance_stop_animating = 1.5,   -- skip animation for tiny 1-2 char moves (reduces CPU on CursorMoved)
       -- kanagawa wave: violet accent cursor trail
       cursor_color            = "#957FB8", -- oniViolet
-      stiffness_insert_mode   = 0.6,
+      stiffness_insert_mode   = 0.7,
     },
   },
 
@@ -49,9 +49,11 @@ return {
   {
     "petertriho/nvim-scrollbar",
     event = "BufReadPost",
+    dependencies = { "kevinhwang91/nvim-hlslens" }, -- search markers in scrollbar
     config = function(_, opts)
       require("scrollbar").setup(opts)
       require("scrollbar.handlers.gitsigns").setup()
+      require("scrollbar.handlers.search").setup()  -- show search positions in scrollbar
     end,
     opts = {
       hide_if_all_visible = true, -- hide scrollbar if entire file is visible
@@ -141,7 +143,7 @@ return {
   -- Very subtle (15% opacity) — just enough to know which mode you are in at a glance.
   {
     "mvllow/modes.nvim",
-    event = "BufReadPre",
+    event = "VeryLazy",
     opts = {
       -- kanagawa wave palette
       colors = {
@@ -164,16 +166,17 @@ return {
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     opts = {
       show_on_start    = true,
-      cursor_line_only = true,  -- only show label for the block the cursor is in
       prefix_string    = "  ",  -- small arrow before the label
       max_length       = 50,    -- truncate long labels
-      min_distance     = 8,     -- only show when block is 8+ lines tall
+      min_distance     = 12,    -- only show when block is 12+ lines tall (8 was too noisy)
       language_config  = {
         python     = { prefix_string = "  # " },
         go         = { prefix_string = "  // " },
         typescript = { prefix_string = "  // " },
         javascript = { prefix_string = "  // " },
         lua        = { prefix_string = "  -- " },
+        c          = { prefix_string = "  // " },
+        cpp        = { prefix_string = "  // " },
       },
     },
   },
@@ -206,6 +209,32 @@ return {
           lua    = { "self", "_" },
         },
       },
+    },
+  },
+
+  -- ─── Illuminate — highlight all references to word/symbol under cursor ──────────
+  -- When your cursor sits on a variable or function, all other occurrences in the
+  -- file are subtly underlined. Uses LSP when available, falls back to treesitter.
+  -- <leader>ui toggles it if you need a clean view temporarily.
+  {
+    "RRethy/vim-illuminate",
+    event = "BufReadPost",
+    opts = {
+      delay    = 200,
+      providers = { "lsp", "treesitter", "regex" },
+      large_file_cutoff   = 2000,
+      large_file_overrides = { providers = { "lsp" } }, -- regex is too slow on big files
+      filetypes_denylist = {
+        "neo-tree", "aerial", "lazy", "mason", "trouble", "qf",
+        "dap-repl", "dapui_scopes", "dapui_breakpoints",
+        "dapui_stacks", "dapui_watches", "dapui_console",
+      },
+    },
+    config = function(_, opts)
+      require("illuminate").configure(opts)
+    end,
+    keys = {
+      { "<leader>ui", function() require("illuminate").toggle() end, desc = "Toggle Illuminate" },
     },
   },
 

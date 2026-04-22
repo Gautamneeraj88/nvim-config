@@ -47,16 +47,18 @@ return {
   },
 
   -- ─── Git Conflict — highlight & resolve merge conflicts ──────────────────────
+  -- co  → choose OURS   (current branch)   ct  → choose THEIRS (incoming)
+  -- cb  → choose BOTH   (keep both)        c0  → choose NONE   (delete block)
+  -- ]x  → next conflict                    [x  → previous conflict
   {
     "akinsho/git-conflict.nvim",
-    event = "BufReadPost", -- BufReadPre fires before content is loaded; Post is correct for conflict detection
-    opts = {},
-    -- When you open a file with merge conflicts, these keymaps activate:
-    -- co  → choose OURS   (current branch)
-    -- ct  → choose THEIRS (incoming branch)
-    -- cb  → choose BOTH   (keep both changes)
-    -- c0  → choose NONE   (delete the conflict block)
-    -- ]x  → next conflict
-    -- [x  → previous conflict
+    event = "BufReadPost",
+    opts = {
+      disable_diagnostics = true, -- LSP errors on conflict markers are noise
+      list_opener         = "copen",
+    },
+    keys = {
+      { "<leader>gx", "<cmd>GitConflictListQf<cr>", desc = "List all conflicts (quickfix)" },
+    },
   },
 }

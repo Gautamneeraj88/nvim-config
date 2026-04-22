@@ -48,7 +48,6 @@ require("lazy").setup({
 
     -- Disable LazyVim defaults we don't want
     { "folke/flash.nvim",      enabled = false }, -- not used; keep nav simple
-    { "MagicDuck/grug-far.nvim", enabled = false }, -- using spectre instead (<leader>sr)
   },
   defaults = { lazy = true, version = false },
   install = { colorscheme = { "catppuccin", "tokyonight", "rose-pine", "kanagawa" } },

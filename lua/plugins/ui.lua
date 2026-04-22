@@ -37,6 +37,17 @@ return {
   {
     "folke/noice.nvim",
     opts = function(_, opts)
+      -- Filter noisy one-line messages that don't need notification treatment
+      opts.routes = vim.list_extend(opts.routes or {}, {
+        { filter = { event = "msg_show", find = "written" },          opts = { skip = true } },
+        { filter = { event = "msg_show", find = "%d+ lines? yanked" }, opts = { skip = true } },
+        { filter = { event = "msg_show", find = "search hit" },        opts = { skip = true } },
+        { filter = { event = "msg_show", find = "Already at" },        opts = { skip = true } },
+        { filter = { event = "msg_show", find = "%d+ fewer lines" },   opts = { skip = true } },
+        { filter = { event = "msg_show", find = "%d+ more lines" },    opts = { skip = true } },
+        { filter = { event = "msg_show", find = "%d+ lines" },         opts = { skip = true } },
+      })
+
       opts.views = vim.tbl_deep_extend("force", opts.views or {}, {
         cmdline_popup = {
           position = { row = "40%", col = "50%" }, -- centered in screen
@@ -56,28 +67,6 @@ return {
     end,
   },
 
-  -- ─── LSP Lens — reference & implementation counts above functions ─────────
-  -- Shows  ● 4 references   ⚡ 2 implementations  above each function/class.
-  -- Like VS Code's CodeLens — requires the LSP to support it (TS, Python, Go all do).
-  -- Toggle with <leader>ll if you need a clean view temporarily.
-  {
-    "VidocqH/lsp-lens.nvim",
-    event = "LspAttach",
-    opts = {
-      enable           = true,
-      include_declaration = false,
-      sections = {
-        definition  = false, -- skip "1 definition" (not useful)
-        references  = false, -- disabled — textDocument/references scans the whole project (expensive)
-        implements  = true,  -- show "X implementations" (cheap, single-file lookup)
-        git_authors = false, -- skip git authors (noisy)
-      },
-    },
-    keys = {
-      { "<leader>ll", "<cmd>LspLensToggle<cr>", desc = "Toggle LSP Lens" },
-    },
-  },
-
   -- ─── Statusline ───────────────────────────────────────────────────────────
   {
     "nvim-lualine/lualine.nvim",
@@ -86,7 +75,32 @@ return {
         return " " .. os.date("%H:%M")
       end
 
+      -- Show active Python venv name in statusline (only for Python files)
+      local function venv()
+        if vim.bo.filetype ~= "python" then return "" end
+        local path = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
+        if not path then return "" end
+        return " " .. vim.fn.fnamemodify(path, ":t")
+      end
+
+      -- Show count of unresolved merge conflict markers.
+      -- Cached by changedtick — only rescans when buffer content actually changes.
+      local _cc = {}
+      local function conflicts()
+        local buf  = vim.api.nvim_get_current_buf()
+        local tick = vim.api.nvim_buf_get_changedtick(buf)
+        if not _cc[buf] or _cc[buf].tick ~= tick then
+          local n = 0
+          for _, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
+            if line:match("^<<<<<<<") then n = n + 1 end
+          end
+          _cc[buf] = { tick = tick, n = n }
+        end
+        return _cc[buf].n > 0 and (" ⚡" .. _cc[buf].n) or ""
+      end
+
       opts.sections = opts.sections or {}
+      opts.sections.lualine_x = vim.list_extend(opts.sections.lualine_x or {}, { conflicts, venv })
       opts.sections.lualine_z = { "location", clock }
 
       return opts
@@ -142,21 +156,6 @@ return {
             return vim.bo[buf].buftype == "help"
           end,
         },
-      },
-    },
-  },
-
-  -- ─── Better UI for inputs & selects (vim.ui.input / vim.ui.select) ─────────
-  {
-    "stevearc/dressing.nvim",
-    event = "VeryLazy",
-    opts = {
-      input = {
-        default_prompt = "➤ ",
-        win_options = { winblend = 0 },
-      },
-      select = {
-        backend = { "fzf_lua", "builtin" },
       },
     },
   },

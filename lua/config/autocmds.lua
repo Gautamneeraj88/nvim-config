@@ -24,8 +24,10 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "markdown", "text", "gitcommit", "gitrebase" },
   callback = function()
-    vim.opt_local.wrap     = true
-    vim.opt_local.linebreak = true  -- break at word boundaries
+    vim.opt_local.wrap      = true
+    vim.opt_local.linebreak = true       -- break at word boundaries
+    vim.opt_local.spell     = true       -- spell check for prose
+    vim.opt_local.spelllang = "en_us"
   end,
 })
 
@@ -34,10 +36,17 @@ vim.api.nvim_create_autocmd("FileType", {
 -- Cached per-window — only writes the option when the value actually changes,
 -- avoiding redundant option assignments on every single cursor movement.
 local _scrolloff_cache = {}
-vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+local _scrolloff_skip = {
+  ["neo-tree"] = true, ["lazy"] = true, ["mason"] = true, ["help"] = true,
+  ["aerial"] = true, ["trouble"] = true, ["qf"] = true,
+  ["dap-repl"] = true, ["dapui_scopes"] = true, ["dapui_breakpoints"] = true,
+  ["dapui_stacks"] = true, ["dapui_watches"] = true, ["dapui_console"] = true,
+  ["toggleterm"] = true, ["oil"] = true, ["undotree"] = true,
+  ["neotest-summary"] = true, ["neotest-output-panel"] = true,
+}
+vim.api.nvim_create_autocmd({ "CursorMoved" }, {
   callback = function()
-    local ft = vim.bo.filetype
-    if ft == "neo-tree" or ft == "lazy" or ft == "mason" or ft == "help" then return end
+    if _scrolloff_skip[vim.bo.filetype] then return end
     local win    = vim.api.nvim_get_current_win()
     local last   = vim.api.nvim_buf_line_count(0)
     local cur    = vim.api.nvim_win_get_cursor(win)[1]
@@ -60,4 +69,23 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.path:prepend(".,src,node_modules")
     vim.opt_local.includeexpr = "substitute(v:fname, '^\\~/', '', '')"
   end,
+})
+
+-- Per-filetype virt-column guides (overrides the global 80,120 from visuals.lua)
+-- Set via buffer variable that virt-column.nvim reads.
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "python" },
+  callback = function() vim.b.virt_column_virtcolumn = "79,88" end, -- PEP 8 / Black
+})
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "go" },
+  callback = function() vim.b.virt_column_virtcolumn = "100,120" end, -- Go community standard
+})
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "c", "cpp" },
+  callback = function() vim.b.virt_column_virtcolumn = "80,100" end, -- embedded / K&R tradition
+})
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "markdown", "text", "gitcommit" },
+  callback = function() vim.b.virt_column_virtcolumn = "72,80" end, -- prose width conventions
 })

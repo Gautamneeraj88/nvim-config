@@ -14,19 +14,71 @@ local function neo_resize(delta)
 end
 
 return {
+  -- ─── Neoconf — project-local LSP / Neovim settings ───────────────────────────
+  -- Drop a .neoconf.json at the project root to override LSP settings per-project.
+  -- Example: set typeCheckingMode=strict for one repo, off for another.
+  -- Also teaches luals about Neovim's Lua API when editing this config.
+  {
+    "folke/neoconf.nvim",
+    cmd   = "Neoconf",
+    opts  = { global_settings = "neoconf.json" },
+    -- Must be set up before nvim-lspconfig so it can hook on_new_config for each server
+    config = function(_, opts) require("neoconf").setup(opts) end,
+  },
+  -- Wire neoconf as a dependency so it's guaranteed to load first
+  {
+    "neovim/nvim-lspconfig",
+    dependencies = { "folke/neoconf.nvim" },
+  },
+
+  -- ─── Hardtime — break bad vim habits ─────────────────────────────────────────
+  -- Notifies (doesn't block) when you repeat hjkl more than once or spam dd.
+  -- Arrow keys are kept enabled (useful in insert mode / non-vim contexts).
+  -- Toggle with <leader>uh if it gets annoying during a specific task.
+  {
+    "m4xshen/hardtime.nvim",
+    dependencies = { "MunifTanjim/nui.nvim" },
+    event = "VeryLazy",
+    opts = {
+      max_time       = 1000,  -- ms window to detect repeated keys
+      max_count      = 3,     -- allow up to 3 repeats before notifying
+      disable_mouse  = false, -- keep mouse (we use it intentionally)
+      hint           = true,
+      notification   = true,
+      restriction_mode = "hint", -- hint only, don't block the key
+      -- Allow arrow keys — useful in insert mode and for non-vim-native contexts.
+      -- Hardtime's default disabled_keys blocks them; empty table re-enables.
+      disabled_keys = {
+        ["<Up>"]    = {},
+        ["<Down>"]  = {},
+        ["<Left>"]  = {},
+        ["<Right>"] = {},
+      },
+      disabled_filetypes = {
+        "neo-tree", "aerial", "lazy", "mason", "trouble", "qf",
+        "dap-repl", "dapui_scopes", "dapui_breakpoints",
+        "dapui_stacks", "dapui_watches", "help", "undotree",
+        "oil", "toggleterm",
+      },
+    },
+    keys = {
+      { "<leader>uh", "<cmd>Hardtime toggle<cr>", desc = "Toggle Hardtime" },
+    },
+  },
+
   -- ─── TODO Comments — custom colors only, everything else default ─────────────
   {
     "folke/todo-comments.nvim",
     opts = {
       keywords = {
-        TODO  = { color = "#89b4fa" }, -- catppuccin blue
-        FIXME = { color = "#f38ba8" }, -- catppuccin red
-        NOTE  = { color = "#a6e3a1", alt = { "INFORMATION" } }, -- catppuccin green
-        HACK  = { color = "#f9e2af" }, -- catppuccin yellow
-        WARN  = { color = "#fab387" }, -- catppuccin peach
-        PERF  = { color = "#cba6f7" }, -- catppuccin mauve
-        TEST  = { color = "#94e2d5" }, -- catppuccin teal
-        INFO  = { color = "#89dceb" }, -- catppuccin sky
+        TODO  = { color = "#7E9CD8" }, -- kanagawa crystalBlue
+        FIXME = { color = "#E82424" }, -- kanagawa samuraiRed
+        NOTE  = { color = "#98BB6C", alt = { "INFORMATION" } }, -- kanagawa springGreen
+        HACK  = { color = "#E6C384" }, -- kanagawa carpYellow
+        WARN  = { color = "#FF9E3B" }, -- kanagawa roninYellow
+        PERF  = { color = "#957FB8" }, -- kanagawa oniViolet
+        TEST  = { color = "#7AA89F" }, -- kanagawa waveAqua2
+        INFO  = { color = "#6A9589" }, -- kanagawa waveAqua1
       },
     },
   },
@@ -47,7 +99,7 @@ return {
             return msg
           end,
         },
-        float = { source = true, border = "rounded" },
+        float = { source = true }, -- border from global opt.winborder
       },
     },
   },
@@ -131,7 +183,8 @@ return {
     end,
   },
 
-  -- Disable snacks.explorer so only neo-tree is used
+  -- Disable snacks.explorer (neo-tree is used instead) and snacks.words
+  -- (vim-illuminate already handles word highlighting with LSP+treesitter fallback)
   -- Also lower the big-file threshold — LazyVim default is 1.5MB which is too high;
   -- at 200KB files start causing noticeable lag with treesitter + biscuits + hlargs running together
   {
@@ -139,6 +192,7 @@ return {
     opts = {
       bigfile  = { size = 200 * 1024 }, -- 200KB — disables treesitter/syntax/indentscope automatically
       explorer = { enabled = false },
+      words    = { enabled = false }, -- illuminate handles this with more control
       dashboard = {
         preset = {
           header = [[
@@ -237,6 +291,37 @@ return {
           require("goto-preview").close_all_win()
         end,
         desc = "Close All Peek Windows",
+      },
+    },
+  },
+
+  -- ─── Oil — edit filesystem as a buffer ───────────────────────────────────────
+  -- Open parent dir with  -  and edit like text: rename, move (dd/p), bulk delete
+  -- Writes happen only on :w — nothing is destructive until you save.
+  -- neo-tree stays as the default explorer; oil handles bulk file operations.
+  {
+    "stevearc/oil.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    cmd = "Oil",
+    keys = {
+      { "-", "<cmd>Oil<cr>", desc = "Open parent dir (oil)" },
+    },
+    opts = {
+      default_file_explorer = false,          -- keep neo-tree as <leader>e
+      columns = { "icon", "permissions", "size", "mtime" },
+      delete_to_trash = true,                 -- safer than permanent delete
+      skip_confirm_for_simple_edits = true,
+      view_options = { show_hidden = true },
+      float = { padding = 2, border = "rounded" },
+      keymaps = {
+        ["<CR>"] = "actions.select",
+        ["-"]    = "actions.parent",
+        ["_"]    = "actions.open_cwd",
+        ["g."]   = "actions.toggle_hidden",
+        ["gs"]   = "actions.change_sort",
+        ["gx"]   = "actions.open_external",
+        ["<C-c>"] = "actions.close",
+        ["?"]    = "actions.show_help",
       },
     },
   },

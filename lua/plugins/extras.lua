@@ -5,14 +5,23 @@ return {
   -- (<C-n>/<C-p> moved to Alt to avoid conflict with vim-visual-multi)
   {
     "gbprod/yanky.nvim",
+    dependencies = { "kkharji/sqlite.lua" }, -- persistent ring across sessions
     event = "VeryLazy",
     opts = {
-      ring = { storage = "memory" },
-      highlight = { on_put = false, on_yank = false }, -- Snacks handles yank highlight
+      ring = { storage = "sqlite" },
+      highlight = { on_put = true, on_yank = false },  -- on_put: yanky handles it (Snacks only fires TextYankPost = yank, not put)
     },
     keys = {
-      { "p",          "<Plug>(YankyPutAfter)",      mode = { "n", "x" }, desc = "Put after" },
-      { "P",          "<Plug>(YankyPutBefore)",     mode = { "n", "x" }, desc = "Put before" },
+      -- Fall through to native p/P when vim-visual-multi is active —
+      -- VM manages its own put handler and breaks if yanky intercepts it.
+      { "p", function()
+          if vim.b.VM_Selection ~= nil then return "p" end
+          return "<Plug>(YankyPutAfter)"
+        end, expr = true, mode = { "n", "x" }, desc = "Put after" },
+      { "P", function()
+          if vim.b.VM_Selection ~= nil then return "P" end
+          return "<Plug>(YankyPutBefore)"
+        end, expr = true, mode = { "n", "x" }, desc = "Put before" },
       { "<M-p>",      "<Plug>(YankyCycleForward)",  desc = "Cycle yank forward" },
       { "<M-n>",      "<Plug>(YankyCycleBackward)", desc = "Cycle yank backward" },
       { "<leader>fy", "<cmd>YankyRingHistory<cr>",  desc = "Yank History" },
@@ -58,18 +67,6 @@ return {
         border = "rounded",
         show_title = true,
       },
-    },
-  },
-
-  -- ─── Project-wide Find & Replace (Spectre) ───────────────────────────────────
-  {
-    "nvim-pack/nvim-spectre",
-    cmd  = "Spectre",
-    opts = { open_cmd = "noswapfile vnew" },
-    keys = {
-      { "<leader>sr", function() require("spectre").open() end,                               desc = "Search & Replace (Spectre)" },
-      { "<leader>sW", function() require("spectre").open_visual({ select_word = true }) end,  desc = "Search word under cursor" },
-      { "<leader>sf", function() require("spectre").open_file_search() end,                   desc = "Search in current file" },
     },
   },
 
@@ -119,7 +116,8 @@ return {
         "neo-tree", "aerial", "lazy", "mason", "trouble", "qf",
         "dap-repl", "dapui_scopes", "dapui_breakpoints",
         "dapui_stacks", "dapui_watches", "dapui_console",
-        "toggleterm",
+        "toggleterm", "oil",
+        "neotest-summary", "neotest-output-panel",
       },
     },
   },

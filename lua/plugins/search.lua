@@ -3,6 +3,33 @@
 -- (<leader>ff, <leader>fr, <leader>fb, <leader>/, <leader>ss, gr, etc.)
 -- This file only configures appearance and adds keymaps the extra doesn't provide.
 return {
+
+  -- ─── HlSearch Lens — [n/total] count shown inline next to each match ─────────
+  -- While searching with / or *, shows [2/14] next to the current match.
+  -- n/N/*/# all trigger the lens. The scrollbar also gains search-position markers.
+  {
+    "kevinhwang91/nvim-hlslens",
+    event = "BufReadPost",
+    opts = {
+      calm_down        = true,   -- clear lens when cursor moves away
+      nearest_only     = true,   -- annotate only the nearest match (cleaner)
+      nearest_float_when = "never", -- inline virt text, no floating window
+    },
+    config = function(_, opts)
+      require("hlslens").setup(opts)
+      local map = function(key, cmd)
+        vim.keymap.set("n", key, cmd, { noremap = true, silent = true })
+      end
+      -- wrap n/N/*/# so the lens updates after each jump
+      map("n",  [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]])
+      map("N",  [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]])
+      map("*",  [[*<Cmd>lua require('hlslens').start()<CR>]])
+      map("#",  [[#<Cmd>lua require('hlslens').start()<CR>]])
+      map("g*", [[g*<Cmd>lua require('hlslens').start()<CR>]])
+      map("g#", [[g#<Cmd>lua require('hlslens').start()<CR>]])
+    end,
+  },
+
   {
     "ibhagwan/fzf-lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -47,8 +74,7 @@ return {
       -- TODOs / FIXMEs across the project (todo-comments integration)
       { "<leader>ft", function() require("todo-comments.fzf").todo() end, desc = "Search TODOs" },
 
-      -- Switch colorscheme (LazyVim uses <leader>uC; keep <leader>uT as alias)
-      { "<leader>uT", "<cmd>FzfLua colorschemes<cr>",            desc = "Switch Theme" },
+
     },
   },
 }

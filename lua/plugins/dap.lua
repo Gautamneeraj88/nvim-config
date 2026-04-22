@@ -109,7 +109,7 @@ return {
       },
       -- Auto-installs debug adapters via Mason
       {
-        "mason-org/mason-nvim-dap.nvim",
+        "jay-babu/mason-nvim-dap.nvim",
         dependencies = { "mason-org/mason.nvim" },
         opts = {
           automatic_installation = true,
@@ -146,6 +146,19 @@ return {
     },
     config = function()
       local dap = require("dap")
+
+      -- Load .vscode/launch.json before each debug session (if present).
+      -- Runs fresh per session so switching projects always picks the right file.
+      dap.listeners.before.launch["vscode_launchjs"] = function()
+        local f = vim.fn.getcwd() .. "/.vscode/launch.json"
+        if vim.fn.filereadable(f) == 1 then
+          require("dap.ext.vscode").load_launchjs(f, {
+            ["pwa-node"] = { "typescript", "javascript", "typescriptreact", "javascriptreact" },
+            ["python"]   = { "python" },
+            ["delve"]    = { "go" },
+          })
+        end
+      end
 
       -- Breakpoint sign styling
       vim.fn.sign_define("DapBreakpoint",          { text = "●", texthl = "DapBreakpoint",         linehl = "", numhl = "" })
@@ -227,19 +240,26 @@ return {
 
       -- ─── TypeScript / JavaScript adapter ────────────────────────────────────────
       local js_debug = vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js"
-      -- Only register if mason has already installed the adapter; on first launch
-      -- mason-nvim-dap installs it automatically before any debug session starts.
-      if vim.fn.filereadable(js_debug) == 0 then return end
+      -- Register adapters as functions so the file check runs at debug time, not config time.
+      -- This means JS/TS debugging works immediately after mason installs the adapter
+      -- (no Neovim restart needed).
       for _, adapter in ipairs({ "pwa-node", "pwa-chrome", "node-terminal" }) do
-        dap.adapters[adapter] = {
-          type = "server",
-          host = "localhost",
-          port = "${port}",
-          executable = {
-            command = "node",
-            args    = { js_debug, "${port}" },
-          },
-        }
+        dap.adapters[adapter] = function(callback, _)
+          if vim.fn.filereadable(js_debug) == 0 then
+            vim.notify(
+              "js-debug-adapter not installed yet.\nRun :MasonInstall js-debug-adapter and try again.",
+              vim.log.levels.ERROR,
+              { title = "DAP" }
+            )
+            return
+          end
+          callback({
+            type = "server",
+            host = "localhost",
+            port = "${port}",
+            executable = { command = "node", args = { js_debug, "${port}" } },
+          })
+        end
       end
 
       for _, lang in ipairs({ "typescript", "javascript", "typescriptreact", "javascriptreact" }) do

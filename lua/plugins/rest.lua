@@ -53,6 +53,8 @@ return {
       },
     },
     keys = {
+      -- Group label — ft-local so it only appears in .http/.rest buffers
+      { "<leader>r",  group = "REST",                                        ft = { "http", "rest" } },
       -- Run requests
       { "<leader>rr", function() require("kulala").run() end,              ft = { "http", "rest" }, desc = "Run request" },
       { "<leader>ra", function() require("kulala").run_all() end,          ft = { "http", "rest" }, desc = "Run all requests" },

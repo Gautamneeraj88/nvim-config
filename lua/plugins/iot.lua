@@ -102,4 +102,43 @@ Diagnostics:
       end, { desc = "Generate .clangd (suppress cross-compiler errors)" })
     end,
   },
+
+  -- ─── Clangd Extensions — richer C/C++ LSP features ───────────────────────
+  -- Adds on top of clangd (already installed via mason-lspconfig):
+  --   gh               → switch between .h and .cpp instantly
+  --   <leader>ioH      → type hierarchy (what implements this class?)
+  --   <leader>ioT      → show AST for expression under cursor
+  --   Inlay hints      → param names + type hints inline in C/C++ code
+  {
+    "p00f/clangd_extensions.nvim",
+    ft = { "c", "cpp" },
+    config = function()
+      require("clangd_extensions").setup({
+        inlay_hints = {
+          inline             = true,
+          only_current_line  = false,
+          show_parameter_hints = true,
+          parameter_hints_prefix = "  ",
+          other_hints_prefix     = "  ",
+        },
+        ast = {
+          role_icons = {
+            type         = "",
+            declaration  = "",
+            expression   = "",
+            specifier    = "",
+            statement    = "",
+            ["template argument"] = "",
+          },
+        },
+        memory_usage = { border = "rounded" },
+        symbol_info  = { border = "rounded" },
+      })
+    end,
+    keys = {
+      { "gh",          "<cmd>ClangdSwitchSourceHeader<cr>", ft = { "c", "cpp" }, desc = "Switch header/source" },
+      { "<leader>ioH", "<cmd>ClangdTypeHierarchy<cr>",     ft = { "c", "cpp" }, desc = "Type hierarchy" },
+      { "<leader>ioT", "<cmd>ClangdAST<cr>",               ft = { "c", "cpp" }, desc = "AST view" },
+    },
+  },
 }
