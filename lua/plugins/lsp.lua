@@ -86,6 +86,12 @@ return {
                 autoSearchPaths       = true,
                 useLibraryCodeForTypes = true,
                 diagnosticMode        = "openFilesOnly",
+                inlayHints = {
+                  variableTypes      = true,  -- show inferred variable types
+                  functionReturnTypes = true, -- show inferred return types
+                  callArgumentNames  = "all", -- show param names at call sites
+                  genericTypes       = false, -- skip noisy generic type params
+                },
               },
             },
           },

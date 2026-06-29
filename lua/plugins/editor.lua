@@ -193,6 +193,12 @@ return {
       bigfile  = { size = 200 * 1024 }, -- 200KB — disables treesitter/syntax/indentscope automatically
       explorer = { enabled = false },
       words    = { enabled = false }, -- illuminate handles this with more control
+      -- Indent guides + animated scope (replaces mini.indentscope — single system, no doubled guides)
+      indent   = {
+        enabled = true,
+        char    = "│",
+        scope   = { char = "│" },
+      },
       dashboard = {
         preset = {
           header = [[

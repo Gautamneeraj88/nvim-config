@@ -160,13 +160,6 @@ return {
     },
   },
 
-  -- ─── Indent guides ────────────────────────────────────────────────────────
-  -- LazyVim includes mini.indentscope — this just tweaks the style
-  {
-    "nvim-mini/mini.indentscope",
-    opts = {
-      symbol = "│",
-      options = { try_as_border = true },
-    },
-  },
+  -- Indent guides are handled by snacks.indent (LazyVim default) — configured in
+  -- lua/plugins/editor.lua. mini.indentscope was removed to avoid doubled guides.
 }

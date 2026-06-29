@@ -27,55 +27,62 @@ This document covers every feature in detail — read it when you're stuck or wa
 18. [Test Coverage](#test-coverage)
 19. [Project Search & Replace — grug-far](#project-search--replace--grug-far)
 20. [REST Client — Kulala](#rest-client--kulala)
-21. [Python REPL — Iron](#python-repl--iron)
-22. [Node.js REPL — Iron](#nodejs-repl--iron)
-23. [Undo Tree](#undo-tree)
-24. [Session Management](#session-management)
-25. [Multi-cursor](#multi-cursor)
-26. [Text Objects](#text-objects)
-27. [Refactoring](#refactoring)
-28. [Project Switcher](#project-switcher)
-29. [Zen Mode & Twilight](#zen-mode--twilight)
-30. [Code Outline — Aerial](#code-outline--aerial)
-31. [Live Rename — inc-rename](#live-rename--inc-rename)
-32. [Better Folds — UFO](#better-folds--ufo)
-33. [Tabout](#tabout)
-34. [Color Highlighter](#color-highlighter)
-35. [Package Info](#package-info)
-36. [Wakatime — Coding Time Tracker](#wakatime--coding-time-tracker)
-37. [Debugger — DAP](#debugger--dap)
-38. [IoT / Embedded Development — PlatformIO](#iot--embedded-development--platformio)
-39. [TODO Comments](#todo-comments)
-40. [Markdown](#markdown)
-41. [Themes](#themes)
-42. [Panel Layout — Edgy](#panel-layout--edgy)
-43. [Breadcrumbs — Dropbar](#breadcrumbs--dropbar)
-44. [Sticky Context Header](#sticky-context-header)
-45. [Inline Git Blame](#inline-git-blame)
-46. [Code Action Lightbulb](#code-action-lightbulb)
-47. [Yank History — Yanky](#yank-history--yanky)
-48. [Better Quickfix — nvim-bqf](#better-quickfix--nvim-bqf)
-49. [Smarter Word Motions — Spider](#smarter-word-motions--spider)
-50. [Hardtime — Break Bad Habits](#hardtime--break-bad-habits)
-51. [Buffers & Windows](#buffers--windows)
-52. [Editing Shortcuts](#editing-shortcuts)
-53. [Statusline](#statusline)
-54. [Python — Virtual Environment & LSP](#python--virtual-environment--lsp)
-55. [Auto-tag — nvim-ts-autotag](#auto-tag--nvim-ts-autotag)
-56. [Doc Comments — Neogen](#doc-comments--neogen)
-57. [Marks](#marks)
-58. [Function Arg Highlight — Hlargs](#function-arg-highlight--hlargs)
-59. [Floating Split Labels — Incline](#floating-split-labels--incline)
-60. [Mode Colors](#mode-colors)
-61. [Noice — Centered Cmdline](#noice--centered-cmdline)
-62. [Biscuits — Closing Brace Labels](#biscuits--closing-brace-labels)
-63. [Virt-column — Line Length Guide](#virt-column--line-length-guide)
-64. [Cinnamon — Smooth Scroll](#cinnamon--smooth-scroll)
-65. [Scroll-past-EOF — Dynamic Scrolloff](#scroll-past-eof--dynamic-scrolloff)
-66. [Neoconf — Per-project LSP Settings](#neoconf--per-project-lsp-settings)
-67. [Auto-save](#auto-save)
-68. [How to Customize](#how-to-customize)
-69. [Complete Keybinding Reference](#complete-keybinding-reference)
+21. [Database — SQL Client](#database--sql-client)
+22. [Python REPL — Iron](#python-repl--iron)
+23. [Node.js REPL — Iron](#nodejs-repl--iron)
+24. [Undo Tree](#undo-tree)
+25. [Session Management](#session-management)
+26. [Multi-cursor](#multi-cursor)
+27. [Text Objects](#text-objects)
+28. [Refactoring](#refactoring)
+29. [Project Switcher](#project-switcher)
+30. [Zen Mode & Twilight](#zen-mode--twilight)
+31. [Code Outline — Aerial](#code-outline--aerial)
+32. [Live Rename — inc-rename](#live-rename--inc-rename)
+33. [Better Folds — UFO](#better-folds--ufo)
+34. [Tabout](#tabout)
+35. [Color Highlighter](#color-highlighter)
+36. [Package Info](#package-info)
+37. [Wakatime — Coding Time Tracker](#wakatime--coding-time-tracker)
+38. [Debugger — DAP](#debugger--dap)
+39. [IoT / Embedded Development — PlatformIO](#iot--embedded-development--platformio)
+40. [TODO Comments](#todo-comments)
+41. [Markdown](#markdown)
+42. [Themes](#themes)
+43. [Panel Layout — Edgy](#panel-layout--edgy)
+44. [Breadcrumbs — Dropbar](#breadcrumbs--dropbar)
+45. [Sticky Context Header](#sticky-context-header)
+46. [Inline Git Blame](#inline-git-blame)
+47. [Code Action Lightbulb](#code-action-lightbulb)
+48. [Yank History — Yanky](#yank-history--yanky)
+49. [Better Quickfix — nvim-bqf](#better-quickfix--nvim-bqf)
+50. [Smarter Word Motions — Spider](#smarter-word-motions--spider)
+51. [Hardtime — Break Bad Habits](#hardtime--break-bad-habits)
+52. [Buffers & Windows](#buffers--windows)
+53. [Editing Shortcuts](#editing-shortcuts)
+54. [Statusline](#statusline)
+55. [Python — Virtual Environment & LSP](#python--virtual-environment--lsp)
+56. [Auto-tag — nvim-ts-autotag](#auto-tag--nvim-ts-autotag)
+57. [Doc Comments — Neogen](#doc-comments--neogen)
+58. [Marks](#marks)
+59. [Function Arg Highlight — Hlargs](#function-arg-highlight--hlargs)
+60. [Floating Split Labels — Incline](#floating-split-labels--incline)
+61. [Mode Colors](#mode-colors)
+62. [Noice — Centered Cmdline](#noice--centered-cmdline)
+63. [Biscuits — Closing Brace Labels](#biscuits--closing-brace-labels)
+64. [Virt-column — Line Length Guide](#virt-column--line-length-guide)
+65. [Cinnamon — Smooth Scroll](#cinnamon--smooth-scroll)
+66. [Scroll-past-EOF — Dynamic Scrolloff](#scroll-past-eof--dynamic-scrolloff)
+67. [Neoconf — Per-project LSP Settings](#neoconf--per-project-lsp-settings)
+68. [Auto-save](#auto-save)
+69. [Web & Devops Stacks](#web--devops-stacks)
+70. [Surround — mini.surround](#surround--minisurround)
+71. [Split / Join Blocks — treesj](#split--join-blocks--treesj)
+72. [Markdown Image Paste & Tables](#markdown-image-paste--tables)
+73. [Git Diff Presets — Diffview](#git-diff-presets-diffview)
+74. [Incremental Selection](#incremental-selection-treesitter)
+75. [How to Customize](#how-to-customize)
+76. [Complete Keybinding Reference](#complete-keybinding-reference)
 
 ---
 
@@ -571,6 +578,18 @@ const user = getUserBy|    ← ghost text appears: Id(id: string): User
 
 Sources shown in completion: LSP · snippets · buffer words · file paths
 
+### Snippets
+
+Snippets come from **friendly-snippets** — a large prebuilt library covering TypeScript, JavaScript, Python, Go, and more — surfaced through blink.cmp's native snippet engine (no LuaSnip required).
+
+```
+Start typing a trigger (e.g. `fn`, `func`, `forin`, `try`) → the snippet
+appears in the completion popup with a [Snippet] tag → Tab to expand →
+Tab again to jump between placeholders.
+```
+
+Doc-comment templates are generated separately by Neogen (`<leader>cg`) using Neovim's native snippet engine.
+
 ---
 
 ## Git Integration
@@ -753,9 +772,13 @@ q            → close
 
 ```
 <C-\>        → toggle floating terminal (press again to hide)
-<leader>th   → horizontal split terminal (bottom)
-<leader>tv   → vertical split terminal (right)
+<leader>Tf   → floating terminal
+<leader>Th   → horizontal split terminal (bottom)
+<leader>Tv   → vertical split terminal (right)
 ```
+
+> Terminal keys live under the `<leader>T` group (capital T) so the `<leader>t`
+> prefix stays dedicated to the test runner.
 
 ### Exiting terminal mode
 
@@ -963,6 +986,41 @@ Create `kulala.env.json` in the project root:
 <leader>rs   → open scratchpad (temporary .http buffer, not saved)
 <leader>rf   → import from cURL (paste a curl command, convert to .http format)
 ```
+
+---
+
+## Database — SQL Client
+
+In-editor SQL client powered by **vim-dadbod** + **dadbod-ui** — browse schemas, run queries, and view results without leaving Neovim. Replaces a standalone DB GUI (TablePlus, DBeaver, etc.).
+
+### Opening the drawer
+
+```
+<leader>Du   → toggle the database drawer (left, 40 cols)
+<leader>DB   → add a new connection (prompts for a connection URL)
+<leader>Df   → jump to the DBUI query buffer
+<leader>Dr   → rename the current DB query buffer
+```
+
+### Connection URLs
+
+When prompted by `<leader>DB`, paste a connection URL:
+
+```
+postgres://user:pass@localhost:5432/dbname
+mysql://user:pass@localhost:3306/dbname
+sqlite:/absolute/path/to/file.db
+```
+
+Connections are saved under `stdpath('data')/db_ui` and reappear in the drawer next launch. For project-scoped connections, set `$DBUI_URL` or a `g:dbs` table in a project-local config (see `:help dadbod-ui`).
+
+### Running queries
+
+1. `<leader>Du` to open the drawer, expand a connection → a table opens a preview query.
+2. Or open a `.sql` buffer, write SQL, and run with `<leader>S` (dadbod-ui buffer-local) or `:%DB` to run the whole buffer / `:'<,'>DB` for a visual selection.
+3. Results open in a split. SQL completion (tables, columns, keywords) fires automatically in `sql` / `mysql` / `plsql` buffers via blink.cmp.
+
+> Auto-run on save is **off** by default (`db_ui_execute_on_save = 0`) — queries run only when you ask.
 
 ---
 
@@ -1245,7 +1303,7 @@ When active: file explorer hides · statusline hides · tabs hide · code is cen
 Dims everything outside your current function/block to 25% opacity. Keeps focus on the active code without full zen mode.
 
 ```
-<leader>tw   → toggle Twilight
+<leader>uw   → toggle Twilight
 ```
 
 ---
@@ -2112,6 +2170,84 @@ Manual save still works: `<C-s>`
 
 ---
 
+## Web & Devops Stacks
+
+LSP, treesitter, and formatting are wired for these stacks (via LazyVim extras) in addition to TS/JS/Python/Go:
+
+| Stack | What you get |
+|-------|--------------|
+| **Tailwind CSS** | Class completion + sorting + color swatches. The Tailwind LSP attaches only when the project has a `tailwind.config.{js,ts,cjs}` (or v4 `@import "tailwindcss"`). |
+| **Prisma** | `schema.prisma` LSP — completion, format, validation. |
+| **Docker** | `Dockerfile` LSP + `docker-compose.yml` schema + hadolint linting. |
+| **YAML** | yaml-language-server with schema validation (GitHub Actions, compose, k8s, etc.). |
+
+Tailwind class highlighting (colored backgrounds) is also on in TS/JS/CSS/HTML via the colorizer.
+
+---
+
+## Surround — mini.surround
+
+Add, change, or delete the pairs around text. Uses a `gs` prefix so it never clobbers vim's `s`.
+
+```
+gsaiw"   → surround inner word with "        (gsa = add)
+gsd"     → delete surrounding "              (gsd = delete)
+gsr"'    → replace surrounding " with '      (gsr = replace)
+gsf / gsF → jump to next / previous surround
+```
+
+Works in visual mode too: select text, then `gsa)` to wrap in parens.
+
+---
+
+## Split / Join Blocks — treesj
+
+Toggle a code block between one line and multiple lines using treesitter (objects, arrays, argument lists, function bodies).
+
+```
+<leader>cj   → toggle split ⇄ join on the block under the cursor
+```
+
+Great for collapsing a multi-line TS object to one line, or exploding a long Go struct literal.
+
+---
+
+## Markdown Image Paste & Tables
+
+Beyond preview (`<leader>mp`):
+
+```
+<leader>mi   → paste an image from the clipboard into the .md file
+               (saved under ./assets/, a ![](path) link is inserted)
+<leader>mt   → toggle table mode (type | separators → columns auto-align)
+```
+
+---
+
+## Git Diff Presets (Diffview)
+
+In addition to the existing `<leader>gd` / `<leader>gD`:
+
+```
+<leader>gdm  → diff the whole branch vs origin/main   (review before PR)
+<leader>gdM  → diff the whole branch vs local main
+```
+
+Hunk-level git (stage/reset/preview/blame, `]h`/`[h`) is provided by gitsigns under `<leader>gh*`.
+
+---
+
+## Incremental Selection (treesitter)
+
+Grow/shrink the selection by syntax node — no plugin needed, built into the treesitter config:
+
+```
+<C-space>   → expand selection to the next larger node
+<BS>        → shrink selection back down
+```
+
+---
+
 ## How to Customize
 
 ### Disable a plugin
@@ -2289,8 +2425,9 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | Key | Action |
 |-----|--------|
 | `<C-\>` | Toggle floating terminal |
-| `<leader>th` | Terminal horizontal |
-| `<leader>tv` | Terminal vertical |
+| `<leader>Tf` | Terminal float |
+| `<leader>Th` | Terminal horizontal |
+| `<leader>Tv` | Terminal vertical |
 | `<leader>po` | Python: open REPL |
 | `<leader>pr` | Python: restart REPL |
 | `<leader>ph` | Python: hide REPL |
@@ -2320,6 +2457,17 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>re` | Switch environment |
 | `<leader>rs` | Open scratchpad |
 | `<leader>rf` | Import from cURL |
+
+### Database (dadbod)
+
+| Key | Action |
+|-----|--------|
+| `<leader>Du` | Toggle DB drawer |
+| `<leader>DB` | Add connection |
+| `<leader>Df` | Find DB query buffer |
+| `<leader>Dr` | Rename DB query buffer |
+| `<leader>S` | Run query (buffer-local, in DBUI) |
+| `:%DB` | Run whole `.sql` buffer |
 
 ### IoT / PlatformIO
 
@@ -2377,7 +2525,7 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | Key | Action |
 |-----|--------|
 | `<leader>z` | Toggle Zen Mode |
-| `<leader>tw` | Toggle Twilight |
+| `<leader>uw` | Toggle Twilight |
 | `<leader>ui` | Toggle Illuminate |
 | `<leader>uh` | Toggle Hardtime |
 | `<leader>uu` | Toggle Undo Tree |

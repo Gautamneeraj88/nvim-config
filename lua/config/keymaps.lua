@@ -143,10 +143,13 @@ vim.schedule(function()
   if not ok then return end
   wk.add({
     { "<leader>t",   group = "Test" },
+    { "<leader>T",   group = "Terminal" },
+    { "<leader>m",   group = "Markdown" },
     { "<leader>d",   group = "Debug" },
     { "<leader>dt",  group = "Debug Test" },
     { "<leader>dg",  group = "Debug Go" },
     { "<leader>R",   group = "Refactor" },
+    { "<leader>D",   group = "Database" }, -- vim-dadbod-ui (database.lua)
     { "<leader>n",   group = "NPM / Package" },
     { "<leader>go",  group = "Octo (GitHub)" }, -- octo.nvim (git-advanced.lua)
     { "<leader>l",   group = "LSP" },

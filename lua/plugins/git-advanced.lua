@@ -40,6 +40,8 @@ return {
     keys = {
       { "<leader>gd",  "<cmd>DiffviewOpen<cr>",                desc = "Diff View (all changes)" },
       { "<leader>gD",  "<cmd>DiffviewOpen HEAD~1<cr>",         desc = "Diff vs last commit" },
+      { "<leader>gdm", "<cmd>DiffviewOpen origin/main...HEAD<cr>", desc = "Diff branch vs origin/main" },
+      { "<leader>gdM", "<cmd>DiffviewOpen main...HEAD<cr>",        desc = "Diff branch vs local main" },
       { "<leader>gfh", "<cmd>DiffviewFileHistory %<cr>",       desc = "File history (current)" },
       { "<leader>gFH", "<cmd>DiffviewFileHistory<cr>",         desc = "File history (project)" },
       { "<leader>gdc", "<cmd>DiffviewClose<cr>",               desc = "Close Diff View" },

@@ -25,6 +25,12 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.lang.go" },
     { import = "lazyvim.plugins.extras.lang.json" },
 
+    -- Web / devops stacks (LSP + treesitter + formatting wired by these extras)
+    { import = "lazyvim.plugins.extras.lang.tailwind" }, -- Tailwind CSS: class completion + sorting
+    { import = "lazyvim.plugins.extras.lang.prisma" },   -- schema.prisma LSP
+    { import = "lazyvim.plugins.extras.lang.docker" },   -- Dockerfile + compose + hadolint
+    { import = "lazyvim.plugins.extras.lang.yaml" },     -- yaml-language-server + schemas
+
     -- Prettier for TS/JS/CSS formatting
     { import = "lazyvim.plugins.extras.formatting.prettier" },
 

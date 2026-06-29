@@ -22,15 +22,21 @@ return {
         mode = { "n", "t" },
         desc = "Toggle Terminal",
       },
-      -- <leader>th opens a horizontal split terminal
+      -- <leader>Tf opens the floating terminal (explicit, under the Terminal group)
       {
-        "<leader>th",
+        "<leader>Tf",
+        function() Snacks.terminal() end,
+        desc = "Terminal (float)",
+      },
+      -- <leader>Th opens a horizontal split terminal
+      {
+        "<leader>Th",
         function() Snacks.terminal(nil, { win = { position = "bottom", height = 0.35 } }) end,
         desc = "Terminal (horizontal)",
       },
-      -- <leader>tv opens a vertical split terminal
+      -- <leader>Tv opens a vertical split terminal
       {
-        "<leader>tv",
+        "<leader>Tv",
         function() Snacks.terminal(nil, { win = { position = "right", width = 0.4 } }) end,
         desc = "Terminal (vertical)",
       },

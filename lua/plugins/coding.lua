@@ -112,7 +112,9 @@ return {
       { "<leader>cg", function() require("neogen").generate() end, desc = "Generate doc comment" },
     },
     opts = {
-      snippet_engine = "luasnip",
+      -- Native vim.snippet engine — LazyVim's blink.cmp setup uses it; avoids
+      -- pulling in LuaSnip (not installed) just to expand doc-comment templates.
+      snippet_engine = "nvim",
       languages = {
         python     = { template = { annotation_convention = "google_docstrings" } },
         typescript = { template = { annotation_convention = "tsdoc" } },
@@ -234,7 +236,7 @@ return {
   {
     "dmmulroy/ts-error-translator.nvim",
     ft = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
-    opts = { auto_override_publish_diagnostics = true },
+    opts = { auto_attach = true },
   },
 
   -- ─── Completion ghost text — inline suggestion preview ───────────────────────
@@ -247,5 +249,37 @@ return {
         ghost_text = { enabled = true },
       },
     },
+  },
+
+  -- ─── Surround — add/change/delete surrounding pairs ──────────────────────────
+  -- gsaiw"  → surround inner word with "    gsd"  → delete surrounding "
+  -- gsr"'   → replace surrounding " with '       gsf / gsF → find next/prev pair
+  -- `gs` prefix (not bare `s`) so it never clobbers vim's substitute-char.
+  {
+    "nvim-mini/mini.surround",
+    event = "VeryLazy",
+    opts = {
+      mappings = {
+        add            = "gsa", -- visual + normal: add surround
+        delete         = "gsd",
+        replace        = "gsr",
+        find           = "gsf",
+        find_left      = "gsF",
+        highlight      = "gsh",
+        update_n_lines = "gsn",
+      },
+    },
+  },
+
+  -- ─── treesj — split / join code blocks with treesitter awareness ─────────────
+  -- <leader>cj on an object/array/arg-list/function body toggles between a
+  -- single line and a multi-line layout. Big win for TS objects and Go structs.
+  {
+    "Wansmer/treesj",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    keys = {
+      { "<leader>cj", function() require("treesj").toggle() end, desc = "Split/Join block" },
+    },
+    opts = { use_default_keymaps = false, max_join_length = 150 },
   },
 }
