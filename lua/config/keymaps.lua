@@ -131,9 +131,34 @@ vim.api.nvim_create_autocmd("User", {
 
 -- ─── LSP ──────────────────────────────────────────────────────────────────────
 
--- Restart all LSP servers — use when inlay hints / completions stop working
--- after a long session (tsserver/gopls can degrade without crashing)
-map("n", "<leader>lR", "<cmd>LspRestart<cr>", { desc = "Restart LSP" })
+-- Restart all LSP servers attached to the current buffer — use when inlay hints /
+-- completions stop working after a long session (tsserver/gopls can degrade without
+-- crashing). Uses the vim.lsp API directly; nvim-lspconfig's :LspRestart command is
+-- not registered in this setup (LazyVim drives servers via vim.lsp.enable).
+map("n", "<leader>lR", function()
+  local clients = vim.lsp.get_clients({ bufnr = 0 })
+  if #clients == 0 then
+    vim.notify("No active LSP clients", vim.log.levels.WARN)
+    return
+  end
+  local names = {}
+  for _, c in ipairs(clients) do
+    names[#names + 1] = c.name
+    vim.lsp.stop_client(c.id)
+  end
+  vim.defer_fn(function()
+    vim.cmd("silent! edit") -- re-triggers FileType → servers re-attach
+    vim.notify("Restarted LSP: " .. table.concat(names, ", "), vim.log.levels.INFO)
+  end, 500)
+end, { desc = "Restart LSP" })
+
+-- Inlay-hint toggle. LazyVim's default <leader>uh was reclaimed for Hardtime, so
+-- expose the toggle on <leader>uH (Snacks.toggle shows the on/off state in which-key).
+vim.schedule(function()
+  pcall(function()
+    Snacks.toggle.inlay_hints():map("<leader>uH")
+  end)
+end)
 
 -- ─── Which-key group labels ───────────────────────────────────────────────────
 -- Labels for custom <leader> prefixes so they show up named in the which-key popup.

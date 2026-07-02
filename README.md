@@ -460,6 +460,14 @@ K            → hover documentation (type, docstring, signature)
 gr           → all references (fzf list)
 ```
 
+**Reading long docs / signatures:** when a hover (`K`) or the signature popup is open,
+scroll inside it with the keyboard — **`<C-f>`** (Ctrl+f) scrolls down, **`<C-b>`**
+(Ctrl+b) scrolls up. These work even in insert mode while typing a call. Don't scroll
+the popup with the mouse in a terminal — it can leak escape codes into the buffer.
+
+The **signature popup** (parameter list + types) appears automatically as you type a
+function call, e.g. `Field(` — handled by noice, so it's a single bordered window.
+
 ### Code actions
 
 ```
@@ -488,10 +496,18 @@ TypeScript errors like `"Type 'X' is not assignable to type 'Y' because..."` are
 
 ### Inlay hints
 
-Always-on in TypeScript, JavaScript, Go, and C/C++:
+Always-on in TypeScript, JavaScript, Go, Python (basedpyright), and C/C++:
 - Parameter names at call sites: `createUser(data:` → `createUser(data: CreateUserDto`
 - Variable types: `const x =` → `const x: string =`
 - Return types, enum values, composite literal field names
+
+They render in the theme's comment colour (readable, not the near-invisible default).
+
+```
+<leader>uH   → toggle inlay hints on/off (shows on/off state in which-key)
+```
+
+> `<leader>uh` (lowercase) is Hardtime, so the inlay toggle lives on capital `<leader>uH`.
 
 ### LSP management
 
@@ -1252,9 +1268,11 @@ Select code in visual mode and extract it to a new function or variable. Works f
 
 ```
 <leader>Re   → (visual) extract selected code to a new function
+<leader>RE   → (visual) extract selected code to a function in a new file
 <leader>Rv   → (visual) extract selected expression to a new variable
 <leader>Ri   → (normal/visual) inline a variable back into its usages
-<leader>Rb   → (normal) extract current block to a new function
+<leader>RI   → (normal) inline a function back into its call sites
+<leader>Rr   → (normal/visual) pick any valid refactor from a menu
 ```
 
 ### Example — extract to function
@@ -1555,19 +1573,21 @@ Then write code in `src/main.cpp`.
 ```
 <leader>ioc  → generate compile_commands.json (run once for LSP support)
 <leader>iog  → generate .clangd   (run once — suppresses cross-compiler LSP errors)
-:LspRestart  → pick up the new .clangd
+<leader>lR   → restart LSP to pick up the new .clangd
 ```
 
 ### Build and upload
 
 ```
-<leader>iob  → build
-<leader>iou  → upload to device
+<leader>iob  → build             (Piorun build)
+<leader>iou  → upload to device   (Piorun upload)
 <leader>iom  → serial monitor (see device output)
 <leader>iod  → list connected devices
-<leader>iol  → library manager
-<leader>ios  → search boards
+<leader>iol  → library manager (drops into :Piolib — type search/install/…)
+<leader>ioD  → debug (probe-rs / openocd)
 ```
+
+Boards are chosen inside the init picker (`<leader>ioi`) — there is no separate board-search command.
 
 ### C/C++ extras — clangd_extensions
 
@@ -2327,6 +2347,7 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `gpi` | Peek implementation |
 | `gpc` | Close peek windows |
 | `K` | Hover documentation |
+| `<C-f> / <C-b>` | Scroll hover/signature docs down/up |
 | `gr` | All references |
 | `<leader>cd` | Show diagnostic float |
 | `]d / [d` | Next/prev diagnostic |
@@ -2353,7 +2374,9 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>Re` | Extract to function (visual) |
 | `<leader>Rv` | Extract to variable (visual) |
 | `<leader>Ri` | Inline variable |
-| `<leader>Rb` | Extract block to function |
+| `<leader>RE` | Extract function to a new file |
+| `<leader>RI` | Inline function |
+| `<leader>Rr` | Pick refactor from menu |
 | `<leader>as` | Swap argument right |
 | `<leader>aS` | Swap argument left |
 | `<leader>uh` | Toggle Hardtime |
@@ -2479,7 +2502,7 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>iom` | Serial monitor |
 | `<leader>iod` | List devices |
 | `<leader>iol` | Library manager |
-| `<leader>ios` | Search boards |
+| `<leader>ioD` | Debug |
 | `<leader>ioc` | Generate compile_commands.json |
 | `<leader>iog` | Generate .clangd |
 | `<leader>ioH` | Type hierarchy (C/C++) |
@@ -2528,6 +2551,7 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>uw` | Toggle Twilight |
 | `<leader>ui` | Toggle Illuminate |
 | `<leader>uh` | Toggle Hardtime |
+| `<leader>uH` | Toggle inlay hints |
 | `<leader>uu` | Toggle Undo Tree |
 | `<leader>uT` | Switch theme |
 | `zp` | Peek fold |

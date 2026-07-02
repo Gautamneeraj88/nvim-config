@@ -6,11 +6,21 @@
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(ev)
     local client = vim.lsp.get_client_by_id(ev.data.client_id)
-    if client and client.supports_method("textDocument/inlayHint") then
+    if client and client:supports_method("textDocument/inlayHint") then
       vim.lsp.inlay_hint.enable(true, { bufnr = ev.buf })
     end
   end,
 })
+
+-- Inlay hints default to linking `NonText`, which is nearly invisible in most
+-- dark themes (Kanagawa included) — so type/param hints look "missing". Re-link
+-- to the theme's Comment colour (readable + italic) on every colorscheme change.
+vim.api.nvim_create_autocmd("ColorScheme", {
+  callback = function()
+    vim.api.nvim_set_hl(0, "LspInlayHint", { link = "Comment" })
+  end,
+})
+vim.api.nvim_set_hl(0, "LspInlayHint", { link = "Comment" }) -- apply now for the current theme
 
 -- Auto-restore last session when Neovim opens with no file arguments.
 -- No autocmd needed — autocmds.lua is sourced during VeryLazy, which fires

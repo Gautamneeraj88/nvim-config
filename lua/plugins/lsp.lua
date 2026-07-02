@@ -74,11 +74,12 @@ return {
           },
         },
 
-        -- ── Python: disable pyright, use basedpyright (stricter, faster, maintained) ──
-        pyright = { enabled = false },
+        -- ── Python: basedpyright (chosen via vim.g.lazyvim_python_lsp in lazy.lua,
+        --    which enables it and disables pyright). Settings section is the
+        --    lowercase `basedpyright` key — a capitalised key is silently ignored.
         basedpyright = {
           settings = {
-            basedPyright = {
+            basedpyright = {
               analysis = {
                 typeCheckingMode      = "standard",
                 reportUnusedImport    = "warning",

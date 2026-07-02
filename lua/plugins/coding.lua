@@ -78,13 +78,17 @@ return {
     opts = {},
     keys = {
       -- Visual: select code → extract to a named function
-      { "<leader>Re", function() require("refactoring").refactor("Extract Function") end, mode = "v", desc = "Refactor: Extract Function" },
+      { "<leader>Re", function() require("refactoring").extract_func() end,         mode = "v", desc = "Refactor: Extract Function" },
+      -- Visual: select code → extract to a function in a new file
+      { "<leader>RE", function() require("refactoring").extract_func_to_file() end, mode = "v", desc = "Refactor: Extract Function to File" },
       -- Visual: select expression → extract to a named variable
-      { "<leader>Rv", function() require("refactoring").refactor("Extract Variable") end, mode = "v", desc = "Refactor: Extract Variable" },
+      { "<leader>Rv", function() require("refactoring").extract_var() end,          mode = "v", desc = "Refactor: Extract Variable" },
       -- Normal/Visual: inline a variable back into its usages
-      { "<leader>Ri", function() require("refactoring").refactor("Inline Variable") end,  mode = { "n", "v" }, desc = "Refactor: Inline Variable" },
-      -- Normal: extract a block of statements into its own function
-      { "<leader>Rb", function() require("refactoring").refactor("Extract Block") end,    mode = "n", desc = "Refactor: Extract Block" },
+      { "<leader>Ri", function() require("refactoring").inline_var() end,           mode = { "n", "v" }, desc = "Refactor: Inline Variable" },
+      -- Normal: inline a function back into its call sites
+      { "<leader>RI", function() require("refactoring").inline_func() end,          mode = "n", desc = "Refactor: Inline Function" },
+      -- Normal/Visual: pick any valid refactor for the current context from a menu
+      { "<leader>Rr", function() require("refactoring").select_refactor() end,      mode = { "n", "v" }, desc = "Refactor: Select…" },
     },
   },
 
@@ -248,6 +252,10 @@ return {
       completion = {
         ghost_text = { enabled = true },
       },
+      -- NOTE: do NOT enable blink's experimental `signature` here — noice already
+      -- renders LSP signature help (auto-opens on trigger chars). Enabling both
+      -- double-renders an overlapping popup and blink's window leaks mouse-scroll
+      -- escape codes into the buffer as stray digits.
     },
   },
 

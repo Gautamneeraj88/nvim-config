@@ -14,6 +14,12 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- Choose the Python LSP BEFORE the lang.python extra is imported — its module
+-- captures this value at load time and enables only the chosen server, disabling
+-- the others. Without this, LazyVim defaults to pyright and force-disables
+-- basedpyright, so with pyright also turned off in lsp.lua NO Python LSP attaches.
+vim.g.lazyvim_python_lsp = "basedpyright"
+
 require("lazy").setup({
   spec = {
     -- LazyVim core — gives you file search, LSP, git, completion, etc. out of the box

@@ -1,9 +1,28 @@
 return {
+  -- ─── Disable markdownlint linting on prose ───────────────────────────────────
+  -- LazyVim's markdown extra wires markdownlint-cli2 through nvim-lint. On real
+  -- prose (docs, runbooks) it emits dozens of style warnings (MD013 line-length,
+  -- MD033 inline-HTML, …), and nvim-lint's errorformat parser leaves each one with
+  -- no structured `code`, which trips a render crash in Trouble's diagnostics view.
+  -- marksman (LSP) + render-markdown + prettier already cover the markdown workflow,
+  -- so drop the linter. Re-enable per-project with a .markdownlint-cli2.yaml if wanted.
+  {
+    "mfussenegger/nvim-lint",
+    optional = true,
+    opts = function(_, opts)
+      opts.linters_by_ft = opts.linters_by_ft or {}
+      opts.linters_by_ft.markdown = {}
+      opts.linters_by_ft["markdown.mdx"] = {}
+    end,
+  },
+
   -- Browser preview — opens a live-reloading tab in your browser
   -- Install once with :MarkdownPreviewInstall after :Lazy sync
   {
     "iamcco/markdown-preview.nvim",
-    cmd = { "MarkdownPreview", "MarkdownPreviewStop", "MarkdownPreviewToggle" },
+    -- Commands are buffer-local and registered by the plugin's own FileType
+    -- autocmd, so it must load on `ft` (not `cmd`) or the command never binds.
+    ft = "markdown",
     build = "cd app && npx --yes yarn install",
     keys = {
       { "<leader>mp", "<cmd>MarkdownPreviewToggle<cr>", ft = "markdown", desc = "Markdown Preview (browser)" },
