@@ -78,7 +78,7 @@ return {
       -- Remove "terminal" from sessionoptions — dead terminal processes can't be
       -- restored and cause errors when a saved session is loaded in a new Neovim instance
       options = vim.tbl_filter(
-        function(o) return o ~= "terminal" end,
+        function(_, v) return v ~= "terminal" end,
         vim.opt.sessionoptions:get()
       ),
     },

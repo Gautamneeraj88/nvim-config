@@ -208,7 +208,7 @@ Ctrl+r       → redo
 └── lua/
     ├── config/
     │   ├── lazy.lua          ← Plugin manager + enabled LazyVim extras
-    │   ├── options.lua       ← Editor settings (scrolloff, cmdheight, winborder…)
+    │   ├── options.lua       ← Editor settings (scrolloff, cmdheight, winborder, netrw disable…)
     │   ├── keymaps.lua       ← Custom keybindings + which-key group labels
     │   └── autocmds.lua      ← Autocommands (session restore, scrolloff, virt-column)
     │
@@ -2552,6 +2552,7 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>ui` | Toggle Illuminate |
 | `<leader>uh` | Toggle Hardtime |
 | `<leader>uH` | Toggle inlay hints |
+| `<leader>uW` | Toggle word wrap |
 | `<leader>uu` | Toggle Undo Tree |
 | `<leader>uT` | Switch theme |
 | `zp` | Peek fold |

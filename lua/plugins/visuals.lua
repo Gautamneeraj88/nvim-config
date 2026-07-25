@@ -9,7 +9,9 @@ return {
       distance_stop_animating = 1.5,   -- skip animation for tiny 1-2 char moves (reduces CPU on CursorMoved)
       -- kanagawa wave: violet accent cursor trail
       cursor_color            = "#957FB8", -- oniViolet
-      stiffness_insert_mode   = 0.7,
+      -- Don't smear in insert mode — the trail overlays the character you just
+      -- typed, hiding it until the cursor moves away. Keeps the effect in normal mode.
+      smear_insert_mode       = false,
     },
   },
 

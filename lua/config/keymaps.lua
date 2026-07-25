@@ -152,11 +152,14 @@ map("n", "<leader>lR", function()
   end, 500)
 end, { desc = "Restart LSP" })
 
--- Inlay-hint toggle. LazyVim's default <leader>uh was reclaimed for Hardtime, so
--- expose the toggle on <leader>uH (Snacks.toggle shows the on/off state in which-key).
+-- Toggles whose LazyVim defaults were reclaimed for other plugins, rebound to
+-- capital-letter variants (Snacks.toggle shows the on/off state in which-key):
+--   <leader>uH → inlay hints  (default <leader>uh is Hardtime here)
+--   <leader>uW → word wrap    (default <leader>uw is Twilight here)
 vim.schedule(function()
   pcall(function()
     Snacks.toggle.inlay_hints():map("<leader>uH")
+    Snacks.toggle.option("wrap", { name = "Wrap" }):map("<leader>uW")
   end)
 end)
 
@@ -179,6 +182,7 @@ vim.schedule(function()
     { "<leader>go",  group = "Octo (GitHub)" }, -- octo.nvim (git-advanced.lua)
     { "<leader>l",   group = "LSP" },
     { "<leader>a",   group = "Argument" },   -- treesitter-textobjects swap
+    { "<leader>io",  group = "IoT / PlatformIO" },
   })
 end)
 

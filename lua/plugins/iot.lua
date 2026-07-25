@@ -31,7 +31,6 @@ return {
       "Piolib", "Piodebug", "PioLSP", "PioTermList",
     },
     keys = {
-      { "<leader>io",  group  = "IoT / PlatformIO" },
       { "<leader>ioi", "<cmd>Pioinit<cr>",       desc = "Init project (board picker)" },
       { "<leader>iob", "<cmd>Piorun build<cr>",  desc = "Build" },
       { "<leader>iou", "<cmd>Piorun upload<cr>", desc = "Upload to device" },

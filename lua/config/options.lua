@@ -3,6 +3,10 @@
 
 local opt = vim.opt
 
+-- Disable netrw (neo-tree is the file explorer)
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 opt.scrolloff    = 8     -- keep 8 lines visible above/below cursor (LazyVim default: 4)
 opt.inccommand   = "split" -- show live substitution results in a split (LazyVim default: "nosplit")
 

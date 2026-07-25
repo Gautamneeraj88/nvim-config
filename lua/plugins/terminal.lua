@@ -15,17 +15,18 @@ return {
       },
     },
     keys = {
-      -- <C-\> toggles a floating terminal (same key as before)
+      -- <C-\> toggles a floating terminal (same key as before). Position must be
+      -- set explicitly to "float" — the base opts default to "bottom".
       {
         "<C-\\>",
-        function() Snacks.terminal() end,
+        function() Snacks.terminal(nil, { win = { position = "float" } }) end,
         mode = { "n", "t" },
         desc = "Toggle Terminal",
       },
       -- <leader>Tf opens the floating terminal (explicit, under the Terminal group)
       {
         "<leader>Tf",
-        function() Snacks.terminal() end,
+        function() Snacks.terminal(nil, { win = { position = "float" } }) end,
         desc = "Terminal (float)",
       },
       -- <leader>Th opens a horizontal split terminal

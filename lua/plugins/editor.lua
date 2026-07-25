@@ -113,7 +113,7 @@ return {
         delay = 500,
         virt_text_pos = "eol",
       },
-      current_line_blame_formatter = "  <author>, <author_time:%d %b %Y> · <summary>",
+      current_line_blame_formatter = "  <author>, <author_time:%d %b %Y> · <subject>",
     },
   },
 
@@ -232,9 +232,13 @@ return {
       require("cinnamon").setup(opts)
       -- Mouse: scroll viewport only, cursor stays (VSCode behaviour)
       -- Use "3<C-e>" not "<C-e><C-e><C-e>" — one command = one cinnamon animation
-      local modes = { "n", "v", "i" }
-      vim.keymap.set(modes, "<ScrollWheelDown>", "3<C-e>", { silent = true })
-      vim.keymap.set(modes, "<ScrollWheelUp>",   "3<C-y>", { silent = true })
+      vim.keymap.set({ "n", "v" }, "<ScrollWheelDown>", "3<C-e>", { silent = true })
+      vim.keymap.set({ "n", "v" }, "<ScrollWheelUp>",   "3<C-y>", { silent = true })
+      -- Insert mode: run the scroll as a :normal! command. The old shared
+      -- { "n","v","i" } map sent "3<C-e>" as literal insert keys — typing "3"
+      -- then inserting the line below — so scrolling while typing was broken.
+      vim.keymap.set("i", "<ScrollWheelDown>", function() vim.cmd("normal! 3\5") end,  { silent = true })
+      vim.keymap.set("i", "<ScrollWheelUp>",   function() vim.cmd("normal! 3\25") end, { silent = true })
     end,
   },
 
