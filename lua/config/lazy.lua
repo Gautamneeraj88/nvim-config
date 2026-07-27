@@ -56,9 +56,6 @@ require("lazy").setup({
     -- Use fzf-lua as the LazyVim picker (replaces snacks.picker for built-in keymaps)
     { import = "lazyvim.plugins.extras.editor.fzf" },
 
-    -- Lua LSP with Neovim API annotations (vim.api, vim.fn, etc.)
-    { import = "lazyvim.plugins.extras.lang.lua" },
-
     -- Task runner — structured build/test/make commands with a UI panel
     { import = "lazyvim.plugins.extras.editor.overseer" },
 
