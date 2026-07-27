@@ -64,13 +64,39 @@ return {
   },
 
   -- ─── Project Switcher ─────────────────────────────────────────────────────────
-  -- Snacks has a built-in project picker based on recent git roots
+  -- Uses fzf-lua to find and switch between git repos in your workspace
   {
-    "folke/snacks.nvim",
+    "ibhagwan/fzf-lua",
     keys = {
       {
         "<leader>fp",
-        function() Snacks.picker.projects() end,
+        function()
+          local fzf = require("fzf-lua")
+          local home = vim.fn.expand("~")
+          local results = vim.fn.systemlist(
+            "find " .. home .. "/projects " .. home .. "/code " .. home .. "/dev " .. home .. "/src " .. home .. "/work " .. home .. "/repos " .. home .. " -maxdepth 3 -name .git -type d 2>/dev/null"
+          )
+          if #results == 0 then
+            vim.notify("No git repos found", vim.log.levels.WARN)
+            return
+          end
+          local dirs = {}
+          for _, r in ipairs(results) do
+            local dir = r:gsub("/.git$", "")
+            dirs[#dirs + 1] = dir
+          end
+          fzf.fzf_exec(dirs, {
+            prompt = "Projects> ",
+            actions = {
+              ["default"] = function(selected)
+                if selected and selected[1] then
+                  vim.cmd("cd " .. selected[1])
+                  vim.notify("Switched to: " .. selected[1])
+                end
+              end,
+            },
+          })
+        end,
         desc = "Switch Project",
       },
     },
