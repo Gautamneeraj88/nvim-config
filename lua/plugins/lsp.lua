@@ -123,7 +123,7 @@ return {
   -- <leader>cf and format-on-save both use the stricter formatter.
   {
     "mason-org/mason.nvim",
-    opts = { ensure_installed = { "gofumpt", "stylua", "shfmt", "shellcheck" } },
+    opts = { ensure_installed = { "gofumpt", "stylua", "shfmt", "shellcheck", "stylelint" } },
   },
   {
     "stevearc/conform.nvim",
@@ -140,7 +140,7 @@ return {
     },
   },
 
-  -- Shell linting via shellcheck
+  -- Shell + CSS linting
   {
     "mfussenegger/nvim-lint",
     optional = true,
@@ -148,6 +148,8 @@ return {
       linters_by_ft = {
         sh   = { "shellcheck" },
         bash = { "shellcheck" },
+        css  = { "stylelint" },
+        scss = { "stylelint" },
       },
     },
   },

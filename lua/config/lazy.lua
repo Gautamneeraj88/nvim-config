@@ -56,6 +56,18 @@ require("lazy").setup({
     -- Use fzf-lua as the LazyVim picker (replaces snacks.picker for built-in keymaps)
     { import = "lazyvim.plugins.extras.editor.fzf" },
 
+    -- Lua LSP with Neovim API annotations (vim.api, vim.fn, etc.)
+    { import = "lazyvim.plugins.extras.lang.lua" },
+
+    -- Task runner — structured build/test/make commands with a UI panel
+    { import = "lazyvim.plugins.extras.editor.overseer" },
+
+    -- Smarter increment/decrement — dates, booleans, enums, semver
+    { import = "lazyvim.plugins.extras.editor.dial" },
+
+    -- Dotfile management helpers (neovim config editing workflows)
+    { import = "lazyvim.plugins.extras.util.dot" },
+
     -- Your personal tweaks (lua/plugins/)
     { import = "plugins" },
 

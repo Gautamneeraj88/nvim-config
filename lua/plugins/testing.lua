@@ -68,6 +68,7 @@ return {
       -- Run with coverage — generates the file that <leader>tc reads
       -- Python: requires pytest-cov  (pip install pytest-cov)
       -- Go:     writes /tmp/go-coverage.out
+      -- JS/TS:  not supported by nvim-coverage — use <leader>tt instead
       { "<leader>tT", function()
           local ft = vim.bo.filetype
           local args
@@ -75,6 +76,9 @@ return {
             args = { "--cov", "--cov-report=json:/tmp/coverage.json" }
           elseif ft == "go" then
             args = { "-coverprofile=/tmp/go-coverage.out" }
+          else
+            vim.notify("Coverage only supports Python and Go. Use <leader>tt for " .. ft .. " tests.", vim.log.levels.INFO)
+            return
           end
           require("neotest").run.run({ vim.fn.expand("%"), extra_args = args })
         end, desc = "Run tests with coverage" },

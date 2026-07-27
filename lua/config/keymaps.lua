@@ -185,6 +185,8 @@ vim.schedule(function()
     { "<leader>io",  group = "IoT / PlatformIO" },
     { "<leader>f",   group = "File / Find" },
     { "<leader>s",   group = "Search" },
+    { "<leader>sr",  group = "Replace (grug-far)" },
+    { "<leader>ss",  group = "Symbol" },
   })
 end)
 
