@@ -830,6 +830,54 @@ j / k        → scroll through terminal output
 
 ---
 
+## Tmux Integration
+
+Smart-splits.nvim detects when Neovim runs inside tmux and wires `<C-h/j/k/l>` to navigate across Neovim splits **and** tmux panes seamlessly.
+
+### Setup (one-time)
+
+**1. Install the tmux plugin** (via [tpm](https://github.com/tmux-plugins/tpm)):
+
+Add to `~/.tmux.conf`:
+
+```bash
+set -g @plugin 'mrjones2014/smart-splits.nvim'
+```
+
+Then press `prefix + I` to install.
+
+**2. Add keybindings to `~/.tmux.conf`:**
+
+```bash
+# Smart-splits tmux navigation
+bind -n C-h if-shell "$is_vim" "send-keys C-h"  "select-pane -L"
+bind -n C-j if-shell "$is_vim" "send-keys C-j"  "select-pane -D"
+bind -n C-k if-shell "$is_vim" "send-keys C-k"  "select-pane -U"
+bind -n C-l if-shell "$is_vim" "send-keys C-l"  "select-pane -R"
+
+# Smart-splits tmux resize
+bind -n M-Left  if-shell "$is_vim" "send-keys M-Left"  "resize-pane -L 5"
+bind -n M-Right if-shell "$is_vim" "send-keys M-Right" "resize-pane -R 5"
+bind -n M-Down  if-shell "$is_vim" "send-keys M-Down"  "resize-pane -D 5"
+bind -n M-Up    if-shell "$is_vim" "send-keys M-Up"    "resize-pane -U 5"
+```
+
+**3. Add the `is_vim` variable** near the top of `~/.tmux.conf`:
+
+```bash
+is_vim="basename #{pane_current_command}) = vim"
+```
+
+**4. Reload tmux config:**
+
+```bash
+tmux source-file ~/.tmux.conf
+```
+
+After this, `Ctrl+h/j/k/l` moves between Neovim windows and tmux panes interchangeably. No visual boundary between the two.
+
+---
+
 ## Test Runner — Neotest
 
 Run tests without leaving Neovim. Auto-detects Jest/Vitest/pytest/Go test.

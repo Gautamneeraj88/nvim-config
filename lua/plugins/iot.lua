@@ -9,6 +9,12 @@ return {
     opts = { ensure_installed = { "c", "cpp", "cmake" } },
   },
 
+  -- ─── Web treesitter parsers (CSS, SCSS, HTML) ──────────────────────────────
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = { ensure_installed = { "css", "scss", "html" } },
+  },
+
   -- ─── PlatformIO — IoT / Embedded Development ─────────────────────────────
   -- Supports: ESP32 (all variants), Arduino, STM32, Raspberry Pi Pico
   -- Requires: pip install platformio
