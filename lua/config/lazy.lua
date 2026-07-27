@@ -36,6 +36,7 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.lang.prisma" },   -- schema.prisma LSP
     { import = "lazyvim.plugins.extras.lang.docker" },   -- Dockerfile + compose + hadolint
     { import = "lazyvim.plugins.extras.lang.yaml" },     -- yaml-language-server + schemas
+    { import = "lazyvim.plugins.extras.lang.toml" },     -- TOML (taplo LSP for platformio.ini etc.)
 
     -- Prettier for TS/JS/CSS formatting
     { import = "lazyvim.plugins.extras.formatting.prettier" },

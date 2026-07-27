@@ -98,14 +98,24 @@ return {
           },
         },
 
+        -- ── CSS / SCSS — autocompletion + validation for Tailwind classes ──────
+        cssls  = {},
+        scssls = {},
+
+        -- ── HTML — autocompletion for tags + attributes ─────────────────────────
+        html = {},
+
+        -- ── Bash / Shell — autocompletion + diagnostics for .sh / .bash ────────
+        bashls = {},
+
       },
     },
   },
 
-  -- Install basedpyright via mason
+  -- Install LSP servers via mason
   {
     "mason-org/mason-lspconfig.nvim",
-    opts = { ensure_installed = { "basedpyright" } },
+    opts = { ensure_installed = { "basedpyright", "cssls", "html", "bashls" } },
   },
 
   -- ─── Go: wire gofumpt in conform (gopls alone won't override conform's formatter) ─
@@ -113,14 +123,31 @@ return {
   -- <leader>cf and format-on-save both use the stricter formatter.
   {
     "mason-org/mason.nvim",
-    opts = { ensure_installed = { "gofumpt", "stylua" } },
+    opts = { ensure_installed = { "gofumpt", "stylua", "shfmt", "shellcheck" } },
   },
   {
     "stevearc/conform.nvim",
     opts = {
       formatters_by_ft = {
-        go  = { "goimports", "gofumpt" },
-        lua = { "stylua" },
+        go    = { "goimports", "gofumpt" },
+        lua   = { "stylua" },
+        sh    = { "shfmt" },
+        bash  = { "shfmt" },
+        css   = { "prettier" },
+        scss  = { "prettier" },
+        html  = { "prettier" },
+      },
+    },
+  },
+
+  -- Shell linting via shellcheck
+  {
+    "mfussenegger/nvim-lint",
+    optional = true,
+    opts = {
+      linters_by_ft = {
+        sh   = { "shellcheck" },
+        bash = { "shellcheck" },
       },
     },
   },

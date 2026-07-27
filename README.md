@@ -226,7 +226,7 @@ Ctrl+r       → redo
         │                        persistence, marks, twilight, zen mode
         ├── git-advanced.lua  ← Diffview, git-conflict, Octo (GitHub PRs/issues)
         ├── iot.lua           ← PlatformIO (ESP32/STM32/RP2040) + clangd_extensions
-        ├── lsp.lua           ← vtsls, gopls, basedpyright, gofumpt, stylua settings
+        ├── lsp.lua           ← vtsls, gopls, basedpyright, cssls, html, bashls, gofumpt, stylua, shfmt settings
         ├── python.lua        ← basedpyright venv detection, ruff formatter, iron.nvim REPL
         ├── rest.lua          ← Kulala HTTP/REST client
         ├── search.lua        ← fzf-lua config + hlslens search lens
@@ -249,8 +249,13 @@ Ctrl+r       → redo
 | `lang.python` | basedpyright, ruff |
 | `lang.go` | gopls, gofmt/gofumpt |
 | `lang.json` | jsonls, schema validation |
-| `formatting.prettier` | Prettier for TS/JS/CSS/HTML |
+| `lang.tailwind` | Tailwind CSS class completion + sorting |
+| `lang.prisma` | schema.prisma LSP |
+| `lang.docker` | Dockerfile + compose + hadolint |
+| `lang.yaml` | yaml-language-server + schemas |
+| `lang.toml` | TOML (taplo LSP for platformio.ini etc.) |
 | `lang.markdown` | LSP, treesitter, render |
+| `formatting.prettier` | Prettier for TS/JS/CSS/HTML |
 | `test.core` | Neotest framework |
 | `editor.aerial` | Code outline panel |
 | `editor.inc-rename` | Live rename preview |
@@ -446,6 +451,14 @@ LSP gives you IDE features automatically when you open a supported file.
 | Go | `gopls` | Full Go toolchain, staticcheck, gofumpt |
 | JSON | `jsonls` | Schema validation |
 | C/C++ | `clangd` | IoT/embedded, clangd_extensions for extras |
+| CSS/SCSS | `cssls` / `scssls` | Tailwind class completion, validation |
+| HTML | `html` | Tag/attribute autocompletion |
+| Bash/Shell | `bashls` | Shell script diagnostics + shellcheck |
+| YAML | `yaml-language-server` | Schemas, validation |
+| TOML | `taplo` | platformio.ini, Cargo.toml etc. |
+| Tailwind | `tailwindcss` | Class completion, sorting |
+| Prisma | `prisma-language-server` | Schema validation |
+| Docker | `dockerls` | Dockerfile + compose |
 
 ### Navigation
 
@@ -2393,6 +2406,8 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>gfh` | File history (current) |
 | `<leader>gFH` | File history (project) |
 | `<leader>gdc` | Close Diffview |
+| `<leader>gdm` | Diff branch vs origin/main |
+| `<leader>gdM` | Diff branch vs local main |
 | `<leader>gx` | List conflicts in quickfix |
 | `<leader>ghp` | Preview hunk |
 | `<leader>ghs` | Stage hunk |
@@ -2584,3 +2599,11 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `dm<space>` | Delete all marks in buffer |
 | `m] / m[` | Next/prev mark |
 | `m:` | Preview all marks |
+
+### Markdown
+
+| Key | Action |
+|-----|--------|
+| `<leader>mp` | Browser preview (live reload) |
+| `<leader>mi` | Paste image from clipboard |
+| `<leader>mt` | Toggle table mode |

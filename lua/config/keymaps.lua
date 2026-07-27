@@ -183,6 +183,8 @@ vim.schedule(function()
     { "<leader>l",   group = "LSP" },
     { "<leader>a",   group = "Argument" },   -- treesitter-textobjects swap
     { "<leader>io",  group = "IoT / PlatformIO" },
+    { "<leader>f",   group = "File / Find" },
+    { "<leader>s",   group = "Search" },
   })
 end)
 
