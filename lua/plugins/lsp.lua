@@ -118,8 +118,7 @@ return {
     opts = { ensure_installed = { "basedpyright", "cssls", "html", "bashls" } },
   },
 
-  -- ─── Go: wire gofumpt in conform (gopls alone won't override conform's formatter) ─
-  -- LazyVim's lang.go extra defaults to gofmt. Override to gofumpt so
+  -- ─── Formatting (conform) ──────────────────────────────────────────────────
   -- <leader>cf and format-on-save both use the stricter formatter.
   {
     "mason-org/mason.nvim",
@@ -136,6 +135,14 @@ return {
         css   = { "prettier" },
         scss  = { "prettier" },
         html  = { "prettier" },
+        -- JS/TS: prettier is default. To switch to biome (faster, all-in-one):
+        --   1. Uncomment biome below, comment out prettier
+        --   2. Run :LazyExtras → enable extras.formatting.biome
+        --   3. Install biome: :MasonInstall biome
+        --   javascript      = { "biome" },
+        --   typescript       = { "biome" },
+        --   javascriptreact  = { "biome" },
+        --   typescriptreact  = { "biome" },
       },
     },
   },

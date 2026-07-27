@@ -1,4 +1,18 @@
 return {
+  -- ─── Window Picker ───────────────────────────────────────────────────────────
+  -- Visual popup to pick which split to open a file into.
+  -- Used by neo-tree's "open_split" / "open_vsplit" / "open_tab" actions.
+  {
+    "s1n7ax/nvim-window-picker",
+    event = "VeryLazy",
+    opts = {
+      hint = "floating-big-letter",
+      filter_rules = {
+        bo = { filetype = { "neo-tree", "aerial", "fidget", "lazy", "mason" } },
+      },
+    },
+  },
+
   -- ─── Smart Splits — resize splits + tmux-aware navigation ────────────────
   {
     "mrjones2014/smart-splits.nvim",

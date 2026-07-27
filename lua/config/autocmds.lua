@@ -62,7 +62,7 @@ local _scrolloff_skip = {
   ["aerial"] = true, ["trouble"] = true, ["qf"] = true,
   ["dap-repl"] = true, ["dapui_scopes"] = true, ["dapui_breakpoints"] = true,
   ["dapui_stacks"] = true, ["dapui_watches"] = true, ["dapui_console"] = true,
-  ["toggleterm"] = true, ["oil"] = true, ["undotree"] = true,
+  ["oil"] = true, ["undotree"] = true,
   ["neotest-summary"] = true, ["neotest-output-panel"] = true,
 }
 vim.api.nvim_create_autocmd({ "CursorMoved" }, {

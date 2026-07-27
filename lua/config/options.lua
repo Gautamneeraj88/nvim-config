@@ -24,3 +24,13 @@ opt.winborder    = "rounded" -- global rounded borders on ALL floating windows (
 
 -- File navigation (lets gf find .ts, .py, .go files by extension)
 opt.suffixesadd:append({ ".js", ".ts", ".jsx", ".tsx", ".py", ".go" })
+
+-- Folds — open everything by default, use treesitter/manual when needed
+opt.fillchars = { eob = " ", fold = "·", vert = "│", horiz = "─" }
+opt.foldcolumn = "1"
+opt.foldlevel = 99
+opt.foldlevelstart = 99
+opt.foldenable = true
+
+-- Statuscolumn — gutter shows fold marker + line number; gitsigns/DAP use the sign column
+opt.statuscolumn = "%=%C %l "

@@ -58,7 +58,7 @@ return {
         "neo-tree", "aerial", "lazy", "mason", "trouble", "qf",
         "dap-repl", "dapui_scopes", "dapui_breakpoints",
         "dapui_stacks", "dapui_watches", "help", "undotree",
-        "oil", "toggleterm",
+        "oil",
       },
     },
     keys = {
@@ -332,6 +332,29 @@ return {
         ["gx"]   = "actions.open_external",
         ["<C-c>"] = "actions.close",
         ["?"]    = "actions.show_help",
+      },
+    },
+  },
+
+  -- ─── No Neck Pain — center editor buffer to fixed width ─────────────────────
+  -- Pads empty windows on both sides so the code stays centered at 120 columns.
+  -- Great for ultrawide monitors. Toggle with <leader>un.
+  {
+    "shortcuts/no-neck-pain.nvim",
+    cmd = "NoNeckPain",
+    keys = {
+      {
+        "<leader>un",
+        function() require("no-neck-pain").toggle() end,
+        desc = "Toggle No Neck Pain",
+      },
+    },
+    opts = {
+      width = 140,
+      minSideBufferWidth = 10,
+      autowidth = {
+        enable = true,
+        filetype = { neo-tree = false, aerial = false, fidget = false },
       },
     },
   },
