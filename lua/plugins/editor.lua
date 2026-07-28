@@ -248,7 +248,7 @@ return {
             { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
             { icon = " ", key = "g", desc = "Git Status", action = ":Neogit kind=tab" },
             { icon = " ", key = "p", desc = "Projects", action = ":lua Snacks.dashboard.pick('projects')" },
-            { icon = " ", key = "s", desc = "Coding Stats", action = ":lua require('plugins.stats').open_stats()" },
+            { icon = " ", key = "s", desc = "Coding Stats", action = ":lua require('stats').open_stats()" },
             { icon = " ", key = "c", desc = "Config", action = ":e $MYVIMRC" },
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },

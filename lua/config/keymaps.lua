@@ -218,10 +218,10 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- ─── WakaTime Stats ──────────────────────────────────────────────────────────
 
-map("n", "<leader>ws", function() require("plugins.stats").open_stats() end,
+map("n", "<leader>ws", function() require("stats").open_stats() end,
   { desc = "Open Coding Stats" })
 map("n", "<leader>wS", function() require("wakatime").fetch() end,
   { desc = "Refresh WakaTime Stats" })
-map("n", "<leader>wh", function() require("plugins.stats").open_history() end,
+map("n", "<leader>wh", function() require("stats").open_history() end,
   { desc = "Message History" })
 
