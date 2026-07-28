@@ -19,6 +19,7 @@ vim.opt.rtp:prepend(lazypath)
 -- the others. Without this, LazyVim defaults to pyright and force-disables
 -- basedpyright, so with pyright also turned off in lsp.lua NO Python LSP attaches.
 vim.g.lazyvim_python_lsp = "basedpyright"
+vim.g.lazyvim_explorer = "neo-tree"  -- v16 defaults to snacks_explorer; keep neo-tree
 
 require("lazy").setup({
   spec = {
