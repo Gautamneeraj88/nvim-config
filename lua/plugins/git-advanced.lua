@@ -93,4 +93,30 @@ return {
       },
     },
   },
+
+  -- ─── CI/CD — GitHub Actions in a floating window ────────────────────────────
+  -- <leader>ga  → open CI/CD pipeline browser (float)
+  -- <leader>gA  → open Actions workflow file (if in .github/workflows/)
+  -- Requires: gh CLI authenticated (`gh auth login`)
+  {
+    "D3xter87/cicd.nvim",
+    cmd = { "Cicd", "Actions" },
+    init = function()
+      -- Inject gh token so cicd.nvim can talk to GitHub API
+      if not vim.env.GITHUB_TOKEN then
+        local token = vim.fn.system("gh auth token 2>/dev/null"):gsub("%s+", "")
+        if token ~= "" then vim.env.GITHUB_TOKEN = token end
+      end
+    end,
+    opts = {
+      intervals = {
+        auto_refresh = 10000,
+        min = 5000,
+      },
+    },
+    keys = {
+      { "<leader>ga", "<cmd>Cicd<cr>", desc = "CI/CD Pipelines (float)" },
+      { "<leader>gA", "<cmd>Actions<cr>", desc = "GitHub Actions (float)" },
+    },
+  },
 }

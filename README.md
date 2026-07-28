@@ -226,7 +226,7 @@ Ctrl+r       → redo
         │                        peek definition (goto-preview), no-neck-pain
         ├── extras.lua        ← Yanky, vim-visual-multi, nvim-bqf,
         │                        persistence, marks, twilight, zen mode
-        ├── git-advanced.lua  ← Diffview, git-conflict, Octo, lazygit (floating)
+        ├── git-advanced.lua  ← Diffview, git-conflict, Octo, lazygit, cicd.nvim
         ├── iot.lua           ← PlatformIO (ESP32/STM32/RP2040) + clangd_extensions
         ├── lsp.lua           ← vtsls, gopls, basedpyright, cssls, html, bashls, gofumpt, stylua, shfmt settings
         ├── markdown.lua      ← Markdown preview, image paste, table mode
@@ -801,6 +801,27 @@ Or use `:Octo` directly:
 <leader>ca   → add comment
 Tab          → next file in PR diff
 ]c / [c      → next/previous comment thread
+q            → close
+```
+
+---
+
+## CI/CD — GitHub Actions
+
+Browse and manage GitHub Actions workflows in a floating window.
+
+```
+<leader>ga   → open CI/CD pipeline browser (float)
+<leader>gA   → open Actions workflow file (if in .github/workflows/)
+```
+
+### Inside the float
+
+```
+j / k        → move between jobs
+Space        → act on selected job (retry/cancel)
+r            → refresh
+/            → live filter
 q            → close
 ```
 
@@ -2455,7 +2476,7 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 
 | Key | Action |
 |-----|--------|
-| `<leader>gg` | Open Lazygit |
+| `<leader>gg` | Open Lazygit (floating) |
 | `<leader>gc` | Git commits (fzf) |
 | `<leader>gB` | Git branches (fzf) |
 | `<leader>gd` | Diffview (all changes) |
@@ -2466,6 +2487,8 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>gdm` | Diff branch vs origin/main |
 | `<leader>gdM` | Diff branch vs local main |
 | `<leader>gx` | List conflicts in quickfix |
+| `<leader>ga` | CI/CD Pipelines (float) |
+| `<leader>gA` | GitHub Actions (float) |
 | `<leader>ghp` | Preview hunk |
 | `<leader>ghs` | Stage hunk |
 | `<leader>ghr` | Reset hunk |
