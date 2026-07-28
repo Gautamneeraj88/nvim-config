@@ -354,7 +354,7 @@ return {
       minSideBufferWidth = 10,
       autowidth = {
         enable = true,
-        filetype = { neo-tree = false, aerial = false, fidget = false },
+        filetype = { ["neo-tree"] = false, aerial = false, fidget = false },
       },
     },
   },
