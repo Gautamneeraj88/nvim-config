@@ -12,7 +12,7 @@ opt.inccommand   = "split" -- show live substitution results in a split (LazyVim
 
 -- Performance
 opt.updatetime   = 200   -- faster CursorHold / LSP diagnostics (LazyVim default: 4000ms)
-opt.timeoutlen   = 300   -- faster which-key popup (LazyVim default: 300, explicit for clarity)
+opt.timeoutlen   = 800   -- which-key popup delay (300 was too fast to read hints)
 
 -- UX
 opt.confirm      = true  -- ask "Save / Discard / Cancel?" instead of erroring on :q with unsaved changes
