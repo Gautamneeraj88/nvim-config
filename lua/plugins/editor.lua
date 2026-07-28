@@ -201,16 +201,60 @@ return {
       },
       dashboard = {
         preset = {
-          header = [[
-  ██████╗ ██████╗ ██████╗ ██╗███╗   ██╗ ██████╗     ████████╗██╗███╗   ███╗███████╗
- ██╔════╝██╔═══██╗██╔══██╗██║████╗  ██║██╔════╝     ╚══██╔══╝██║████╗ ████║██╔════╝
- ██║     ██║   ██║██║  ██║██║██╔██╗ ██║██║  ███╗       ██║   ██║██╔████╔██║█████╗
- ██║     ██║   ██║██║  ██║██║██║╚██╗██║██║   ██║       ██║   ██║██║╚██╔╝██║██╔══╝
- ╚██████╗╚██████╔╝██████╔╝██║██║ ╚████║╚██████╔╝       ██║   ██║██║ ╚═╝ ██║███████╗
-  ╚═════╝ ╚═════╝ ╚═════╝ ╚═╝╚═╝  ╚═══╝ ╚═════╝        ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝]],
+          header = function()
+            local stats = require("plugins.coding-stats").get_cached()
+            local cwd = vim.fn.getcwd()
+            local project = vim.fn.fnamemodify(cwd, ":t")
+
+            -- Detect project language
+            local lang_icons = {
+              ["go.mod"] = " ", ["pyproject.toml"] = " ", ["setup.py"] = " ",
+              ["package.json"] = " ", ["tsconfig.json"] = " ",
+              ["Cargo.toml"] = " ", ["Makefile"] = " ", ["CMakeLists.txt"] = " ",
+              ["docker-compose.yml"] = " ", ["Dockerfile"] = " ",
+              [".git"] = " ",
+            }
+            local icon = " "
+            for marker, ic in pairs(lang_icons) do
+              if vim.fn.filereadable(cwd .. "/" .. marker) == 1 then
+                icon = ic
+                break
+              end
+            end
+
+            -- Git branch
+            local branch = ""
+            local branch_file = io.open(cwd .. "/.git/HEAD", "r")
+            if branch_file then
+              local head = branch_file:read("*l") or ""
+              branch_file:close()
+              branch = head:match("ref: refs/heads/(.+)") or head:sub(1, 7)
+            end
+
+            local header = icon .. " " .. project
+            if branch ~= "" then header = header .. "  " .. branch end
+
+            -- Show WakaTime coding time if available
+            if stats and stats.total and stats.total > 0 then
+              local time = require("plugins.coding-stats").format_time(stats.total)
+              header = header .. "\n   Coded today: " .. time
+            end
+
+            return header
+          end,
+          -- stylua: ignore
+          keys = {
+            { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
+            { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
+            { icon = " ", key = "g", desc = "Git Status", action = ":Neogit kind=tab" },
+            { icon = " ", key = "p", desc = "Projects", action = ":lua Snacks.dashboard.pick('projects')" },
+            { icon = " ", key = "s", desc = "Coding Stats", action = ":lua require('plugins.stats').open()" },
+            { icon = " ", key = "c", desc = "Config", action = ":e $MYVIMRC" },
+            { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+          },
         },
         sections = {
-          { section = "header" },
+          { section = "header", padding = 1 },
           { section = "keys", gap = 1, padding = 1 },
           { icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
           { icon = " ", title = "Projects", section = "projects", indent = 2, padding = 1 },

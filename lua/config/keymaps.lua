@@ -187,6 +187,7 @@ vim.schedule(function()
     { "<leader>s",   group = "Search" },
     { "<leader>sr",  group = "Replace (grug-far)" },
     { "<leader>ss",  group = "Symbol" },
+    { "<leader>w",   group = "Window / WakaTime" },
   })
 end)
 
@@ -213,4 +214,11 @@ vim.api.nvim_create_autocmd("FileType", {
 -- ─── Git ──────────────────────────────────────────────────────────────────────
 
 -- <leader>gg is LazyVim default for lazygit — kept as-is
+
+-- ─── WakaTime Stats ──────────────────────────────────────────────────────────
+
+map("n", "<leader>ws", function() require("plugins.stats").open() end,
+  { desc = "Open Coding Stats" })
+map("n", "<leader>wS", function() require("plugins.coding-stats").fetch() end,
+  { desc = "Refresh WakaTime Stats" })
 
