@@ -100,9 +100,7 @@ return {
   -- Requires: gh CLI authenticated (`gh auth login`)
   {
     "D3xter87/cicd.nvim",
-    cmd = { "Cicd", "Actions" },
     init = function()
-      -- Inject gh token so cicd.nvim can talk to GitHub API
       if not vim.env.GITHUB_TOKEN then
         local token = vim.fn.system("gh auth token 2>/dev/null"):gsub("%s+", "")
         if token ~= "" then vim.env.GITHUB_TOKEN = token end
@@ -115,8 +113,8 @@ return {
       },
     },
     keys = {
-      { "<leader>ga", "<cmd>Cicd<cr>", desc = "CI/CD Pipelines (float)" },
-      { "<leader>gA", "<cmd>Actions<cr>", desc = "GitHub Actions (float)" },
+      { "<leader>ga", function() require("cicd").open_pipeline_browser() end, desc = "CI/CD Pipelines (float)" },
+      { "<leader>gA", function() require("cicd").open_pipeline_browser() end, desc = "GitHub Actions (float)" },
     },
   },
 }
