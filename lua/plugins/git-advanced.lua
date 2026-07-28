@@ -167,6 +167,21 @@ return {
         end
       end
 
+      -- Patch HTTP client to pcall callbacks — prevents nil-ctx crash in async vim.schedule
+      local client = require("cicd.http.client")
+      local orig_request = client.request
+      function client.request(opts, cb)
+        return orig_request(opts, function(result)
+          local ok, err = pcall(cb, result)
+          if not ok then
+            -- Swallow "index upvalue 'ctx'" — happens when browser closes mid-request
+            if not err or not err:match("'ctx'") then
+              vim.notify("cicd: " .. tostring(err), vim.log.levels.WARN)
+            end
+          end
+        end)
+      end
+
       -- Start background CI/CD status notifications
       require("cicd_notify").start()
     end,
