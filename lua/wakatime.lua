@@ -50,7 +50,7 @@ function M.http_get(url, callback)
   local api_key = M.get_api_key()
   if not api_key then callback(nil) return end
   vim.fn.jobstart({
-    "curl", "-s", "-H", "Authorization: " .. api_key,
+    "curl", "-s", "-u", api_key .. ":",
     "--max-time", "10", url,
   }, {
     stdout_buffered = true,
@@ -160,25 +160,30 @@ function M.fetch()
 
     if not user_ok or (user_data and user_data.errors) then
       local err = user_data and user_data.errors and table.concat(user_data.errors, ", ") or "Invalid response"
-      vim.notify("WakaTime auth failed: " .. err .. "\nGet a new key at https://wakatime.com/settings/api-key", vim.log.levels.ERROR)
+      vim.notify("WakaTime auth failed: " .. err, vim.log.levels.ERROR)
       return
     end
 
-    M.http_get("https://wakatime.com/api/v1/summaries?range=today", function(summary_body)
+    -- Correct endpoint: /api/v1/users/current/summaries (not /api/v1/summaries)
+    M.http_get("https://wakatime.com/api/v1/users/current/summaries?start=" .. os.date("%Y-%m-01") .. "&end=" .. os.date("%Y-%m-%d"), function(summary_body)
       if not summary_body then
         vim.notify("WakaTime summaries API unreachable", vim.log.levels.ERROR)
         return
       end
       local sum_ok, summary_data = pcall(vim.json.decode, summary_body)
 
-      if user_ok and sum_ok then
+      if sum_ok and summary_data and not summary_data.errors then
         local stats = M.build_stats(user_data, summary_data)
         M.save_cache(stats)
-        vim.notify("WakaTime stats updated — " .. M.format_time(stats.total) .. " coded today", vim.log.levels.INFO)
-        -- Open the stats floating window automatically
+        local time = M.format_time(stats.total)
+        local langs = #stats.languages
+        vim.notify("WakaTime updated — " .. time .. " coded, " .. langs .. " languages", vim.log.levels.INFO)
         pcall(function()
           require("stats").open_stats()
         end)
+      else
+        local err = summary_data and summary_data.errors and table.concat(summary_data.errors, ", ") or "Unknown error"
+        vim.notify("WakaTime summaries failed: " .. err, vim.log.levels.ERROR)
       end
     end)
   end)

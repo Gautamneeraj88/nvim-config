@@ -189,57 +189,47 @@ return {
   -- at 200KB files start causing noticeable lag with treesitter + biscuits + hlargs running together
   {
     "folke/snacks.nvim",
-    opts = {
-      bigfile  = { size = 200 * 1024 }, -- 200KB — disables treesitter/syntax/indentscope automatically
-      explorer = { enabled = false },
-      words    = { enabled = false }, -- illuminate handles this with more control
-      -- Indent guides + animated scope (replaces mini.indentscope — single system, no doubled guides)
-      indent   = {
-        enabled = true,
-        char    = "│",
-        scope   = { char = "│" },
-      },
-      dashboard = {
+    opts = function(_, opts)
+      -- Dynamic dashboard header: project name + language icon + git branch
+      local function make_header()
+        local ok, result = pcall(function()
+          local cwd = vim.fn.getcwd()
+          local project = vim.fn.fnamemodify(cwd, ":t")
+          local markers = {
+            ["go.mod"] = " ", ["pyproject.toml"] = " ", ["setup.py"] = " ",
+            ["package.json"] = " ", ["tsconfig.json"] = " ",
+            ["Cargo.toml"] = " ", ["Makefile"] = " ", ["CMakeLists.txt"] = " ",
+            ["docker-compose.yml"] = " ", ["Dockerfile"] = " ",
+          }
+          local icon = " "
+          for m, ic in pairs(markers) do
+            if vim.fn.filereadable(cwd .. "/" .. m) == 1 then icon = ic break end
+          end
+          local branch = ""
+          local f = io.open(cwd .. "/.git/HEAD", "r")
+          if f then
+            local head = f:read("*l") or ""
+            f:close()
+            branch = head:match("ref: refs/heads/(.+)") or head:sub(1, 7)
+          end
+          local header = icon .. " " .. project
+          if branch ~= "" then header = header .. "  " .. branch end
+          local s_ok, stats = pcall(require("wakatime").get_cached)
+          if s_ok and stats and stats.total and stats.total > 0 then
+            header = header .. "\n   Coded today: " .. require("wakatime").format_time(stats.total)
+          end
+          return header
+        end)
+        return ok and result or " Neovim"
+      end
+
+      opts.bigfile  = { size = 200 * 1024 }
+      opts.explorer = { enabled = false }
+      opts.words    = { enabled = false }
+      opts.indent   = { enabled = true, char = "│", scope = { char = "│" } }
+      opts.dashboard = {
         preset = {
-          header = function()
-            local ok, result = pcall(function()
-              local cwd = vim.fn.getcwd()
-              local project = vim.fn.fnamemodify(cwd, ":t")
-
-              -- Detect project language from marker files
-              local markers = {
-                ["go.mod"] = " ", ["pyproject.toml"] = " ", ["setup.py"] = " ",
-                ["package.json"] = " ", ["tsconfig.json"] = " ",
-                ["Cargo.toml"] = " ", ["Makefile"] = " ", ["CMakeLists.txt"] = " ",
-                ["docker-compose.yml"] = " ", ["Dockerfile"] = " ",
-              }
-              local icon = " "
-              for m, ic in pairs(markers) do
-                if vim.fn.filereadable(cwd .. "/" .. m) == 1 then icon = ic break end
-              end
-
-              -- Git branch
-              local branch = ""
-              local f = io.open(cwd .. "/.git/HEAD", "r")
-              if f then
-                local head = f:read("*l") or ""
-                f:close()
-                branch = head:match("ref: refs/heads/(.+)") or head:sub(1, 7)
-              end
-
-              local header = icon .. " " .. project
-              if branch ~= "" then header = header .. "  " .. branch end
-
-              -- WakaTime coding time (safe — never breaks dashboard)
-              local stats_ok, stats = pcall(require("wakatime").get_cached)
-              if stats_ok and stats and stats.total and stats.total > 0 then
-                header = header .. "\n   Coded today: " .. require("wakatime").format_time(stats.total)
-              end
-
-              return header
-            end)
-            return ok and result or " Neovim"
-          end,
+          header = make_header(),
           -- stylua: ignore
           keys = {
             { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
@@ -258,8 +248,9 @@ return {
           { icon = " ", title = "Projects", section = "projects", indent = 2, padding = 1 },
           { section = "startup" },
         },
-      },
-    },
+      }
+      return opts
+    end,
   },
 
   -- ─── VSCode-style smooth scrolling ──────────────────────────────────────────
