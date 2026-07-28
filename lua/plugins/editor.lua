@@ -234,8 +234,7 @@ return {
           keys = {
             { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
             { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
-            { icon = " ", key = "g", desc = "Git Status", action = ":Neogit kind=tab" },
-            { icon = " ", key = "p", desc = "Projects", action = ":lua Snacks.dashboard.pick('projects')" },
+            { icon = " ", key = "g", desc = "Git Diff", action = ":DiffviewOpen" },
             { icon = " ", key = "s", desc = "Coding Stats", action = ":lua require('stats').open_stats()" },
             { icon = " ", key = "c", desc = "Config", action = ":e $MYVIMRC" },
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
@@ -245,7 +244,6 @@ return {
           { section = "header", padding = 1 },
           { section = "keys", gap = 1, padding = 1 },
           { icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
-          { icon = " ", title = "Projects", section = "projects", indent = 2, padding = 1 },
           { section = "startup" },
         },
       }

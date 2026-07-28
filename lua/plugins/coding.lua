@@ -6,12 +6,6 @@ return {
     "kevinhwang91/nvim-ufo",
     dependencies = { "kevinhwang91/promise-async" },
     event = "BufReadPost",
-    init = function()
-      vim.opt.foldcolumn    = "0"   -- no gutter column; UFO virtual text shows fold counts instead
-      vim.opt.foldlevel     = 99    -- open all folds by default
-      vim.opt.foldlevelstart = 99
-      vim.opt.foldenable    = true
-    end,
     opts = {
       -- Use LSP first, fall back to treesitter, then indent
       provider_selector = function(_, filetype, _)

@@ -22,15 +22,8 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 })
 vim.api.nvim_set_hl(0, "LspInlayHint", { link = "Comment" }) -- apply now for the current theme
 
--- Auto-restore last session when Neovim opens with no file arguments.
--- No autocmd needed — autocmds.lua is sourced during VeryLazy, which fires
--- after VimEnter, so we just run directly. vim.schedule lets the UI settle first.
--- argc(-1) counts files across all tab pages (correct for "launched with no args").
-if vim.fn.argc(-1) == 0 then
-  vim.schedule(function()
-    require("persistence").load()
-  end)
-end
+-- Session restore is manual via <leader>qs (restore) / <leader>ql (last session).
+-- Auto-restore was removed because it blanks the welcome dashboard on startup.
 
 -- Close man pages with q (LazyVim handles the other utility windows)
 vim.api.nvim_create_autocmd("FileType", {
