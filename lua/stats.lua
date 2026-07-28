@@ -7,16 +7,6 @@ local M = {}
 
 local function build_stats_lines()
   local stats = wakatime.get_cached()
-  if not stats then
-    return {
-      "",
-      "  No WakaTime stats available.",
-      "",
-      "  Press <leader>wS to fetch stats",
-      "  (requires ~/.wakatime.cfg with api_key)",
-      "",
-    }
-  end
 
   local lines = {}
   local function add(s) lines[#lines + 1] = s end
@@ -26,47 +16,94 @@ local function build_stats_lines()
   add("  │           WakaTime Coding Stats          │")
   add("  └─────────────────────────────────────────┘")
   add("")
-  add("  User:          " .. (stats.user or "Unknown"))
-  add("  Date:          " .. (stats.date or os.date("%a, %b %d")))
-  add("  Current:       " .. (stats.project or "—"))
+
+  if not stats then
+    add("  Status:  No cached data")
+    add("")
+    local key = wakatime.get_api_key()
+    if key then
+      add("  API Key: " .. key:sub(1, 10) .. "...")
+    else
+      add("  API Key: NOT FOUND")
+      add("  Add to ~/.wakatime.cfg:")
+      add("    api_key=your_key_here")
+    end
+    add("")
+    add("  Press <leader>wS to fetch from WakaTime")
+    add("  Get key: wakatime.com/settings/api-key")
+    add("")
+    add("  Close:  q / <Esc>")
+    add("")
+    return lines
+  end
+
+  add("  User:      " .. (stats.user or "Unknown"))
+  add("  Date:      " .. (stats.date or os.date("%a, %b %d")))
+  add("  Project:   " .. (stats.project or "—"))
   add("")
 
-  add("  ┌─── Today ──────────────────────────────┐")
+  -- Total time
   local time_str = wakatime.format_time(stats.total)
-  add("  │  Total:      " .. time_str .. string.rep(" ", 28 - #time_str) .. "│")
-  add("  └────────────────────────────────────────┘")
+  if stats.total > 0 then
+    add("  ┌─── Today ──────────────────────────────┐")
+    add("  │  Total:  " .. time_str .. string.rep(" ", 30 - #time_str) .. "│")
+    add("  └────────────────────────────────────────┘")
+  else
+    add("  ┌─── Today ──────────────────────────────┐")
+    add("  │  Total:  0m (no coding data for today) │")
+    add("  └────────────────────────────────────────┘")
+  end
   add("")
 
-  if #stats.languages > 0 then
+  -- Language breakdown
+  if stats.languages and #stats.languages > 0 then
     add("  ┌─── Languages ──────────────────────────┐")
     local max_secs = stats.languages[1].seconds
     for i, lang in ipairs(stats.languages) do
       if i > 8 then break end
       local ts = wakatime.format_time(lang.seconds)
       local bar = wakatime.format_bar(lang.seconds, max_secs)
-      local pad = 38 - #lang.name - #ts - #bar - 5
+      local name = lang.name
+      if #name > 12 then name = name:sub(1, 11) .. "~" end
+      local pad = 38 - #name - #ts - #bar - 5
       if pad < 0 then pad = 0 end
-      add("  │  " .. lang.name .. string.rep(" ", 14 - #lang.name) .. bar .. "  " .. ts .. string.rep(" ", pad) .. "│")
+      add("  │  " .. name .. string.rep(" ", 13 - #name) .. bar .. "  " .. ts .. string.rep(" ", pad) .. "│")
     end
     add("  └────────────────────────────────────────┘")
     add("")
+  else
+    add("  Languages:  none recorded today")
+    add("")
   end
 
-  if #stats.projects > 0 then
+  -- Project breakdown
+  if stats.projects and #stats.projects > 0 then
     add("  ┌─── Projects ───────────────────────────┐")
     local max_secs = stats.projects[1].seconds
     for i, proj in ipairs(stats.projects) do
       if i > 8 then break end
       local ts = wakatime.format_time(proj.seconds)
       local bar = wakatime.format_bar(proj.seconds, max_secs)
-      local pad = 38 - #proj.name - #ts - #bar - 5
+      local name = proj.name
+      if #name > 12 then name = name:sub(1, 11) .. "~" end
+      local pad = 38 - #name - #ts - #bar - 5
       if pad < 0 then pad = 0 end
-      add("  │  " .. proj.name .. string.rep(" ", 14 - #proj.name) .. bar .. "  " .. ts .. string.rep(" ", pad) .. "│")
+      add("  │  " .. name .. string.rep(" ", 13 - #name) .. bar .. "  " .. ts .. string.rep(" ", pad) .. "│")
     end
     add("  └────────────────────────────────────────┘")
     add("")
+  else
+    add("  Projects:   none recorded today")
+    add("")
   end
 
+  -- Cache info
+  if stats._cached_at then
+    local age = os.time() - stats._cached_at
+    local age_str = age < 60 and "just now" or (math.floor(age / 60) .. "m ago")
+    add("  Cached: " .. age_str)
+  end
+  add("")
   add("  Refresh:  <leader>wS")
   add("  Close:    q / <Esc>")
   add("")
@@ -102,7 +139,11 @@ local function open_float(lines, title)
   vim.bo[buf].buftype = "nofile"
   vim.bo[buf].modifiable = false
 
-  local width = 50
+  -- Calculate width from longest line
+  local width = 46
+  for _, line in ipairs(lines) do
+    if #line + 2 > width then width = math.min(#line + 2, 60) end
+  end
   local height = math.min(#lines, vim.o.lines - 4)
   local row = math.floor((vim.o.lines - height) / 2)
   local col = math.floor((vim.o.columns - width) / 2)

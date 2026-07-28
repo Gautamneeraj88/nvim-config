@@ -202,45 +202,43 @@ return {
       dashboard = {
         preset = {
           header = function()
-            local stats = require("wakatime").get_cached()
-            local cwd = vim.fn.getcwd()
-            local project = vim.fn.fnamemodify(cwd, ":t")
+            local ok, result = pcall(function()
+              local cwd = vim.fn.getcwd()
+              local project = vim.fn.fnamemodify(cwd, ":t")
 
-            -- Detect project language
-            local lang_icons = {
-              ["go.mod"] = " ", ["pyproject.toml"] = " ", ["setup.py"] = " ",
-              ["package.json"] = " ", ["tsconfig.json"] = " ",
-              ["Cargo.toml"] = " ", ["Makefile"] = " ", ["CMakeLists.txt"] = " ",
-              ["docker-compose.yml"] = " ", ["Dockerfile"] = " ",
-              [".git"] = " ",
-            }
-            local icon = " "
-            for marker, ic in pairs(lang_icons) do
-              if vim.fn.filereadable(cwd .. "/" .. marker) == 1 then
-                icon = ic
-                break
+              -- Detect project language from marker files
+              local markers = {
+                ["go.mod"] = " ", ["pyproject.toml"] = " ", ["setup.py"] = " ",
+                ["package.json"] = " ", ["tsconfig.json"] = " ",
+                ["Cargo.toml"] = " ", ["Makefile"] = " ", ["CMakeLists.txt"] = " ",
+                ["docker-compose.yml"] = " ", ["Dockerfile"] = " ",
+              }
+              local icon = " "
+              for m, ic in pairs(markers) do
+                if vim.fn.filereadable(cwd .. "/" .. m) == 1 then icon = ic break end
               end
-            end
 
-            -- Git branch
-            local branch = ""
-            local branch_file = io.open(cwd .. "/.git/HEAD", "r")
-            if branch_file then
-              local head = branch_file:read("*l") or ""
-              branch_file:close()
-              branch = head:match("ref: refs/heads/(.+)") or head:sub(1, 7)
-            end
+              -- Git branch
+              local branch = ""
+              local f = io.open(cwd .. "/.git/HEAD", "r")
+              if f then
+                local head = f:read("*l") or ""
+                f:close()
+                branch = head:match("ref: refs/heads/(.+)") or head:sub(1, 7)
+              end
 
-            local header = icon .. " " .. project
-            if branch ~= "" then header = header .. "  " .. branch end
+              local header = icon .. " " .. project
+              if branch ~= "" then header = header .. "  " .. branch end
 
-            -- Show WakaTime coding time if available
-            if stats and stats.total and stats.total > 0 then
-              local time = require("wakatime").format_time(stats.total)
-              header = header .. "\n   Coded today: " .. time
-            end
+              -- WakaTime coding time (safe — never breaks dashboard)
+              local stats_ok, stats = pcall(require("wakatime").get_cached)
+              if stats_ok and stats and stats.total and stats.total > 0 then
+                header = header .. "\n   Coded today: " .. require("wakatime").format_time(stats.total)
+              end
 
-            return header
+              return header
+            end)
+            return ok and result or " Neovim"
           end,
           -- stylua: ignore
           keys = {
