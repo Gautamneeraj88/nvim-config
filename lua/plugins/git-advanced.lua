@@ -129,7 +129,7 @@ return {
         if not view or not view.buf then return end
         local lines, extmarks = ansi.parse(body)
         if #lines == 0 or (#lines == 1 and lines[1] == "") then
-          lines = { "", "  (no log available for this job)" }
+          lines = { "", "  (logs not available yet — job may still be queued)" }
         end
 
         local follow = true
@@ -166,6 +166,9 @@ return {
           end
         end
       end
+
+      -- Start background CI/CD status notifications
+      require("cicd_notify").start()
     end,
     opts = {
       intervals = {
