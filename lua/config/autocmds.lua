@@ -103,3 +103,47 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = { "markdown", "text", "gitcommit" },
   callback = function() vim.b.virt_column_virtcolumn = "72,80" end, -- prose width conventions
 })
+
+-- ─── Format command (via Conform) ─────────────────────────────────────────────
+vim.api.nvim_create_user_command("Format", function()
+  local conform = require("conform")
+  local buf = vim.api.nvim_get_current_buf()
+  local formatters = conform.list_formatters(buf)
+  if #formatters == 0 then
+    vim.notify("No formatter available for " .. vim.bo[buf].filetype, vim.log.levels.WARN)
+    return
+  end
+  conform.format({ bufnr = buf, lsp_fallback = true })
+  vim.notify("Formatted with: " .. formatters[1].name)
+end, { desc = "Format current buffer" })
+
+-- ─── ReloadConfig command ─────────────────────────────────────────────────────
+-- Clears cached modules and re-requires them. init.lua/lazy bootstrap is NOT
+-- re-run (it only runs once). After this, run :Lazy to refresh plugins.
+vim.api.nvim_create_user_command("ReloadConfig", function()
+  local config_dir = vim.fn.stdpath("config") .. "/lua"
+  local count = 0
+
+  -- Clear config modules (options, keymaps, autocmds)
+  for _, f in ipairs(vim.fn.readdir(config_dir .. "/config")) do
+    local mod = "config." .. f:gsub("%.lua$", "")
+    package.loaded[mod] = nil
+    count = count + 1
+  end
+
+  -- Clear plugin spec modules
+  local plugins_dir = config_dir .. "/plugins"
+  if vim.fn.isdirectory(plugins_dir) == 1 then
+    for _, f in ipairs(vim.fn.readdir(plugins_dir)) do
+      local mod = "plugins." .. f:gsub("%.lua$", "")
+      package.loaded[mod] = nil
+      count = count + 1
+    end
+  end
+
+  -- Re-source the three core config modules
+  pcall(require, "config.options")
+  pcall(require, "config.keymaps")
+  pcall(require, "config.autocmds")
+  vim.notify("Reloaded " .. count .. " modules (run :Lazy sync for plugin changes)", vim.log.levels.INFO)
+end, { desc = "Reload Neovim config" })

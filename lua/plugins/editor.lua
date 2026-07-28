@@ -190,46 +190,13 @@ return {
   {
     "folke/snacks.nvim",
     opts = function(_, opts)
-      -- Dynamic dashboard header: project name + language icon + git branch
-      local function make_header()
-        local ok, result = pcall(function()
-          local cwd = vim.fn.getcwd()
-          local project = vim.fn.fnamemodify(cwd, ":t")
-          local markers = {
-            ["go.mod"] = " ", ["pyproject.toml"] = " ", ["setup.py"] = " ",
-            ["package.json"] = " ", ["tsconfig.json"] = " ",
-            ["Cargo.toml"] = " ", ["Makefile"] = " ", ["CMakeLists.txt"] = " ",
-            ["docker-compose.yml"] = " ", ["Dockerfile"] = " ",
-          }
-          local icon = " "
-          for m, ic in pairs(markers) do
-            if vim.fn.filereadable(cwd .. "/" .. m) == 1 then icon = ic break end
-          end
-          local branch = ""
-          local f = io.open(cwd .. "/.git/HEAD", "r")
-          if f then
-            local head = f:read("*l") or ""
-            f:close()
-            branch = head:match("ref: refs/heads/(.+)") or head:sub(1, 7)
-          end
-          local header = icon .. " " .. project
-          if branch ~= "" then header = header .. "  " .. branch end
-          local s_ok, stats = pcall(require("wakatime").get_cached)
-          if s_ok and stats and stats.total and stats.total > 0 then
-            header = header .. "\n   Coded today: " .. require("wakatime").format_time(stats.total)
-          end
-          return header
-        end)
-        return ok and result or " Neovim"
-      end
-
       opts.bigfile  = { size = 200 * 1024 }
       opts.explorer = { enabled = false }
       opts.words    = { enabled = false }
       opts.indent   = { enabled = true, char = "│", scope = { char = "│" } }
       opts.dashboard = {
         preset = {
-          header = make_header(),
+          header = " Neovim",  -- fallback; overridden by dynamic section below
           -- stylua: ignore
           keys = {
             { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
@@ -241,7 +208,38 @@ return {
           },
         },
         sections = {
-          { section = "header", padding = 1 },
+          -- Dynamic header: recomputes every time the dashboard renders
+          { section = function()
+              local ok, result = pcall(function()
+                local cwd = vim.fn.getcwd()
+                local project = vim.fn.fnamemodify(cwd, ":t")
+                local markers = {
+                  ["go.mod"] = " ", ["pyproject.toml"] = " ", ["setup.py"] = " ",
+                  ["package.json"] = " ", ["tsconfig.json"] = " ",
+                  ["Cargo.toml"] = " ", ["Makefile"] = " ", ["CMakeLists.txt"] = " ",
+                  ["docker-compose.yml"] = " ", ["Dockerfile"] = " ",
+                }
+                local icon = " "
+                for m, ic in pairs(markers) do
+                  if vim.fn.filereadable(cwd .. "/" .. m) == 1 then icon = ic break end
+                end
+                local branch = ""
+                local f = io.open(cwd .. "/.git/HEAD", "r")
+                if f then
+                  local head = f:read("*l") or ""
+                  f:close()
+                  branch = head:match("ref: refs/heads/(.+)") or head:sub(1, 7)
+                end
+                local header = icon .. " " .. project
+                if branch ~= "" then header = header .. "  " .. branch end
+                local s_ok, wstats = pcall(require("wakatime").get_cached)
+                if s_ok and wstats and wstats.total and wstats.total > 0 then
+                  header = header .. "\n   Coded today: " .. require("wakatime").format_time(wstats.total)
+                end
+                return header
+              end)
+              return { header = ok and result or " Neovim", padding = 2 }
+            end },
           { section = "keys", gap = 1, padding = 1 },
           { icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
           { section = "startup" },
@@ -345,7 +343,7 @@ return {
     dependencies = { "nvim-tree/nvim-web-devicons" },
     cmd = "Oil",
     keys = {
-      { "-", "<cmd>Oil<cr>", desc = "Open parent dir (oil)" },
+      { "-", function() require("oil").open_float() end, desc = "Open parent dir (oil)" },
     },
     opts = {
       default_file_explorer = false,          -- keep neo-tree as <leader>e

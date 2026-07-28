@@ -177,18 +177,23 @@ vim.schedule(function()
     { "<leader>dt",  group = "Debug Test" },
     { "<leader>dg",  group = "Debug Go" },
     { "<leader>R",   group = "Refactor" },
-    { "<leader>D",   group = "Database" }, -- vim-dadbod-ui (database.lua)
+    { "<leader>D",   group = "Database" },
     { "<leader>n",   group = "NPM / Package" },
-    { "<leader>go",  group = "Octo (GitHub)" }, -- octo.nvim (git-advanced.lua)
+    { "<leader>go",  group = "Octo (GitHub)" },
     { "<leader>l",   group = "LSP" },
-    { "<leader>a",   group = "Argument" },   -- treesitter-textobjects swap
+    { "<leader>a",   group = "Argument" },
     { "<leader>io",  group = "IoT / PlatformIO" },
     { "<leader>f",   group = "File / Find" },
     { "<leader>s",   group = "Search" },
     { "<leader>sr",  group = "Replace (grug-far)" },
     { "<leader>ss",  group = "Symbol" },
     { "<leader>w",   group = "Window / WakaTime" },
-    { "<leader>wh",  group = "History" },
+    { "<leader>e",   group = "Explorer" },
+    { "<leader>g",   group = "Git" },
+    { "<leader>gd",  group = "Diff" },
+    { "<leader>b",   group = "Buffer" },
+    { "<leader>u",   group = "UI" },
+    { "<leader>z",   group = "Zen" },
   })
 end)
 
@@ -214,7 +219,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- ─── Git ──────────────────────────────────────────────────────────────────────
 
--- <leader>gg is LazyVim default for lazygit — kept as-is
+-- <leader>gg / <leader>gG are overridden in git-advanced.lua (floating lazygit)
 
 -- ─── WakaTime Stats ──────────────────────────────────────────────────────────
 
@@ -222,6 +227,6 @@ map("n", "<leader>ws", function() require("stats").open_stats() end,
   { desc = "Open Coding Stats" })
 map("n", "<leader>wS", function() require("wakatime").fetch() end,
   { desc = "Refresh WakaTime Stats" })
-map("n", "<leader>wh", function() require("stats").open_history() end,
+map("n", "<leader>wm", function() require("stats").open_history() end,
   { desc = "Message History" })
 

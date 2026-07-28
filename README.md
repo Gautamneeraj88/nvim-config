@@ -92,7 +92,7 @@ This document covers every feature in detail — read it when you're stuck or wa
 
 ```bash
 # macOS — install with Homebrew
-brew install neovim git node ripgrep fzf lazygit
+brew install neovim git node ripgrep fd tree-sitter-cli fzf lazygit
 
 # For Python REPL (ts-node optional, for TypeScript REPL)
 npm install -g ts-node          # optional: TypeScript REPL support
@@ -355,7 +355,7 @@ Default width: **40 columns**. Minimum: 20. Standard `<leader>w>` does not work 
 Edit the filesystem like a text buffer — rename files with `cw`, move with `dd`/`p`, delete with `dd`. **Nothing is applied until you save with `:w`.**
 
 ```
--            → open parent directory of current file in oil
+-            → open parent directory in a floating oil window
 ```
 
 ### Inside Oil
@@ -2664,3 +2664,11 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>mp` | Browser preview (live reload) |
 | `<leader>mi` | Paste image from clipboard |
 | `<leader>mt` | Toggle table mode |
+
+### Commands
+
+| Command | Action |
+|---------|--------|
+| `:Format` | Format current buffer via Conform |
+| `:ReloadConfig` | Reload all config + plugin modules (run `:Lazy sync` after) |
+| `:WakaTimeApiKey` | Set your WakaTime API key |

@@ -87,8 +87,17 @@ return {
         function()
           local fzf = require("fzf-lua")
           local home = vim.fn.expand("~")
+          local search_dirs = {}
+          for _, d in ipairs({ "projects", "code", "dev", "src", "work", "repos" }) do
+            local path = home .. "/" .. d
+            if vim.fn.isdirectory(path) == 1 then search_dirs[#search_dirs + 1] = path end
+          end
+          if #search_dirs == 0 then
+            vim.notify("No ~/projects|code|dev|src|work|repos dirs found", vim.log.levels.WARN)
+            return
+          end
           local results = vim.fn.systemlist(
-            "find " .. home .. "/projects " .. home .. "/code " .. home .. "/dev " .. home .. "/src " .. home .. "/work " .. home .. "/repos " .. home .. " -maxdepth 3 -name .git -type d 2>/dev/null"
+            "fd --hidden --max-depth 3 --type d --name .git " .. table.concat(search_dirs, " ") .. " 2>/dev/null"
           )
           if #results == 0 then
             vim.notify("No git repos found", vim.log.levels.WARN)
