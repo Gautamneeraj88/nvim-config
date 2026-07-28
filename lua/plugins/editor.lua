@@ -202,7 +202,7 @@ return {
       dashboard = {
         preset = {
           header = function()
-            local stats = require("plugins.coding-stats").get_cached()
+            local stats = require("wakatime").get_cached()
             local cwd = vim.fn.getcwd()
             local project = vim.fn.fnamemodify(cwd, ":t")
 
@@ -236,7 +236,7 @@ return {
 
             -- Show WakaTime coding time if available
             if stats and stats.total and stats.total > 0 then
-              local time = require("plugins.coding-stats").format_time(stats.total)
+              local time = require("wakatime").format_time(stats.total)
               header = header .. "\n   Coded today: " .. time
             end
 
@@ -248,7 +248,7 @@ return {
             { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
             { icon = " ", key = "g", desc = "Git Status", action = ":Neogit kind=tab" },
             { icon = " ", key = "p", desc = "Projects", action = ":lua Snacks.dashboard.pick('projects')" },
-            { icon = " ", key = "s", desc = "Coding Stats", action = ":lua require('plugins.stats').open()" },
+            { icon = " ", key = "s", desc = "Coding Stats", action = ":lua require('plugins.stats').open_stats()" },
             { icon = " ", key = "c", desc = "Config", action = ":e $MYVIMRC" },
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },

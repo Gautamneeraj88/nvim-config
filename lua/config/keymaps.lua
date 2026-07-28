@@ -188,6 +188,7 @@ vim.schedule(function()
     { "<leader>sr",  group = "Replace (grug-far)" },
     { "<leader>ss",  group = "Symbol" },
     { "<leader>w",   group = "Window / WakaTime" },
+    { "<leader>wh",  group = "History" },
   })
 end)
 
@@ -217,8 +218,10 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- ─── WakaTime Stats ──────────────────────────────────────────────────────────
 
-map("n", "<leader>ws", function() require("plugins.stats").open() end,
+map("n", "<leader>ws", function() require("plugins.stats").open_stats() end,
   { desc = "Open Coding Stats" })
-map("n", "<leader>wS", function() require("plugins.coding-stats").fetch() end,
+map("n", "<leader>wS", function() require("wakatime").fetch() end,
   { desc = "Refresh WakaTime Stats" })
+map("n", "<leader>wh", function() require("plugins.stats").open_history() end,
+  { desc = "Message History" })
 

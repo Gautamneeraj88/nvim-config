@@ -49,7 +49,7 @@ end
 function M.http_get(url, callback)
   local api_key = M.get_api_key()
   if not api_key then callback(nil) return end
-  local job_id = vim.fn.jobstart({
+  vim.fn.jobstart({
     "curl", "-s", "-H", "Authorization: " .. api_key,
     "--max-time", "10", url,
   }, {
@@ -65,7 +65,6 @@ function M.http_get(url, callback)
       if exit_code ~= 0 then callback(nil) end
     end,
   })
-  if job_id <= 0 then callback(nil) end
 end
 
 --- Format seconds into human-readable string (e.g. "2h 34m", "45m", "1h 12s")
@@ -82,7 +81,7 @@ function M.format_time(seconds)
   end
 end
 
---- Format seconds into bar chart (e.g. "████░░ 2h 34m")
+--- Format seconds into bar chart (e.g. "████░░")
 function M.format_bar(seconds, max_seconds)
   if not seconds or seconds <= 0 then return "░░░░░░" end
   local width = 6
@@ -117,21 +116,18 @@ function M.build_stats(user_data, summary_data)
     end
   end
 
-  -- Sort languages by time descending
   local sorted_langs = {}
   for name, secs in pairs(languages) do
     sorted_langs[#sorted_langs + 1] = { name = name, seconds = secs }
   end
   table.sort(sorted_langs, function(a, b) return a.seconds > b.seconds end)
 
-  -- Sort projects by time descending
   local sorted_projs = {}
   for name, secs in pairs(projects) do
     sorted_projs[#sorted_projs + 1] = { name = name, seconds = secs }
   end
   table.sort(sorted_projs, function(a, b) return a.seconds > b.seconds end)
 
-  -- Detect current project
   local cwd = vim.fn.getcwd()
   local project_name = vim.fn.fnamemodify(cwd, ":t")
 
@@ -153,12 +149,10 @@ function M.fetch()
     return
   end
 
-  -- Fetch user info
   M.http_get("https://wakatime.com/api/v1/users/current", function(user_body)
     if not user_body then return end
     local user_ok, user_data = pcall(vim.json.decode, user_body)
 
-    -- Fetch today's coding activity
     M.http_get("https://wakatime.com/api/v1/summaries?range=today", function(summary_body)
       if not summary_body then return end
       local sum_ok, summary_data = pcall(vim.json.decode, summary_body)
@@ -167,7 +161,6 @@ function M.fetch()
         local stats = M.build_stats(user_data, summary_data)
         M.save_cache(stats)
         vim.notify("WakaTime stats updated", vim.log.levels.INFO)
-        -- Refresh dashboard if visible
         pcall(function()
           require("snacks.dashboard").open()
         end)
