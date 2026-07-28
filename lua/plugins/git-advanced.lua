@@ -105,13 +105,67 @@ return {
         local token = vim.fn.system("gh auth token 2>/dev/null"):gsub("%s+", "")
         if token ~= "" then vim.env.GITHUB_TOKEN = token end
       end
-      -- Lazy-load commands: plugin doesn't register these itself
       vim.api.nvim_create_user_command("Cicd", function()
         require("cicd").open_pipeline_browser()
       end, { desc = "CI/CD Pipeline Browser" })
       vim.api.nvim_create_user_command("Actions", function()
         require("cicd").open_pipeline_browser()
       end, { desc = "GitHub Actions" })
+    end,
+    config = function(_, opts)
+      require("cicd").setup(opts)
+
+      -- Patch logview to render ANSI colors instead of stripping them
+      local ansi = require("ansi")
+      local logview = require("cicd.ui.logview")
+
+      ansi.setup_highlights()
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        callback = function() ansi.setup_highlights() end,
+      })
+
+      local orig_set_body = logview.set_body
+      function logview.set_body(view, body)
+        if not view or not view.buf then return end
+        local lines, extmarks = ansi.parse(body)
+        if #lines == 0 or (#lines == 1 and lines[1] == "") then
+          lines = { "", "  (no log available for this job)" }
+        end
+
+        local follow = true
+        local cur
+        if view.loaded and view.win and vim.api.nvim_win_is_valid(view.win) then
+          local total = vim.api.nvim_buf_line_count(view.buf)
+          local ok, pos = pcall(vim.api.nvim_win_get_cursor, view.win)
+          if ok then
+            cur = pos
+            follow = pos[1] >= total
+          end
+        end
+
+        vim.api.nvim_set_option_value("modifiable", true, { buf = view.buf })
+        vim.api.nvim_buf_set_lines(view.buf, 0, -1, false, lines)
+        vim.api.nvim_set_option_value("modifiable", false, { buf = view.buf })
+
+        local ns = vim.api.nvim_create_namespace("cicd_ansi")
+        vim.api.nvim_buf_clear_namespace(view.buf, ns, 0, -1)
+        for _, em in ipairs(extmarks) do
+          pcall(vim.api.nvim_buf_set_extmark, view.buf, ns, em[1], em[2], {
+            end_col = em[3],
+            hl_group = em[4],
+          })
+        end
+
+        view.loaded = true
+        if view.win and vim.api.nvim_win_is_valid(view.win) then
+          local count = vim.api.nvim_buf_line_count(view.buf)
+          if follow then
+            pcall(vim.api.nvim_win_set_cursor, view.win, { count, 0 })
+          elseif cur then
+            pcall(vim.api.nvim_win_set_cursor, view.win, { math.min(cur[1], count), cur[2] })
+          end
+        end
+      end
     end,
     opts = {
       intervals = {
