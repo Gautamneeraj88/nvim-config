@@ -210,30 +210,33 @@ Ctrl+r       → redo
     │   ├── lazy.lua          ← Plugin manager + enabled LazyVim extras
     │   ├── options.lua       ← Editor settings (scrolloff, cmdheight, winborder, netrw disable…)
     │   ├── keymaps.lua       ← Custom keybindings + which-key group labels
-    │   └── autocmds.lua      ← Autocommands (session restore, scrolloff, virt-column)
+    │   └── autocmds.lua      ← Autocommands (inlay hints, virt-column, session hooks)
     │
     └── plugins/
+        ├── autosave.lua      ← Auto-save on InsertLeave/BufLeave/FocusLost
         ├── coding.lua        ← UFO folds, refactoring, autotag, neogen, tabout,
         │                        treesitter textobjects, various textobjs,
         │                        ts-error-translator, blink.cmp ghost text
         ├── colorscheme.lua   ← Kanagawa wave (default) + catppuccin, tokyonight,
         │                        rose-pine, oxocarbon, cyberdream
         ├── dap.lua           ← Debugger: Python, Go, TS/JS, IoT (probe-rs + OpenOCD)
+        ├── database.lua      ← vim-dadbod-ui SQL client + blink completion
         ├── editor.lua        ← Neoconf, hardtime, todo-comments, diagnostics,
         │                        gitsigns blame, neo-tree, oil, smooth scroll,
-        │                        peek definition (goto-preview)
+        │                        peek definition (goto-preview), no-neck-pain
         ├── extras.lua        ← Yanky, vim-visual-multi, nvim-bqf,
         │                        persistence, marks, twilight, zen mode
-        ├── git-advanced.lua  ← Diffview, git-conflict, Octo (GitHub PRs/issues)
+        ├── git-advanced.lua  ← Diffview, git-conflict, Octo, lazygit (floating)
         ├── iot.lua           ← PlatformIO (ESP32/STM32/RP2040) + clangd_extensions
         ├── lsp.lua           ← vtsls, gopls, basedpyright, cssls, html, bashls, gofumpt, stylua, shfmt settings
+        ├── markdown.lua      ← Markdown preview, image paste, table mode
         ├── python.lua        ← basedpyright venv detection, ruff formatter, iron.nvim REPL
         ├── rest.lua          ← Kulala HTTP/REST client
         ├── search.lua        ← fzf-lua config + hlslens search lens
         ├── terminal.lua      ← Snacks terminal + snacks.input
         ├── testing.lua       ← Neotest (Jest/Vitest/pytest/Go) + nvim-coverage
         ├── ui.lua            ← Edgy, treesitter-context, fidget, lualine,
-        │                        lightbulb, noice, mini.indentscope
+        │                        lightbulb, noice
         ├── ui-extras.lua     ← Dropbar breadcrumbs, colorizer, package-info, wakatime
         ├── undotree.lua      ← Undo history tree
         └── visuals.lua       ← Smear cursor, rainbow delimiters, scrollbar,
@@ -260,12 +263,15 @@ Ctrl+r       → redo
 | `editor.aerial` | Code outline panel |
 | `editor.inc-rename` | Live rename preview |
 | `editor.fzf` | fzf-lua as the LazyVim picker |
+| `editor.overseer` | Task runner — build/test/make commands with UI panel |
+| `editor.dial` | Smarter increment/decrement — dates, booleans, semver |
+| `util.dot` | Dotfile management helpers |
 
 ---
 
 ## The Leader Key & Which-Key
 
-**Leader key is `Space`**. Press it and wait 300ms — a popup shows all available commands grouped by category.
+**Leader key is `Space`**. Press it and wait 1000ms — a popup shows all available commands grouped by category.
 
 ```
 Space f ...   → File operations
@@ -625,8 +631,11 @@ Doc-comment templates are generated separately by Neogen (`<leader>cg`) using Ne
 
 ### Lazygit — full git UI
 
+Opens in a **centered floating window** (85% × 90% of screen).
+
 ```
-<leader>gg   → open lazygit (full screen)
+<leader>gg   → open lazygit (rooted at project git root)
+<leader>gG   → open lazygit (rooted at cwd — useful in monorepos)
 ```
 
 **Inside lazygit** (`?` for all keys):

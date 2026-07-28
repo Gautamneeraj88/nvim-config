@@ -63,4 +63,34 @@ return {
       { "<leader>gx", "<cmd>GitConflictListQf<cr>", desc = "List all conflicts (quickfix)" },
     },
   },
+
+  -- ─── Lazygit — full git TUI in a floating window ────────────────────────────
+  -- <leader>gg  → lazygit rooted at project root (git top-level)
+  -- <leader>gG  → lazygit rooted at cwd (useful in monorepos)
+  -- Both open in a centered floating window (85% x 90% of screen).
+  {
+    "folke/snacks.nvim",
+    keys = {
+      {
+        "<leader>gg",
+        function()
+          Snacks.lazygit({ cwd = LazyVim.root.git(), win = {
+            width = 0.85, height = 0.9,
+            position = "float",
+          } })
+        end,
+        desc = "Lazygit (Root Dir)",
+      },
+      {
+        "<leader>gG",
+        function()
+          Snacks.lazygit({ win = {
+            width = 0.85, height = 0.9,
+            position = "float",
+          } })
+        end,
+        desc = "Lazygit (cwd)",
+      },
+    },
+  },
 }
