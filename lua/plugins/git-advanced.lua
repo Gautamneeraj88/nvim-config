@@ -105,6 +105,13 @@ return {
         local token = vim.fn.system("gh auth token 2>/dev/null"):gsub("%s+", "")
         if token ~= "" then vim.env.GITHUB_TOKEN = token end
       end
+      -- Lazy-load commands: plugin doesn't register these itself
+      vim.api.nvim_create_user_command("Cicd", function()
+        require("cicd").open_pipeline_browser()
+      end, { desc = "CI/CD Pipeline Browser" })
+      vim.api.nvim_create_user_command("Actions", function()
+        require("cicd").open_pipeline_browser()
+      end, { desc = "GitHub Actions" })
     end,
     opts = {
       intervals = {
