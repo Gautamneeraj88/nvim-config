@@ -145,24 +145,39 @@ end
 function M.fetch()
   local api_key = M.get_api_key()
   if not api_key then
-    vim.notify("WakaTime API key not found in ~/.wakatime.cfg", vim.log.levels.WARN)
+    vim.notify("No API key in ~/.wakatime.cfg", vim.log.levels.ERROR)
     return
   end
 
+  vim.notify("Fetching WakaTime stats...", vim.log.levels.INFO)
+
   M.http_get("https://wakatime.com/api/v1/users/current", function(user_body)
-    if not user_body then return end
+    if not user_body then
+      vim.notify("WakaTime API unreachable — check your internet connection", vim.log.levels.ERROR)
+      return
+    end
     local user_ok, user_data = pcall(vim.json.decode, user_body)
 
+    if not user_ok or (user_data and user_data.errors) then
+      local err = user_data and user_data.errors and table.concat(user_data.errors, ", ") or "Invalid response"
+      vim.notify("WakaTime auth failed: " .. err .. "\nGet a new key at https://wakatime.com/settings/api-key", vim.log.levels.ERROR)
+      return
+    end
+
     M.http_get("https://wakatime.com/api/v1/summaries?range=today", function(summary_body)
-      if not summary_body then return end
+      if not summary_body then
+        vim.notify("WakaTime summaries API unreachable", vim.log.levels.ERROR)
+        return
+      end
       local sum_ok, summary_data = pcall(vim.json.decode, summary_body)
 
       if user_ok and sum_ok then
         local stats = M.build_stats(user_data, summary_data)
         M.save_cache(stats)
-        vim.notify("WakaTime stats updated", vim.log.levels.INFO)
+        vim.notify("WakaTime stats updated — " .. M.format_time(stats.total) .. " coded today", vim.log.levels.INFO)
+        -- Open the stats floating window automatically
         pcall(function()
-          require("snacks.dashboard").open()
+          require("stats").open_stats()
         end)
       end
     end)
