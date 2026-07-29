@@ -78,6 +78,19 @@ return {
         --    which enables it and disables pyright). Settings section is the
         --    lowercase `basedpyright` key — a capitalised key is silently ignored.
         basedpyright = {
+          before_init = function(_, config)
+            -- Neovim 0.12+: JSON null → vim.NIL (userdata) breaks URI parsing
+            if config.workspaceFolders then
+              local clean = {}
+              for _, wf in ipairs(config.workspaceFolders) do
+                if type(wf) == "table" and type(wf.uri) == "string" then
+                  clean[#clean + 1] = wf
+                end
+              end
+              config.workspaceFolders = #clean > 0 and clean or nil
+            end
+            config.rootUri = (type(config.rootUri) == "string" and config.rootUri) or nil
+          end,
           settings = {
             basedpyright = {
               analysis = {
