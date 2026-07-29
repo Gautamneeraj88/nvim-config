@@ -808,7 +808,7 @@ q            → close
 
 ## CI/CD — GitHub Actions
 
-Browse and manage GitHub Actions workflows in a floating window.
+Browse and manage GitHub Actions workflows in a floating window. Background polling sends notifications on status changes (works without opening the UI).
 
 ```
 <leader>ga   → open CI/CD pipeline browser (float)
@@ -820,10 +820,16 @@ Browse and manage GitHub Actions workflows in a floating window.
 ```
 j / k        → move between jobs
 Space        → act on selected job (retry/cancel)
+L            → open job log in a float (ANSI-colored)
 r            → refresh
 /            → live filter
 q            → close
 ```
+
+### Background notifications
+
+CI/CD status is polled every 30s. Notifications appear automatically for completed runs:
+` success`, ` failure`, ` cancelled`.
 
 ---
 
