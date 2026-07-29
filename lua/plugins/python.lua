@@ -9,8 +9,8 @@ return {
             -- 1. Use activated venv if one is already active in the shell
             local venv = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
 
-            local root = (params.rootUri and vim.uri_to_fname(params.rootUri))
-              or params.rootPath
+            local root = (type(params.rootUri) == "string" and vim.uri_to_fname(params.rootUri))
+              or (type(params.rootPath) == "string" and params.rootPath)
               or vim.fn.getcwd()
 
             -- 2. Walk up from the project root, looking for a venv folder
