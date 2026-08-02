@@ -1,17 +1,6 @@
 -- Autocmds are automatically loaded on the VeryLazy event
 -- LazyVim sets up good defaults — we only add what's specific to our workflow
 
--- Enable inlay hints for every buffer as soon as an LSP that supports them attaches.
--- LazyVim's default may leave this off; this ensures it's always on.
-vim.api.nvim_create_autocmd("LspAttach", {
-  callback = function(ev)
-    local client = vim.lsp.get_client_by_id(ev.data.client_id)
-    if client and client:supports_method("textDocument/inlayHint") then
-      vim.lsp.inlay_hint.enable(true, { bufnr = ev.buf })
-    end
-  end,
-})
-
 -- Inlay hints default to linking `NonText`, which is nearly invisible in most
 -- dark themes (Kanagawa included) — so type/param hints look "missing". Re-link
 -- to the theme's Comment colour (readable + italic) on every colorscheme change.

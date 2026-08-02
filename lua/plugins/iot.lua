@@ -125,19 +125,12 @@ Diagnostics:
   --   gh               → switch between .h and .cpp instantly
   --   <leader>ioH      → type hierarchy (what implements this class?)
   --   <leader>ioT      → show AST for expression under cursor
-  --   Inlay hints      → param names + type hints inline in C/C++ code
+  --   Inlay hints      → handled by builtin LSP (LazyVim default), not this plugin
   {
     "p00f/clangd_extensions.nvim",
     ft = { "c", "cpp" },
     config = function()
       require("clangd_extensions").setup({
-        inlay_hints = {
-          inline             = true,
-          only_current_line  = false,
-          show_parameter_hints = true,
-          parameter_hints_prefix = "  ",
-          other_hints_prefix     = "  ",
-        },
         ast = {
           role_icons = {
             type         = "",

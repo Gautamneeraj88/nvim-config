@@ -44,6 +44,13 @@ map("n", "<leader>w-", "<cmd>resize -5<cr>",          { desc = "Decrease window 
 map("n", "<leader>w>", "<cmd>vertical resize +5<cr>", { desc = "Increase window width" })
 map("n", "<leader>w<", "<cmd>vertical resize -5<cr>", { desc = "Decrease window width" })
 
+-- ─── Word Search ──────────────────────────────────────────────────────────────
+
+-- Next/previous occurrence of the word under the cursor (vim-native * / #).
+-- <leader>gl is taken by LazyVim's Git Log, so the bare <g>l prefix is used here.
+map("n", "gl", "*", { desc = "Next word occurrence" })
+map("n", "gL", "#", { desc = "Previous word occurrence" })
+
 -- ─── Terminal ─────────────────────────────────────────────────────────────────
 
 -- Exit terminal mode back to normal mode

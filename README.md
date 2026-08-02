@@ -1258,49 +1258,66 @@ Saves your entire workspace state — open files, splits, cursor positions.
 
 ## Multi-cursor
 
-Works exactly like VS Code's `Ctrl+D`.
+Works exactly like VS Code's `Ctrl+D` (multi-cursor editing). Uses the **vim-visual-multi** plugin.
+
+### Key notation
+
+Neovim keybindings use shorthand. Read them like this:
+
+```
+<C-n>        → Ctrl + n         (hold the Ctrl key, press n)
+<M-p>        → Alt + p          (hold the Alt/Option key, press p)
+<C-Up>       → Ctrl + Up arrow
+<leader>     → Space bar        (Neovim's leader key)
+\            → backslash key    (vim-visual-multi's leader key — no modifier)
+```
 
 ### Select occurrences
 
+Place the cursor on the word, then:
+
 ```
-<C-n>        → select word under cursor
+<C-n>        → select the word under the cursor
              → press again to add the NEXT occurrence
              → keep pressing to add more
-<C-x>        → skip current occurrence, jump to next  (like VS Code Ctrl+K Ctrl+D)
-<C-q>        → remove last added cursor
-\\A          → select ALL occurrences at once  (\\ is the VM leader)
+\A           → select ALL occurrences of the word at once
+<C-x>        → skip the current occurrence, jump to the next
+<C-q>        → remove the last added cursor
 ```
+
+> `\A` is **backslash then capital A** — `\` is the vim-visual-multi leader, `A` = "all".
 
 ### Add cursors vertically
 
 ```
-<C-Down>     → add cursor on line below
-<C-Up>       → add cursor on line above
+<C-Down>     → add a cursor on the line below
+<C-Up>       → add a cursor on the line above
 ```
 
 ### Once cursors are active
 
+Just **start typing** — the new text replaces every selected occurrence at the same time.
 All normal Neovim editing applies to all cursors simultaneously:
 
 ```
+<type>       → replace all selected occurrences (VS Code-style)
 i / a        → insert / append at all cursors
 c            → change at all cursors
 d            → delete at all cursors
-I / A        → insert at start/end of all lines
+I / A        → insert at start/end of all selected lines
 Esc          → exit multi-cursor mode
 ```
 
 ### Example — rename a variable
 
 ```
-1. Cursor on `userData`
-2. <C-n>                → selects first match
-3. <C-n> again          → adds next match
-4. Keep pressing or \\A → all matches selected
-5. c                    → delete all and enter insert
-6. Type `userInfo`      → all cursors type simultaneously
-7. Esc                  → done
+1. Put the cursor on `userData`
+2. \A                    → select ALL occurrences at once
+3. Type `userInfo`       → every occurrence is replaced live
+4. Esc                   → done
 ```
+
+Or step by step: `<C-n>` on the word → keep pressing `<C-n>` to add each next occurrence → type the replacement → `<Esc>`.
 
 > **Note:** `<C-n>` is reserved for multi-cursor. Yanky uses `<M-p>`/`<M-n>` (Alt) to avoid conflict.
 

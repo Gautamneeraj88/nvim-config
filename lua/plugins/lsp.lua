@@ -88,6 +88,13 @@ return {
                 autoSearchPaths       = true,
                 useLibraryCodeForTypes = true,
                 diagnosticMode        = "openFilesOnly",
+                -- FastAPI's documented `Depends()` default-arg idiom is a false
+                -- positive for this rule; the Annotated style avoids it entirely.
+                reportCallInDefaultInitializer = "none",
+                -- Stylistic noise on idiomatic SQLAlchemy/Pydantic class attrs
+                -- (__tablename__, model_config) and missing @override decorators.
+                reportUnannotatedClassAttribute = "none",
+                reportImplicitOverride          = "none",
                 inlayHints = {
                   variableTypes      = true,  -- show inferred variable types
                   functionReturnTypes = true, -- show inferred return types
