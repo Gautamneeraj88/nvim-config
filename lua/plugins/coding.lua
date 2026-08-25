@@ -246,6 +246,21 @@ return {
       completion = {
         ghost_text = { enabled = true },
       },
+      sources = {
+        providers = {
+          path = {
+            -- Bundler aliases ("@/components/…", "#/lib/…") are not filesystem
+            -- paths, but blink's path source only looks at the leading "/" and
+            -- resolves it against the filesystem root — offering /Applications,
+            -- /bin, /Library… inside every import. Let the LSP own those.
+            enabled = function()
+              local col = vim.api.nvim_win_get_cursor(0)[2]
+              local before = vim.api.nvim_get_current_line():sub(1, col)
+              return before:match("[\"'`][@#][^\"'`]*$") == nil
+            end,
+          },
+        },
+      },
       -- NOTE: do NOT enable blink's experimental `signature` here — noice already
       -- renders LSP signature help (auto-opens on trigger chars). Enabling both
       -- double-renders an overlapping popup and blink's window leaks mouse-scroll
