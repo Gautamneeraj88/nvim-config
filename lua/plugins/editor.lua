@@ -62,7 +62,9 @@ return {
       },
     },
     keys = {
-      { "<leader>uh", "<cmd>Hardtime toggle<cr>", desc = "Toggle Hardtime" },
+      -- uH, not uh: <leader>uh is LazyVim's inlay-hint toggle. Taking it made the
+      -- winner depend on VeryLazy handler order and hid one of the two.
+      { "<leader>uH", "<cmd>Hardtime toggle<cr>", desc = "Toggle Hardtime" },
     },
   },
 
@@ -249,28 +251,6 @@ return {
     end,
   },
 
-  -- ─── VSCode-style smooth scrolling ──────────────────────────────────────────
-  {
-    "declancm/cinnamon.nvim",
-    event = "VeryLazy",
-    opts = {
-      keymaps = { basic = true, extra = true },
-      options = { mode = "cursor", easing = "quadratic", max_delta = { time = 150 } },
-    },
-    config = function(_, opts)
-      require("cinnamon").setup(opts)
-      -- Mouse: scroll viewport only, cursor stays (VSCode behaviour)
-      -- Use "3<C-e>" not "<C-e><C-e><C-e>" — one command = one cinnamon animation
-      vim.keymap.set({ "n", "v" }, "<ScrollWheelDown>", "3<C-e>", { silent = true })
-      vim.keymap.set({ "n", "v" }, "<ScrollWheelUp>",   "3<C-y>", { silent = true })
-      -- Insert mode: run the scroll as a :normal! command. The old shared
-      -- { "n","v","i" } map sent "3<C-e>" as literal insert keys — typing "3"
-      -- then inserting the line below — so scrolling while typing was broken.
-      vim.keymap.set("i", "<ScrollWheelDown>", function() vim.cmd("normal! 3\5") end,  { silent = true })
-      vim.keymap.set("i", "<ScrollWheelUp>",   function() vim.cmd("normal! 3\25") end, { silent = true })
-    end,
-  },
-
   -- ─── Peek Definition (gp = peek, q = close) ─────────────────────────────────
   {
     "rmagatti/goto-preview",
@@ -300,7 +280,7 @@ return {
         function()
           local clients = vim.lsp.get_clients({ bufnr = 0 })
           local supported = vim.tbl_filter(function(c)
-            return c.supports_method("textDocument/implementation")
+            return c:supports_method("textDocument/implementation")
           end, clients)
           if #supported == 0 then
             vim.notify("Peek implementation not supported for " .. vim.bo.filetype, vim.log.levels.WARN)
@@ -373,7 +353,7 @@ return {
     cmd = "NoNeckPain",
     keys = {
       {
-        "<leader>un",
+        "<leader>uP", -- un is LazyVim's Dismiss All Notifications
         function() require("no-neck-pain").toggle() end,
         desc = "Toggle No Neck Pain",
       },

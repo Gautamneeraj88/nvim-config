@@ -1,18 +1,8 @@
+-- Sticky context header (nvim-treesitter-context) was removed: it crashed on
+-- fast edits in TSX ("Invalid 'end_col': out of range" from its highlight copy,
+-- an upstream race with no config knob) and dropbar already shows
+-- file > class > function in the winbar.
 return {
-  -- ─── Sticky Context Header ────────────────────────────────────────────────
-  -- Pins the current function/class signature at the top when you scroll past it
-  -- Like VS Code / Zed's "sticky scroll" feature
-  {
-    "nvim-treesitter/nvim-treesitter-context",
-    event = "BufReadPost",
-    opts = {
-      max_lines      = 3,  -- max lines of context shown at top
-      min_window_height = 20,
-      mode           = "cursor",
-      separator      = "─",
-    },
-  },
-
   -- ─── LSP Progress Indicator ──────────────────────────────────────────────
   -- Shows a spinner in the bottom-right while LSP is indexing/loading
   {

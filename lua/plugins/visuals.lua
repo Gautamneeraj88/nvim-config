@@ -4,7 +4,7 @@ return {
     "sphamba/smear-cursor.nvim",
     event = "VeryLazy",
     opts = {
-      stiffness               = 0.9,   -- catch up fast → shorter overlap with cinnamon scroll
+      stiffness               = 0.9,   -- catch up fast → shorter overlap with smooth scroll
       trailing_stiffness      = 0.6,
       distance_stop_animating = 1.5,   -- skip animation for tiny 1-2 char moves (reduces CPU on CursorMoved)
       -- kanagawa wave: violet accent cursor trail
@@ -79,8 +79,8 @@ return {
       },
       excluded_buftypes = { "terminal" },
       excluded_filetypes = { "neo-tree", "lazy", "mason", "aerial", "trouble" },
-      -- WinScrolled removed — cinnamon fires it on every scroll frame, causing
-      -- the scrollbar to redraw hundreds of times during a single smooth scroll
+      -- WinScrolled removed — smooth scrolling (snacks.scroll) fires it on every
+      -- animation frame, redrawing the scrollbar hundreds of times per scroll
       autocmd = { render = { "BufWinEnter", "TabEnter", "TermEnter", "WinEnter",
                              "CmdwinLeave", "VimResized" } },
     },
@@ -236,13 +236,14 @@ return {
       require("illuminate").configure(opts)
     end,
     keys = {
-      { "<leader>ui", function() require("illuminate").toggle() end, desc = "Toggle Illuminate" },
+      -- uR, not ui: <leader>ui is LazyVim's Inspect Pos.
+      { "<leader>uR", function() require("illuminate").toggle() end, desc = "Toggle Illuminate" },
     },
   },
 
   -- ─── Smooth animations (mini.animate) ─────────────────────────────────────────
   -- Animates: window resize, window open/close
-  -- Scroll animation is handled by cinnamon.nvim — disabled here to avoid double animation
+  -- Scroll animation is handled by snacks.scroll — disabled here to avoid double animation
   -- Cursor animation is handled by smear-cursor.nvim — disabled here too
   {
     "nvim-mini/mini.animate",
@@ -259,7 +260,7 @@ return {
         close = {
           timing = animate.gen_timing.linear({ duration = 80, unit = "total" }),
         },
-        scroll = { enable = false }, -- cinnamon.nvim handles scroll animation
+        scroll = { enable = false }, -- snacks.scroll handles scroll animation
         cursor = { enable = false }, -- smear-cursor.nvim handles cursor animation
       }
     end,

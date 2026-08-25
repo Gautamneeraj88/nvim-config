@@ -44,6 +44,15 @@ map("n", "<leader>w-", "<cmd>resize -5<cr>",          { desc = "Decrease window 
 map("n", "<leader>w>", "<cmd>vertical resize +5<cr>", { desc = "Increase window width" })
 map("n", "<leader>w<", "<cmd>vertical resize -5<cr>", { desc = "Decrease window width" })
 
+-- Mouse wheel scrolls the viewport, cursor stays put (VSCode behaviour).
+-- "3<C-e>" not "<C-e><C-e><C-e>" — one command, one smooth-scroll animation.
+map({ "n", "v" }, "<ScrollWheelDown>", "3<C-e>", { silent = true })
+map({ "n", "v" }, "<ScrollWheelUp>",   "3<C-y>", { silent = true })
+-- Insert mode runs it as :normal! — a plain "3<C-e>" rhs would be typed into the
+-- buffer as the literal characters instead of scrolling.
+map("i", "<ScrollWheelDown>", function() vim.cmd("normal! 3\5") end,  { silent = true })
+map("i", "<ScrollWheelUp>",   function() vim.cmd("normal! 3\25") end, { silent = true })
+
 -- ─── Word Search ──────────────────────────────────────────────────────────────
 
 -- Next/previous occurrence of the word under the cursor (vim-native * / #).
@@ -142,7 +151,7 @@ vim.api.nvim_create_autocmd("User", {
 -- completions stop working after a long session (tsserver/gopls can degrade without
 -- crashing). Uses the vim.lsp API directly; nvim-lspconfig's :LspRestart command is
 -- not registered in this setup (LazyVim drives servers via vim.lsp.enable).
-map("n", "<leader>lR", function()
+map("n", "<leader>cL", function()
   local clients = vim.lsp.get_clients({ bufnr = 0 })
   if #clients == 0 then
     vim.notify("No active LSP clients", vim.log.levels.WARN)
@@ -159,17 +168,6 @@ map("n", "<leader>lR", function()
   end, 500)
 end, { desc = "Restart LSP" })
 
--- Toggles whose LazyVim defaults were reclaimed for other plugins, rebound to
--- capital-letter variants (Snacks.toggle shows the on/off state in which-key):
---   <leader>uH → inlay hints  (default <leader>uh is Hardtime here)
---   <leader>uW → word wrap    (default <leader>uw is Twilight here)
-vim.schedule(function()
-  pcall(function()
-    Snacks.toggle.inlay_hints():map("<leader>uH")
-    Snacks.toggle.option("wrap", { name = "Wrap" }):map("<leader>uW")
-  end)
-end)
-
 -- ─── Which-key group labels ───────────────────────────────────────────────────
 -- Labels for custom <leader> prefixes so they show up named in the which-key popup.
 -- LazyVim already registers labels for its own groups (f, b, c, g, q, u, x…).
@@ -185,9 +183,8 @@ vim.schedule(function()
     { "<leader>dg",  group = "Debug Go" },
     { "<leader>R",   group = "Refactor" },
     { "<leader>D",   group = "Database" },
-    { "<leader>n",   group = "NPM / Package" },
+    { "<leader>P",   group = "Package / npm" },
     { "<leader>go",  group = "Octo (GitHub)" },
-    { "<leader>l",   group = "LSP" },
     { "<leader>a",   group = "Argument" },
     { "<leader>io",  group = "IoT / PlatformIO" },
     { "<leader>f",   group = "File / Find" },
@@ -200,7 +197,6 @@ vim.schedule(function()
     { "<leader>gd",  group = "Diff" },
     { "<leader>b",   group = "Buffer" },
     { "<leader>u",   group = "UI" },
-    { "<leader>z",   group = "Zen" },
   })
 end)
 
@@ -234,6 +230,6 @@ map("n", "<leader>ws", function() require("stats").open_stats() end,
   { desc = "Open Coding Stats" })
 map("n", "<leader>wS", function() require("wakatime").fetch() end,
   { desc = "Refresh WakaTime Stats" })
-map("n", "<leader>wm", function() require("stats").open_history() end,
+map("n", "<leader>wM", function() require("stats").open_history() end,
   { desc = "Message History" })
 

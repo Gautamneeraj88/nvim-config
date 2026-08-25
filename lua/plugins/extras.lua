@@ -122,59 +122,6 @@ return {
     },
   },
 
-  -- ─── Twilight — dim inactive code ────────────────────────────────────────
-  -- Dims everything outside your current function/block to ~25% opacity.
-  -- Keeps your focus on the active code without going full zen mode.
-  -- Already installed as a zen-mode dependency — just adding a standalone toggle.
-  {
-    "folke/twilight.nvim",
-    cmd  = { "Twilight", "TwilightEnable", "TwilightDisable" },
-    keys = {
-      { "<leader>uw", "<cmd>Twilight<cr>", desc = "Toggle Twilight (dim inactive code)" },
-    },
-    opts = {
-      dimming = {
-        alpha    = 0.25,  -- 25% opacity for dimmed code (0 = black, 1 = no dim)
-        inactive = false, -- dim inactive windows; false = dim inactive blocks within same window
-      },
-      context  = 15,     -- lines of context kept bright around cursor
-      treesitter = true, -- use treesitter to detect function/block boundaries
-      expand = {         -- node types that count as a "context" to keep lit
-        "function",
-        "method",
-        "table",
-        "if_statement",
-        "arrow_function",
-      },
-    },
-  },
-
-  -- ─── Zen Mode ─────────────────────────────────────────────────────────────────
-  {
-    "folke/zen-mode.nvim",
-    cmd  = "ZenMode",
-    opts = {
-      window = {
-        backdrop = 0.95,
-        width    = 120,
-        height   = 1,
-        options  = {
-          signcolumn    = "no",
-          number        = false,
-          relativenumber = false,
-          cursorline    = false,
-          foldcolumn    = "0",
-        },
-      },
-      plugins = {
-        options  = { ruler = false, showcmd = false },
-        twilight = { enabled = false },
-        gitsigns = { enabled = false },
-      },
-    },
-    keys = {
-      { "<leader>z", "<cmd>ZenMode<cr>", desc = "Toggle Zen Mode" },
-    },
-  },
-
+-- Zen mode and dimming come from snacks.nvim (<leader>uz / <leader>uD);
+-- zen-mode.nvim and twilight.nvim were the same two features a second time.
 }

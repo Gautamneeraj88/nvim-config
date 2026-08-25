@@ -13,8 +13,18 @@ return {
           if vim.bo[buf].buftype == "terminal" then
             return { sources.terminal }
           end
+          -- dropbar refreshes on vim.schedule, so the treesitter source can walk
+          -- nodes from a tree that no longer matches the buffer and blow up in
+          -- get_node_text ("Index out of bounds"). Losing one breadcrumb frame is
+          -- better than an error popup on every fast edit.
+          local treesitter = {
+            get_symbols = function(...)
+              local ok, symbols = pcall(sources.treesitter.get_symbols, ...)
+              return ok and symbols or {}
+            end,
+          }
           return {
-            utils.source.fallback({ sources.lsp, sources.treesitter }),
+            utils.source.fallback({ sources.lsp, treesitter }),
           }
         end,
       },
@@ -68,11 +78,13 @@ return {
       require("package-info").setup({ package_manager = pm })
     end,
     keys = {
-      { "<leader>np", function() require("package-info").toggle() end,         desc = "Toggle package versions" },
-      { "<leader>nu", function() require("package-info").update() end,         desc = "Update package" },
-      { "<leader>nd", function() require("package-info").delete() end,         desc = "Delete package" },
-      { "<leader>ni", function() require("package-info").install() end,        desc = "Install new package" },
-      { "<leader>nc", function() require("package-info").change_version() end, desc = "Change package version" },
+      -- <leader>P, not <leader>n: upstream <leader>n is Notification History, so a
+      -- group there only fired after timeoutlen.
+      { "<leader>Pp", function() require("package-info").toggle() end,         desc = "Toggle package versions" },
+      { "<leader>Pu", function() require("package-info").update() end,         desc = "Update package" },
+      { "<leader>Pd", function() require("package-info").delete() end,         desc = "Delete package" },
+      { "<leader>Pi", function() require("package-info").install() end,        desc = "Install new package" },
+      { "<leader>Pc", function() require("package-info").change_version() end, desc = "Change package version" },
     },
   },
 
