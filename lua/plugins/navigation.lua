@@ -97,7 +97,7 @@ return {
             return
           end
           local results = vim.fn.systemlist(
-            "fd --hidden --max-depth 3 --type d --name .git " .. table.concat(search_dirs, " ") .. " 2>/dev/null"
+            "fd --hidden --max-depth 3 --type d '^\\.git$' " .. table.concat(search_dirs, " ") .. " 2>/dev/null"
           )
           if #results == 0 then
             vim.notify("No git repos found", vim.log.levels.WARN)
@@ -105,7 +105,7 @@ return {
           end
           local dirs = {}
           for _, r in ipairs(results) do
-            local dir = r:gsub("/.git$", "")
+            local dir = r:gsub("/%.git/?$", "") -- fd prints the dir with a trailing slash
             dirs[#dirs + 1] = dir
           end
           fzf.fzf_exec(dirs, {
