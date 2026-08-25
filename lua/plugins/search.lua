@@ -17,16 +17,31 @@ return {
     },
     config = function(_, opts)
       require("hlslens").setup(opts)
-      local map = function(key, cmd)
-        vim.keymap.set("n", key, cmd, { noremap = true, silent = true })
-      end
+
       -- wrap n/N/*/# so the lens updates after each jump
-      map("n",  [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]])
-      map("N",  [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]])
-      map("*",  [[*<Cmd>lua require('hlslens').start()<CR>]])
-      map("#",  [[#<Cmd>lua require('hlslens').start()<CR>]])
-      map("g*", [[g*<Cmd>lua require('hlslens').start()<CR>]])
-      map("g#", [[g#<Cmd>lua require('hlslens').start()<CR>]])
+      local function set_lens_maps()
+        local map = function(key, cmd)
+          vim.keymap.set("n", key, cmd, { noremap = true, silent = true })
+        end
+        map("n",  [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]])
+        map("N",  [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]])
+        map("*",  [[*<Cmd>lua require('hlslens').start()<CR>]])
+        map("#",  [[#<Cmd>lua require('hlslens').start()<CR>]])
+        map("g*", [[g*<Cmd>lua require('hlslens').start()<CR>]])
+        map("g#", [[g#<Cmd>lua require('hlslens').start()<CR>]])
+      end
+
+      -- These must be registered LAST or they are silently clobbered: LazyVim's
+      -- own keymaps take n/N on VeryLazy, while this plugin loads earlier on
+      -- BufReadPost. vim.schedule pushes us past every synchronous VeryLazy handler.
+      if vim.v.vim_did_enter == 1 then
+        vim.schedule(set_lens_maps)
+      end
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "VeryLazy",
+        once = true,
+        callback = function() vim.schedule(set_lens_maps) end,
+      })
     end,
   },
 
@@ -53,14 +68,34 @@ return {
       },
       keymap = {
         builtin = {
+          -- `true` inherits fzf-lua's own builtin maps (<F1> help, <F4> preview
+          -- toggle, <S-Up>/<S-Down> preview paging). Without it this table
+          -- REPLACES them and they are silently gone.
+          true,
           ["<C-d>"] = "preview-page-down",
           ["<C-u>"] = "preview-page-up",
+        },
+        fzf = {
+          true,
+          ["ctrl-j"] = "down", -- same hand position as the arrows
+          ["ctrl-k"] = "up",
         },
       },
       fzf_opts = {
         ["--prompt"] = "  ",
         ["--info"] = "inline",
         ["--layout"] = "reverse",
+        -- Wrap at both ends. Without it the arrows go dead once the selection
+        -- sits on the first or last entry, which reads as "arrows don't work"
+        -- in a 2-buffer list where you are already on the last one.
+        ["--cycle"] = true,
+      },
+      buffers = {
+        -- fzf-lua freezes the current buffer as a --header-lines=1 row whenever
+        -- sort_lastused is on, so it is drawn but not selectable. With two
+        -- buffers open that leaves exactly one reachable entry and the arrows
+        -- look broken. Unfreeze it; MRU ordering is kept.
+        fzf_opts = { ["--header-lines"] = false },
       },
     },
     keys = {
