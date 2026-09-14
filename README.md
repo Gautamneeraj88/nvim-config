@@ -16,7 +16,7 @@ This document covers every feature in detail — read it when you're stuck or wa
 7. [Fuzzy Search — fzf-lua](#fuzzy-search--fzf-lua)
 8. [LSP — Code Intelligence](#lsp--code-intelligence)
 9. [Diagnostics Panel — Trouble](#diagnostics-panel--trouble)
-10. [Peek Definition — goto-preview](#peek-definition--goto-preview)
+10. [LSP Navigation & Definition](#lsp-navigation--definition)
 11. [Completion & Ghost Text](#completion--ghost-text)
 12. [Git Integration](#git-integration)
 13. [Git Diff Viewer — Diffview](#git-diff-viewer--diffview)
@@ -296,23 +296,17 @@ Space w ...   → Window operations
 
 VSCode-style file tree. **Dotfiles are visible by default.**
 
-### Two modes
+### Usage
 
 ```
-<leader>e    → toggle explorer (always shows full project root / cwd)
-<leader>o    → focus mode — roots tree at nearest package/module root
-               Press again → returns to full project root
+<leader>e    → toggle file explorer (project root)
+<leader>E    → toggle file explorer (current working directory)
 ```
-
-**When to use which:**
 
 | Situation | Key |
 |---|---|
-| Browse the whole project | `<leader>e` |
-| Deep in a monorepo, want just the current package | `<leader>o` |
-| Done with focus, back to full view | `<leader>o` again |
-
-Focus mode walks up from your file looking for `package.json`, `tsconfig.json`, `Cargo.toml`, `go.mod`, `pyproject.toml` or `.git`.
+| Browse project root | `<leader>e` |
+| Browse current working directory | `<leader>E` |
 
 ### Navigation inside the tree
 
@@ -569,25 +563,17 @@ q            → close
 
 ---
 
-## Peek Definition — goto-preview
+## LSP Navigation & Definition
 
-Shows definitions and references in a **floating window** without leaving your current position.
+Jump to definitions, implementations, and references across your project with instant fzf-lua preview.
 
 ```
-gp           → peek definition
-gpt          → peek type definition
-gpr          → peek all references
-gpi          → peek implementation (TS/Go only — checks if server supports it)
-gpc          → close all peek windows
-Esc          → close peek window when inside it
+gd           → jump to definition
+gr           → list all references in fzf-lua
+gI           → jump to implementation
+gy           → jump to type definition
+K            → hover documentation / signature
 ```
-
-### gd vs gp
-
-| Key  | Behavior |
-|------|----------|
-| `gd` | Jumps to definition — you leave your current file |
-| `gp` | Peeks at definition — stays floating, your file unchanged |
 
 ---
 
@@ -2493,73 +2479,41 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>Rr` | Pick refactor from menu |
 | `<leader>as` | Swap argument right |
 | `<leader>aS` | Swap argument left |
-| `<leader>uh` | Toggle Hardtime |
+### Harpoon (Fast file switching)
+
+| Key | Action |
+|-----|--------|
+| `<leader>H` | Add current file to Harpoon |
+| `<leader>h` | Open Harpoon quick menu |
+| `<leader>1` | Jump to Harpoon file 1 |
+| `<leader>2` | Jump to Harpoon file 2 |
+| `<leader>3` | Jump to Harpoon file 3 |
+| `<leader>4` | Jump to Harpoon file 4 |
+| `[h` | Previous Harpoon file |
+| `]h` | Next Harpoon file |
 
 ### Git
 
 | Key | Action |
 |-----|--------|
-| `<leader>gg` | Open Lazygit (floating) |
-| `<leader>gc` | Git commits (fzf) |
-| `<leader>gB` | Git branches (fzf) |
-| `<leader>gd` | Diffview (all changes) |
-| `<leader>gD` | Diffview vs last commit |
-| `<leader>gfh` | File history (current) |
-| `<leader>gFH` | File history (project) |
+| `<leader>gg` | Open Lazygit (root dir) |
+| `<leader>gG` | Open Lazygit (cwd) |
+| `<leader>gb` | Git Blame Line |
+| `<leader>gc` | Git commits |
+| `<leader>gB` | Git branches |
+| `<leader>gs` | Git status |
+| `<leader>gS` | Git stash |
+| `<leader>ge` | Git explorer |
+| `<leader>gd` / `<leader>gdo` | Diffview Open (all changes) |
 | `<leader>gdc` | Close Diffview |
-| `<leader>gdm` | Diff branch vs origin/main |
-| `<leader>gdM` | Diff branch vs local main |
-| `<leader>gx` | List conflicts in quickfix |
-| `<leader>ga` | CI/CD Pipelines (float) |
-| `<leader>gA` | GitHub Actions (float) |
-| `<leader>ghp` | Preview hunk |
-| `<leader>ghs` | Stage hunk |
-| `<leader>ghr` | Reset hunk |
-| `<leader>ghb` | Blame current line |
-| `<leader>gop` | Octo: list PRs |
-| `<leader>goi` | Octo: list issues |
-| `<leader>gor` | Octo: start PR review |
-| `<leader>gom` | Octo: merge PR |
+| `<leader>gdd` | Diffview vs last commit (HEAD~1) |
+| `<leader>gdm` | Diff branch vs origin/main (or master) |
+| `<leader>gdM` | Diff branch vs local main (or master) |
+| `<leader>gdh` | File history (current file) |
+| `<leader>gdH` | File history (project) |
+| `<leader>gx` | List merge conflicts in quickfix |
 | `co / ct` | Conflict: choose ours/theirs |
 | `cb / c0` | Conflict: choose both/none |
-
-### Tests
-
-| Key | Action |
-|-----|--------|
-| `<leader>tt` | Run nearest test |
-| `<leader>tf` | Run all tests in file |
-| `<leader>ta` | Run entire test suite |
-| `<leader>tl` | Re-run last test |
-| `<leader>tW` | Watch nearest test |
-| `<leader>tS` | Stop test |
-| `<leader>ts` | Toggle test summary |
-| `<leader>to` | Toggle test output |
-| `<leader>tT` | Run with coverage |
-| `<leader>tc` | Toggle coverage signs |
-| `<leader>tC` | Coverage summary |
-
-### Debugger
-
-| Key | Action |
-|-----|--------|
-| `<F5>` | Start / Continue |
-| `<F10>` | Step Over |
-| `<F11>` | Step Into |
-| `<F12>` | Step Out |
-| `<leader>db` | Toggle breakpoint |
-| `<leader>dB` | Conditional breakpoint |
-| `<leader>dl` | Log point |
-| `<leader>dc` | Run to cursor |
-| `<leader>dq` | Stop debugging |
-| `<leader>dr` | Restart session |
-| `<leader>du` | Toggle DAP UI |
-| `<leader>de` | Evaluate expression |
-| `<leader>dh` | Hover variable |
-| `<leader>dtm` | Debug Python test method |
-| `<leader>dtc` | Debug Python test class |
-| `<leader>dgt` | Debug Go test |
-| `<leader>dgl` | Debug Go last test |
 
 ### Terminal & REPLs
 
@@ -2584,49 +2538,6 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>jf` | Node: send file |
 | `<leader>jc` | Node: clear REPL |
 
-### REST Client (`.http` / `.rest` files only)
-
-| Key | Action |
-|-----|--------|
-| `<leader>rr` | Run request |
-| `<leader>ra` | Run all requests |
-| `<leader>rp` | Replay last request |
-| `<leader>ri` | Inspect request |
-| `<leader>rc` | Copy as cURL |
-| `<leader>rv` | Toggle body/headers/stats |
-| `<leader>rS` | Show response stats |
-| `<leader>re` | Switch environment |
-| `<leader>rs` | Open scratchpad |
-| `<leader>rf` | Import from cURL |
-
-### Database (dadbod)
-
-| Key | Action |
-|-----|--------|
-| `<leader>Du` | Toggle DB drawer |
-| `<leader>DB` | Add connection |
-| `<leader>Df` | Find DB query buffer |
-| `<leader>Dr` | Rename DB query buffer |
-| `<leader>S` | Run query (buffer-local, in DBUI) |
-| `:%DB` | Run whole `.sql` buffer |
-
-### IoT / PlatformIO
-
-| Key | Action |
-|-----|--------|
-| `<leader>ioi` | Init project |
-| `<leader>iob` | Build |
-| `<leader>iou` | Upload to device |
-| `<leader>iom` | Serial monitor |
-| `<leader>iod` | List devices |
-| `<leader>iol` | Library manager |
-| `<leader>ioD` | Debug |
-| `<leader>ioc` | Generate compile_commands.json |
-| `<leader>iog` | Generate .clangd |
-| `<leader>ioH` | Type hierarchy (C/C++) |
-| `<leader>ioT` | AST view (C/C++) |
-| `gh` | Switch header/source (C/C++) |
-
 ### Buffers & Windows
 
 | Key | Action |
@@ -2635,8 +2546,8 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `H / L` | Prev/next buffer |
 | `<leader>bd` | Close current buffer |
 | `<leader>bo` | Close other buffers |
-| `<leader>e` | Toggle file explorer |
-| `<leader>o` | Toggle explorer focus mode |
+| `<leader>e` | Toggle file explorer (root dir) |
+| `<leader>E` | Toggle file explorer (cwd) |
 | `<leader>-` | Split horizontal |
 | `<leader>\|` | Split vertical |
 | `<C-h/j/k/l>` | Move between windows |

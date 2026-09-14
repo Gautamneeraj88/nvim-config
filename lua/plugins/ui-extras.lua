@@ -32,10 +32,8 @@ return {
   {
     "vuki656/package-info.nvim",
     dependencies = { "MunifTanjim/nui.nvim" },
-    event = { "BufReadPost */package.json" },
+    event = { "BufReadPost */package.json", "BufReadPost package.json" },
     config = function()
-      -- Detect package manager from the package.json's own directory (not cwd).
-      -- Triggered on BufReadPost, so the current buffer IS the package.json.
       local dir = vim.fn.expand("%:p:h")
       local pm = "npm"
       if vim.fn.filereadable(dir .. "/pnpm-lock.yaml") == 1 then
@@ -44,16 +42,31 @@ return {
         pm = "yarn"
       end
       require("package-info").setup({ package_manager = pm })
+
+      local function bind_keys(buf)
+        local map = function(lhs, rhs, desc)
+          vim.keymap.set("n", lhs, rhs, { buffer = buf, desc = desc, silent = true })
+        end
+        map("<leader>Pp", function() require("package-info").toggle() end, "Toggle package versions")
+        map("<leader>Pu", function() require("package-info").update() end, "Update package")
+        map("<leader>Pd", function() require("package-info").delete() end, "Delete package")
+        map("<leader>Pi", function() require("package-info").install() end, "Install new package")
+        map("<leader>Pc", function() require("package-info").change_version() end, "Change package version")
+        local ok, wk = pcall(require, "which-key")
+        if ok then
+          wk.add({ { "<leader>P", group = "Package / npm", buffer = buf } })
+        end
+      end
+
+      bind_keys(vim.api.nvim_get_current_buf())
+
+      vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
+        pattern = { "*/package.json", "package.json" },
+        callback = function(ev)
+          bind_keys(ev.buf)
+        end,
+      })
     end,
-    keys = {
-      -- <leader>P, not <leader>n: upstream <leader>n is Notification History, so a
-      -- group there only fired after timeoutlen.
-      { "<leader>Pp", function() require("package-info").toggle() end,         desc = "Toggle package versions" },
-      { "<leader>Pu", function() require("package-info").update() end,         desc = "Update package" },
-      { "<leader>Pd", function() require("package-info").delete() end,         desc = "Delete package" },
-      { "<leader>Pi", function() require("package-info").install() end,        desc = "Install new package" },
-      { "<leader>Pc", function() require("package-info").change_version() end, desc = "Change package version" },
-    },
   },
 
 }

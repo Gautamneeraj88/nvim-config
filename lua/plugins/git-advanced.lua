@@ -17,13 +17,30 @@ return {
       },
     },
     keys = {
-      { "<leader>gd",  "<cmd>DiffviewOpen<cr>",                desc = "Diff View (all changes)" },
-      { "<leader>gD",  "<cmd>DiffviewOpen HEAD~1<cr>",         desc = "Diff vs last commit" },
-      { "<leader>gdm", "<cmd>DiffviewOpen origin/main...HEAD<cr>", desc = "Diff branch vs origin/main" },
-      { "<leader>gdM", "<cmd>DiffviewOpen main...HEAD<cr>",        desc = "Diff branch vs local main" },
-      { "<leader>gfh", "<cmd>DiffviewFileHistory %<cr>",       desc = "File history (current)" },
-      { "<leader>gFH", "<cmd>DiffviewFileHistory<cr>",         desc = "File history (project)" },
-      { "<leader>gdc", "<cmd>DiffviewClose<cr>",               desc = "Close Diff View" },
+      { "<leader>gd",  "<cmd>DiffviewOpen<cr>", desc = "Diff View (all changes)" },
+      { "<leader>gdo", "<cmd>DiffviewOpen<cr>", desc = "Diff View Open" },
+      { "<leader>gdc", "<cmd>DiffviewClose<cr>", desc = "Close Diff View" },
+      { "<leader>gdd", "<cmd>DiffviewOpen HEAD~1<cr>", desc = "Diff vs last commit" },
+      {
+        "<leader>gdm",
+        function()
+          local branch = vim.fn.system("git rev-parse --verify origin/main 2>/dev/null")
+          local name = vim.v.shell_error == 0 and "main" or "master"
+          vim.cmd("DiffviewOpen origin/" .. name .. "...HEAD")
+        end,
+        desc = "Diff branch vs origin/main(master)",
+      },
+      {
+        "<leader>gdM",
+        function()
+          local branch = vim.fn.system("git rev-parse --verify main 2>/dev/null")
+          local name = vim.v.shell_error == 0 and "main" or "master"
+          vim.cmd("DiffviewOpen " .. name .. "...HEAD")
+        end,
+        desc = "Diff branch vs local main(master)",
+      },
+      { "<leader>gdh", "<cmd>DiffviewFileHistory %<cr>", desc = "File history (current)" },
+      { "<leader>gdH", "<cmd>DiffviewFileHistory<cr>",   desc = "File history (project)" },
     },
   },
 

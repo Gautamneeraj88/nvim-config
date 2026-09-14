@@ -102,49 +102,15 @@ return {
   },
 
   -- ─── Project Switcher ─────────────────────────────────────────────────────────
-  -- Uses fzf-lua to find and switch between git repos in your workspace
   {
-    "ibhagwan/fzf-lua",
+    "folke/snacks.nvim",
     keys = {
       {
         "<leader>fp",
         function()
-          local fzf = require("fzf-lua")
-          local home = vim.fn.expand("~")
-          local search_dirs = {}
-          for _, d in ipairs({ "projects", "code", "dev", "src", "work", "repos" }) do
-            local path = home .. "/" .. d
-            if vim.fn.isdirectory(path) == 1 then search_dirs[#search_dirs + 1] = path end
-          end
-          if #search_dirs == 0 then
-            vim.notify("No ~/projects|code|dev|src|work|repos dirs found", vim.log.levels.WARN)
-            return
-          end
-          local results = vim.fn.systemlist(
-            "fd --hidden --max-depth 3 --type d '^\\.git$' " .. table.concat(search_dirs, " ") .. " 2>/dev/null"
-          )
-          if #results == 0 then
-            vim.notify("No git repos found", vim.log.levels.WARN)
-            return
-          end
-          local dirs = {}
-          for _, r in ipairs(results) do
-            local dir = r:gsub("/%.git/?$", "") -- fd prints the dir with a trailing slash
-            dirs[#dirs + 1] = dir
-          end
-          fzf.fzf_exec(dirs, {
-            prompt = "Projects> ",
-            actions = {
-              ["default"] = function(selected)
-                if selected and selected[1] then
-                  vim.cmd("cd " .. selected[1])
-                  vim.notify("Switched to: " .. selected[1])
-                end
-              end,
-            },
-          })
+          Snacks.picker.projects()
         end,
-        desc = "Switch Project",
+        desc = "Projects",
       },
     },
   },

@@ -155,10 +155,14 @@ return {
   -- at 200KB files start causing noticeable lag with treesitter + biscuits + hlargs running together
   {
     "folke/snacks.nvim",
+    keys = {
+      { "<leader>dps", false },
+    },
     opts = function(_, opts)
       opts.bigfile  = { size = 200 * 1024 }
       opts.explorer = { enabled = false }
       opts.words    = { enabled = false }
+      opts.profiler = { enabled = false }
       opts.indent   = { enabled = true, char = "│", scope = { char = "│" } }
       opts.dashboard = {
         preset = {
@@ -210,68 +214,6 @@ return {
     end,
   },
 
-  -- ─── Peek Definition (gp = peek, q = close) ─────────────────────────────────
-  {
-    "rmagatti/goto-preview",
-    event = "LspAttach",
-    opts = {
-      width = 120,
-      height = 20,
-      border = "rounded",
-      default_mappings = false, -- we set our own below
-      -- When the float opens, map Esc to close it (buffer-local, won't affect other windows)
-      post_open_hook = function(buf, _)
-        vim.keymap.set("n", "<Esc>", function()
-          require("goto-preview").close_all_win()
-        end, { buffer = buf, silent = true, desc = "Close peek window" })
-      end,
-    },
-    keys = {
-      {
-        "gp",
-        function()
-          require("goto-preview").goto_preview_definition()
-        end,
-        desc = "Peek Definition",
-      },
-      {
-        "gpi",
-        function()
-          local clients = vim.lsp.get_clients({ bufnr = 0 })
-          local supported = vim.tbl_filter(function(c)
-            return c:supports_method("textDocument/implementation")
-          end, clients)
-          if #supported == 0 then
-            vim.notify("Peek implementation not supported for " .. vim.bo.filetype, vim.log.levels.WARN)
-          else
-            require("goto-preview").goto_preview_implementation()
-          end
-        end,
-        desc = "Peek Implementation",
-      },
-      {
-        "gpr",
-        function()
-          require("goto-preview").goto_preview_references()
-        end,
-        desc = "Peek References",
-      },
-      {
-        "gpt",
-        function()
-          require("goto-preview").goto_preview_type_definition()
-        end,
-        desc = "Peek Type Definition",
-      },
-      {
-        "gpc",
-        function()
-          require("goto-preview").close_all_win()
-        end,
-        desc = "Close All Peek Windows",
-      },
-    },
-  },
 
   -- ─── Oil — edit filesystem as a buffer ───────────────────────────────────────
   -- Open parent dir with  -  and edit like text: rename, move (dd/p), bulk delete
