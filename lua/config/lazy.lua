@@ -34,19 +34,13 @@ require("lazy").setup({
 
     -- Web / devops stacks (LSP + treesitter + formatting wired by these extras)
     { import = "lazyvim.plugins.extras.lang.tailwind" }, -- Tailwind CSS: class completion + sorting
-    { import = "lazyvim.plugins.extras.lang.prisma" },   -- schema.prisma LSP
-    { import = "lazyvim.plugins.extras.lang.docker" },   -- Dockerfile + compose + hadolint
     { import = "lazyvim.plugins.extras.lang.yaml" },     -- yaml-language-server + schemas
-    { import = "lazyvim.plugins.extras.lang.toml" },     -- TOML (taplo LSP for platformio.ini etc.)
 
     -- Prettier for TS/JS/CSS formatting
     { import = "lazyvim.plugins.extras.formatting.prettier" },
 
     -- Markdown support (rendering, LSP, formatting)
     { import = "lazyvim.plugins.extras.lang.markdown" },
-
-    -- Test runner (neotest core — adapters configured in lua/plugins/testing.lua)
-    { import = "lazyvim.plugins.extras.test.core" },
 
     -- Code outline panel (aerial)
     { import = "lazyvim.plugins.extras.editor.aerial" },
@@ -56,9 +50,6 @@ require("lazy").setup({
 
     -- Use fzf-lua as the LazyVim picker (replaces snacks.picker for built-in keymaps)
     { import = "lazyvim.plugins.extras.editor.fzf" },
-
-    -- Task runner — structured build/test/make commands with a UI panel
-    { import = "lazyvim.plugins.extras.editor.overseer" },
 
     -- Smarter increment/decrement — dates, booleans, enums, semver
     { import = "lazyvim.plugins.extras.editor.dial" },

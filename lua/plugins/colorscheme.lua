@@ -36,7 +36,6 @@ return {
         markdown = true,
         mason = true,
         neo_tree = true,
-        neotest = true,
         noice = true,
         notify = true,
         rainbow_delimiters = true,
@@ -45,9 +44,6 @@ return {
         which_key = true,
         -- mini
         mini = { enabled = true },
-        -- DAP
-        dap = true,
-        dap_ui = true,
       },
     },
   },

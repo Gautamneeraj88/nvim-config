@@ -114,10 +114,7 @@ return {
       sign_priority    = { lower = 10, upper = 15, builtin = 8, bookmark = 20 },
       excluded_filetypes = {
         "neo-tree", "aerial", "lazy", "mason", "trouble", "qf",
-        "dap-repl", "dapui_scopes", "dapui_breakpoints",
-        "dapui_stacks", "dapui_watches", "dapui_console",
         "toggleterm", "oil",
-        "neotest-summary", "neotest-output-panel",
       },
     },
   },

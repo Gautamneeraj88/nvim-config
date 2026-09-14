@@ -10,8 +10,7 @@ return {
       -- Use LSP first, fall back to treesitter, then indent
       provider_selector = function(_, filetype, _)
         local lsp_filetypes = { "typescript", "javascript", "typescriptreact",
-                                "javascriptreact", "python", "go", "json", "lua", "markdown",
-                                "c", "cpp" }
+                                "javascriptreact", "python", "go", "json", "lua", "markdown" }
         if vim.tbl_contains(lsp_filetypes, filetype) then
           return { "lsp", "treesitter" }
         end
@@ -118,8 +117,6 @@ return {
         typescript = { template = { annotation_convention = "tsdoc" } },
         javascript = { template = { annotation_convention = "jsdoc" } },
         go         = { template = { annotation_convention = "godoc" } },
-        c          = { template = { annotation_convention = "doxygen" } },
-        cpp        = { template = { annotation_convention = "doxygen" } },
       },
     },
   },

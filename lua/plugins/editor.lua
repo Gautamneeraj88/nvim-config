@@ -31,42 +31,6 @@ return {
     dependencies = { "folke/neoconf.nvim" },
   },
 
-  -- ─── Hardtime — break bad vim habits ─────────────────────────────────────────
-  -- Notifies (doesn't block) when you repeat hjkl more than once or spam dd.
-  -- Arrow keys are kept enabled (useful in insert mode / non-vim contexts).
-  -- Toggle with <leader>uh if it gets annoying during a specific task.
-  {
-    "m4xshen/hardtime.nvim",
-    dependencies = { "MunifTanjim/nui.nvim" },
-    event = "VeryLazy",
-    opts = {
-      max_time       = 1000,  -- ms window to detect repeated keys
-      max_count      = 3,     -- allow up to 3 repeats before notifying
-      disable_mouse  = false, -- keep mouse (we use it intentionally)
-      hint           = true,
-      notification   = true,
-      restriction_mode = "hint", -- hint only, don't block the key
-      -- Allow arrow keys — useful in insert mode and for non-vim-native contexts.
-      -- Hardtime's default disabled_keys blocks them; empty table re-enables.
-      disabled_keys = {
-        ["<Up>"]    = {},
-        ["<Down>"]  = {},
-        ["<Left>"]  = {},
-        ["<Right>"] = {},
-      },
-      disabled_filetypes = {
-        "neo-tree", "aerial", "lazy", "mason", "trouble", "qf",
-        "dap-repl", "dapui_scopes", "dapui_breakpoints",
-        "dapui_stacks", "dapui_watches", "help", "undotree",
-        "oil",
-      },
-    },
-    keys = {
-      -- uH, not uh: <leader>uh is LazyVim's inlay-hint toggle. Taking it made the
-      -- winner depend on VeryLazy handler order and hid one of the two.
-      { "<leader>uH", "<cmd>Hardtime toggle<cr>", desc = "Toggle Hardtime" },
-    },
-  },
 
   -- ─── TODO Comments — custom colors only, everything else default ─────────────
   {
@@ -204,7 +168,6 @@ return {
             { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
             { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
             { icon = " ", key = "g", desc = "Git Diff", action = ":DiffviewOpen" },
-            { icon = " ", key = "s", desc = "Coding Stats", action = ":lua require('stats').open_stats()" },
             { icon = " ", key = "c", desc = "Config", action = ":e $MYVIMRC" },
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },
@@ -234,10 +197,6 @@ return {
               end
               local header = icon .. " " .. project
               if branch ~= "" then header = header .. "  " .. branch end
-              local s_ok, wstats = pcall(require("wakatime").get_cached)
-              if s_ok and wstats and wstats.total and wstats.total > 0 then
-                header = header .. "\n   Coded today: " .. require("wakatime").format_time(wstats.total)
-              end
               return header
             end)
             return { header = ok and result or " Neovim", padding = 2 }
@@ -345,27 +304,5 @@ return {
     },
   },
 
-  -- ─── No Neck Pain — center editor buffer to fixed width ─────────────────────
-  -- Pads empty windows on both sides so the code stays centered at 120 columns.
-  -- Great for ultrawide monitors. Toggle with <leader>un.
-  {
-    "shortcuts/no-neck-pain.nvim",
-    cmd = "NoNeckPain",
-    keys = {
-      {
-        "<leader>uP", -- un is LazyVim's Dismiss All Notifications
-        function() require("no-neck-pain").toggle() end,
-        desc = "Toggle No Neck Pain",
-      },
-    },
-    opts = {
-      width = 140,
-      minSideBufferWidth = 10,
-      autowidth = {
-        enable = true,
-        filetype = { ["neo-tree"] = false, aerial = false, fidget = false },
-      },
-    },
-  },
 
 }

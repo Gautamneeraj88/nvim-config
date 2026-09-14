@@ -42,10 +42,7 @@ local _scrolloff_cache = {}
 local _scrolloff_skip = {
   ["neo-tree"] = true, ["lazy"] = true, ["mason"] = true, ["help"] = true,
   ["aerial"] = true, ["trouble"] = true, ["qf"] = true,
-  ["dap-repl"] = true, ["dapui_scopes"] = true, ["dapui_breakpoints"] = true,
-  ["dapui_stacks"] = true, ["dapui_watches"] = true, ["dapui_console"] = true,
   ["oil"] = true, ["undotree"] = true,
-  ["neotest-summary"] = true, ["neotest-output-panel"] = true,
 }
 vim.api.nvim_create_autocmd({ "CursorMoved" }, {
   callback = function()
@@ -83,10 +80,6 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "go" },
   callback = function() vim.b.virt_column_virtcolumn = "100,120" end, -- Go community standard
-})
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "c", "cpp" },
-  callback = function() vim.b.virt_column_virtcolumn = "80,100" end, -- embedded / K&R tradition
 })
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "markdown", "text", "gitcommit" },

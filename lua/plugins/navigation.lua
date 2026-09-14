@@ -59,8 +59,6 @@ return {
       vim.api.nvim_create_autocmd("FileType", {
         pattern = {
           "neo-tree", "aerial", "lazy", "mason", "trouble", "qf",
-          "dap-repl", "dapui_scopes", "dapui_breakpoints",
-          "dapui_stacks", "dapui_watches", "dapui_console",
           "oil", "undotree", "help", "man",
         },
         callback = function(ev)
@@ -74,6 +72,32 @@ return {
       { "w",  function() require("spider").motion("w")  end, mode = { "n", "o", "x" }, desc = "Spider w" },
       { "e",  function() require("spider").motion("e")  end, mode = { "n", "o", "x" }, desc = "Spider e" },
       { "b",  function() require("spider").motion("b")  end, mode = { "n", "o", "x" }, desc = "Spider b" },
+    },
+  },
+
+  -- ─── Harpoon v2 — instant file jumping ──────────────────────────────────────
+  -- Pin your 4 active working files and switch instantly with single keystrokes
+  {
+    "ThePrimeagen/harpoon",
+    branch = "harpoon2",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    opts = {
+      menu = {
+        width = vim.api.nvim_win_get_width(0) - 4,
+      },
+      settings = {
+        save_on_toggle = true,
+      },
+    },
+    keys = {
+      { "<leader>H", function() require("harpoon"):list():add() end, desc = "Harpoon Add File" },
+      { "<leader>h", function() local harpoon = require("harpoon"); harpoon.ui:toggle_quick_menu(harpoon:list()) end, desc = "Harpoon Menu" },
+      { "<leader>1", function() require("harpoon"):list():select(1) end, desc = "Harpoon File 1" },
+      { "<leader>2", function() require("harpoon"):list():select(2) end, desc = "Harpoon File 2" },
+      { "<leader>3", function() require("harpoon"):list():select(3) end, desc = "Harpoon File 3" },
+      { "<leader>4", function() require("harpoon"):list():select(4) end, desc = "Harpoon File 4" },
+      { "[h",        function() require("harpoon"):list():prev() end,     desc = "Harpoon Prev File" },
+      { "]h",        function() require("harpoon"):list():next() end,     desc = "Harpoon Next File" },
     },
   },
 

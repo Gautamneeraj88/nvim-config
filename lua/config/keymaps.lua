@@ -175,28 +175,21 @@ vim.schedule(function()
   local ok, wk = pcall(require, "which-key")
   if not ok then return end
   wk.add({
-    { "<leader>t",   group = "Test" },
-    { "<leader>T",   group = "Terminal" },
-    { "<leader>m",   group = "Markdown" },
-    { "<leader>d",   group = "Debug" },
-    { "<leader>dt",  group = "Debug Test" },
-    { "<leader>dg",  group = "Debug Go" },
-    { "<leader>R",   group = "Refactor" },
-    { "<leader>D",   group = "Database" },
-    { "<leader>P",   group = "Package / npm" },
-    { "<leader>go",  group = "Octo (GitHub)" },
-    { "<leader>a",   group = "Argument" },
-    { "<leader>io",  group = "IoT / PlatformIO" },
     { "<leader>f",   group = "File / Find" },
     { "<leader>s",   group = "Search" },
     { "<leader>sr",  group = "Replace (grug-far)" },
     { "<leader>ss",  group = "Symbol" },
-    { "<leader>w",   group = "Window / WakaTime" },
-    { "<leader>e",   group = "Explorer" },
+    { "<leader>b",   group = "Buffer" },
     { "<leader>g",   group = "Git" },
     { "<leader>gd",  group = "Diff" },
-    { "<leader>b",   group = "Buffer" },
+    { "<leader>w",   group = "Window" },
+    { "<leader>T",   group = "Terminal" },
+    { "<leader>m",   group = "Markdown" },
+    { "<leader>R",   group = "Refactor" },
+    { "<leader>a",   group = "Argument" },
+    { "<leader>P",   group = "Package / npm" },
     { "<leader>u",   group = "UI" },
+    { "<leader>e",   group = "Explorer" },
   })
 end)
 
@@ -219,17 +212,4 @@ vim.api.nvim_create_autocmd("FileType", {
     wk.add({ { "<leader>j", group = "Node REPL", buffer = 0 } })
   end,
 })
-
--- ─── Git ──────────────────────────────────────────────────────────────────────
-
--- <leader>gg / <leader>gG are overridden in git-advanced.lua (floating lazygit)
-
--- ─── WakaTime Stats ──────────────────────────────────────────────────────────
-
-map("n", "<leader>ws", function() require("stats").open_stats() end,
-  { desc = "Open Coding Stats" })
-map("n", "<leader>wS", function() require("wakatime").fetch() end,
-  { desc = "Refresh WakaTime Stats" })
-map("n", "<leader>wM", function() require("stats").open_history() end,
-  { desc = "Message History" })
 

@@ -1,36 +1,4 @@
 return {
-  -- ─── Breadcrumbs Bar (dropbar) ────────────────────────────────────────────
-  -- Shows  file > class > function  at the top of each window
-  -- Click any segment to jump there — like VS Code / Zed breadcrumbs
-  {
-    "Bekaboo/dropbar.nvim",
-    event = "BufReadPost",
-    opts = {
-      bar = {
-        sources = function(buf, _)
-          local sources = require("dropbar.sources")
-          local utils   = require("dropbar.utils")
-          if vim.bo[buf].buftype == "terminal" then
-            return { sources.terminal }
-          end
-          -- dropbar refreshes on vim.schedule, so the treesitter source can walk
-          -- nodes from a tree that no longer matches the buffer and blow up in
-          -- get_node_text ("Index out of bounds"). Losing one breadcrumb frame is
-          -- better than an error popup on every fast edit.
-          local treesitter = {
-            get_symbols = function(...)
-              local ok, symbols = pcall(sources.treesitter.get_symbols, ...)
-              return ok and symbols or {}
-            end,
-          }
-          return {
-            utils.source.fallback({ sources.lsp, treesitter }),
-          }
-        end,
-      },
-    },
-  },
-
 
   -- ─── Color Highlighter ────────────────────────────────────────────────────────
   -- Shows hex/rgb/hsl/css/tailwind colors as colored backgrounds inline
@@ -88,15 +56,4 @@ return {
     },
   },
 
-  -- ─── Wakatime — automatic coding time tracking ───────────────────────────────
-  -- Runs silently in the background, tracks time per project/language/file
-  -- View stats at wakatime.com (free account available)
-  -- First use: run :WakaTimeApiKey and paste your API key from wakatime.com
-  {
-    "wakatime/vim-wakatime",
-    event = "VeryLazy",
-    -- No configuration needed — just needs your API key on first use
-    -- :WakaTimeApiKey  → set your API key
-    -- :WakaTimeToday   → see today's coding time
-  },
 }
