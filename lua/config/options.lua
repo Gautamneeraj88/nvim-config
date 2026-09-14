@@ -12,7 +12,7 @@ opt.inccommand   = "split" -- show live substitution results in a split
 
 -- Performance
 opt.updatetime   = 200     -- faster CursorHold / LSP diagnostics
-opt.timeoutlen   = 1000    -- which-key popup stays open long enough to read
+opt.timeoutlen   = 300     -- 300ms: snappy jk / multi-key response, which-key popup appears smoothly
 
 -- UX
 opt.confirm      = true    -- ask "Save / Discard / Cancel?" on :q with unsaved changes

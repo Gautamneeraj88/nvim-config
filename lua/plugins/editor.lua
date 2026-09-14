@@ -171,6 +171,8 @@ return {
           keys = {
             { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
             { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
+            { icon = " ", key = "p", desc = "Projects", action = ":lua Snacks.picker.projects()" },
+            { icon = " ", key = "h", desc = "Harpoon", action = ":lua require('harpoon').ui:toggle_quick_menu(require('harpoon'):list())" },
             { icon = " ", key = "g", desc = "Git Diff", action = ":DiffviewOpen" },
             { icon = " ", key = "c", desc = "Config", action = ":e $MYVIMRC" },
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
