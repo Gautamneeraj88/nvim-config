@@ -20,10 +20,9 @@ return {
   },
 
 
-  -- ─── Noice — centered floating cmdline popup ─────────────────────────────
-  -- LazyVim already enables noice — this just repositions the command-line
-  -- from the default bottom position to a centered floating dialog.
-  -- Pressing : or / now opens a clean popup in the middle of the screen.
+  -- ─── Noice — clean bottom command line (true TUI style) ─────────────────────
+  -- Keeps command-line and search at the bottom of the screen instead of
+  -- a floating dialog in the center, preserving a clean terminal feel.
   {
     "folke/noice.nvim",
     opts = function(_, opts)
@@ -38,21 +37,14 @@ return {
         { filter = { event = "msg_show", find = "%d+ lines" },         opts = { skip = true } },
       })
 
-      opts.views = vim.tbl_deep_extend("force", opts.views or {}, {
-        cmdline_popup = {
-          position = { row = "40%", col = "50%" }, -- centered in screen
-          size     = { width = 90, height = "auto" }, -- 90 wide so neo-tree prompts aren't cut off
-          border   = { style = "rounded", padding = { 0, 1 } },
-          zindex   = 200, -- above neo-tree and other panels
-        },
-        popupmenu = {                              -- completion dropdown below cmdline
-          relative = "editor",
-          position = { row = "57%", col = "50%" },
-          size     = { width = 90, height = 10 },
-          border   = { style = "rounded", padding = { 0, 1 } },
-          zindex   = 200,
-        },
+      opts.presets = vim.tbl_deep_extend("force", opts.presets or {}, {
+        bottom_search = true,
+        command_palette = false,
       })
+
+      opts.cmdline = opts.cmdline or {}
+      opts.cmdline.view = "cmdline" -- classic bottom position
+
       return opts
     end,
   },

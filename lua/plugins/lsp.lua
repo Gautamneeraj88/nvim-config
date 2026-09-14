@@ -130,7 +130,14 @@ return {
   -- <leader>cf and format-on-save both use the stricter formatter.
   {
     "mason-org/mason.nvim",
-    opts = { ensure_installed = { "gofumpt", "stylua", "shfmt", "shellcheck", "stylelint" } },
+    opts = function(_, opts)
+      opts.ensure_installed = opts.ensure_installed or {}
+      vim.list_extend(opts.ensure_installed, { "gofumpt", "stylua", "shfmt", "shellcheck", "stylelint" })
+      opts.ensure_installed = vim.tbl_filter(function(tool)
+        local blocked = { "delve", "js-debug-adapter", "codelldb", "debugpy", "chrome-debug-adapter" }
+        return not vim.tbl_contains(blocked, tool)
+      end, opts.ensure_installed)
+    end,
   },
   {
     "stevearc/conform.nvim",
