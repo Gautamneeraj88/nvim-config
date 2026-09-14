@@ -28,11 +28,11 @@ return {
       { "<A-Right>", function() require("smart-splits").resize_right() end,      desc = "Resize split right" },
       { "<A-Down>",  function() require("smart-splits").resize_down() end,       desc = "Resize split down" },
       { "<A-Up>",    function() require("smart-splits").resize_up() end,         desc = "Resize split up" },
-      -- Navigate splits (tmux-aware — works across Neovim and tmux panes)
-      { "<C-h>",     function() require("smart-splits").move_cursor_left() end,  desc = "Move to left split" },
-      { "<C-j>",     function() require("smart-splits").move_cursor_down() end,  desc = "Move to below split" },
-      { "<C-k>",     function() require("smart-splits").move_cursor_up() end,    desc = "Move to above split" },
-      { "<C-l>",     function() require("smart-splits").move_cursor_right() end, desc = "Move to right split" },
+      -- Navigate splits (tmux-aware — works across Neovim splits and tmux panes, normal & terminal mode)
+      { "<C-h>",     function() require("smart-splits").move_cursor_left() end,  mode = { "n", "t" }, desc = "Move to left split" },
+      { "<C-j>",     function() require("smart-splits").move_cursor_down() end,  mode = { "n", "t" }, desc = "Move to below split" },
+      { "<C-k>",     function() require("smart-splits").move_cursor_up() end,    mode = { "n", "t" }, desc = "Move to above split" },
+      { "<C-l>",     function() require("smart-splits").move_cursor_right() end, mode = { "n", "t" }, desc = "Move to right split" },
     },
     config = function(_, opts)
       require("smart-splits").setup(opts)
@@ -40,10 +40,10 @@ return {
       -- Requires the smart-splits tmux plugin: https://github.com/mrjones2014/smart-splits.nvim#tmux
       -- Add to tmux.conf: set -g @smart-splits-navigate-forward 'C-h'
       if vim.env.TMUX then
-        vim.keymap.set("n", "<C-h>", function() require("smart-splits").move_cursor_left() end,  { desc = "Move to left split/tmux pane" })
-        vim.keymap.set("n", "<C-j>", function() require("smart-splits").move_cursor_down() end,  { desc = "Move to below split/tmux pane" })
-        vim.keymap.set("n", "<C-k>", function() require("smart-splits").move_cursor_up() end,    { desc = "Move to above split/tmux pane" })
-        vim.keymap.set("n", "<C-l>", function() require("smart-splits").move_cursor_right() end, { desc = "Move to right split/tmux pane" })
+        vim.keymap.set({ "n", "t" }, "<C-h>", function() require("smart-splits").move_cursor_left() end,  { desc = "Move to left split/tmux pane" })
+        vim.keymap.set({ "n", "t" }, "<C-j>", function() require("smart-splits").move_cursor_down() end,  { desc = "Move to below split/tmux pane" })
+        vim.keymap.set({ "n", "t" }, "<C-k>", function() require("smart-splits").move_cursor_up() end,    { desc = "Move to above split/tmux pane" })
+        vim.keymap.set({ "n", "t" }, "<C-l>", function() require("smart-splits").move_cursor_right() end, { desc = "Move to right split/tmux pane" })
       end
     end,
   },

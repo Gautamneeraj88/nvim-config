@@ -70,7 +70,7 @@ return {
     },
   },
 
-  -- ─── Inline Git Blame (GitLens-style) ───────────────────────────────────────
+  -- ─── Inline Git Blame (GitLens-style) & Hunk Navigation ───────────────────
   {
     "lewis6991/gitsigns.nvim",
     opts = {
@@ -80,6 +80,10 @@ return {
         virt_text_pos = "eol",
       },
       current_line_blame_formatter = "  <author>, <author_time:%d %b %Y> · <subject>",
+    },
+    keys = {
+      { "]g", function() require("gitsigns").nav_hunk("next") end, desc = "Next Git Hunk" },
+      { "[g", function() require("gitsigns").nav_hunk("prev") end, desc = "Prev Git Hunk" },
     },
   },
 

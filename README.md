@@ -2512,6 +2512,7 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>gdh` | File history (current file) |
 | `<leader>gdH` | File history (project) |
 | `<leader>gx` | List merge conflicts in quickfix |
+| `[g / ]g` | Prev/next git hunk |
 | `co / ct` | Conflict: choose ours/theirs |
 | `cb / c0` | Conflict: choose both/none |
 
@@ -2550,7 +2551,7 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>E` | Toggle file explorer (cwd) |
 | `<leader>-` | Split horizontal |
 | `<leader>\|` | Split vertical |
-| `<C-h/j/k/l>` | Move between windows |
+| `<C-h/j/k/l>` | Move between windows (normal & terminal mode) |
 | `<A-arrows>` | Resize splits |
 | `<leader>w+/-` | Resize height |
 | `<leader>w>/<` | Resize width |
@@ -2576,14 +2577,14 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 
 | Key | Action |
 |-----|--------|
-| `<leader>z` | Toggle Zen Mode |
-| `<leader>uw` | Toggle Twilight |
-| `<leader>ui` | Toggle Illuminate |
-| `<leader>uh` | Toggle Hardtime |
-| `<leader>uH` | Toggle inlay hints |
-| `<leader>uW` | Toggle word wrap |
+| `<leader>uz` | Toggle Zen Mode |
+| `<leader>uZ` / `<leader>wm` | Toggle Zoom (maximize split) |
+| `<leader>uD` | Toggle Dimming |
+| `<leader>uR` | Toggle Illuminate (word highlights) |
+| `<leader>uh` | Toggle inlay hints |
+| `<leader>uw` | Toggle word wrap |
 | `<leader>uu` | Toggle Undo Tree |
-| `<leader>uT` | Switch theme |
+| `<leader>uC` | Switch colorscheme (with live preview) |
 | `zp` | Peek fold |
 | `zR / zM` | Open/close all folds |
 
@@ -2594,13 +2595,14 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>qs` | Restore session |
 | `<leader>ql` | Restore last session |
 | `<leader>qd` | Stop saving session |
-| `<leader>np` | Toggle package versions |
-| `<leader>nu` | Update package |
-| `<leader>nd` | Delete package |
-| `<leader>ni` | Install package |
-| `<leader>nc` | Change package version |
+| `<leader>fp` | Projects picker |
 | `<leader>sr` | Project search & replace (grug-far) |
-| `<leader>lR` | Restart LSP |
+| `<leader>cL` | Restart LSP |
+| `<leader>Pp` | Toggle package versions (`package.json`) |
+| `<leader>Pu` | Update package (`package.json`) |
+| `<leader>Pd` | Delete package (`package.json`) |
+| `<leader>Pi` | Install package (`package.json`) |
+| `<leader>Pc` | Change package version (`package.json`) |
 
 ### Marks
 
