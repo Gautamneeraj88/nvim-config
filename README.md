@@ -1,6 +1,7 @@
 # Neovim Config — Complete Reference
 
-A modern Neovim setup built on **LazyVim** for TypeScript/JavaScript, Python, Go, and **C/C++ IoT/Embedded** development.
+A blazing fast (~24ms startup), lightweight Neovim setup built on **LazyVim** for **TypeScript/JavaScript, Python, Go, and Web Development**. Pure TUI, zero bloat, and 100% active, conflict-free keybindings.
+
 This document covers every feature in detail — read it when you're stuck or want to discover something new.
 
 ---
@@ -21,68 +22,52 @@ This document covers every feature in detail — read it when you're stuck or wa
 12. [Git Integration](#git-integration)
 13. [Git Diff Viewer — Diffview](#git-diff-viewer--diffview)
 14. [Merge Conflicts — git-conflict](#merge-conflicts--git-conflict)
-15. [GitHub — Octo](#github--octo)
+15. [Harpoon v2 — Instant File Jumping](#harpoon-v2--instant-file-jumping)
 16. [Terminal](#terminal)
-17. [Test Runner — Neotest](#test-runner--neotest)
-18. [Test Coverage](#test-coverage)
-19. [Project Search & Replace — grug-far](#project-search--replace--grug-far)
-20. [REST Client — Kulala](#rest-client--kulala)
-21. [Database — SQL Client](#database--sql-client)
-22. [Python REPL — Iron](#python-repl--iron)
-23. [Node.js REPL — Iron](#nodejs-repl--iron)
-24. [Undo Tree](#undo-tree)
-25. [Session Management](#session-management)
-26. [Multi-cursor](#multi-cursor)
-27. [Text Objects](#text-objects)
-28. [Refactoring](#refactoring)
-29. [Project Switcher](#project-switcher)
-30. [Zen Mode & Twilight](#zen-mode--twilight)
-31. [Code Outline — Aerial](#code-outline--aerial)
-32. [Live Rename — inc-rename](#live-rename--inc-rename)
-33. [Better Folds — UFO](#better-folds--ufo)
-34. [Tabout](#tabout)
-35. [Color Highlighter](#color-highlighter)
-36. [Package Info](#package-info)
-37. [Wakatime — Coding Time Tracker](#wakatime--coding-time-tracker)
-38. [Debugger — DAP](#debugger--dap)
-39. [IoT / Embedded Development — PlatformIO](#iot--embedded-development--platformio)
-40. [TODO Comments](#todo-comments)
-41. [Markdown](#markdown)
-42. [Themes](#themes)
-43. [Panel Layout — Edgy](#panel-layout--edgy)
-44. [Breadcrumbs — Dropbar](#breadcrumbs--dropbar)
-45. [Sticky Context Header](#sticky-context-header)
-46. [Inline Git Blame](#inline-git-blame)
-47. [Code Action Lightbulb](#code-action-lightbulb)
-48. [Yank History — Yanky](#yank-history--yanky)
-49. [Better Quickfix — nvim-bqf](#better-quickfix--nvim-bqf)
-50. [Smarter Word Motions — Spider](#smarter-word-motions--spider)
-51. [Hardtime — Break Bad Habits](#hardtime--break-bad-habits)
-52. [Buffers & Windows](#buffers--windows)
-53. [Editing Shortcuts](#editing-shortcuts)
-54. [Statusline](#statusline)
-55. [Python — Virtual Environment & LSP](#python--virtual-environment--lsp)
-56. [Auto-tag — nvim-ts-autotag](#auto-tag--nvim-ts-autotag)
-57. [Doc Comments — Neogen](#doc-comments--neogen)
-58. [Marks](#marks)
-59. [Function Arg Highlight — Hlargs](#function-arg-highlight--hlargs)
-60. [Floating Split Labels — Incline](#floating-split-labels--incline)
-61. [Mode Colors](#mode-colors)
-62. [Noice — Centered Cmdline](#noice--centered-cmdline)
-63. [Biscuits — Closing Brace Labels](#biscuits--closing-brace-labels)
-64. [Virt-column — Line Length Guide](#virt-column--line-length-guide)
-65. [Cinnamon — Smooth Scroll](#cinnamon--smooth-scroll)
-66. [Scroll-past-EOF — Dynamic Scrolloff](#scroll-past-eof--dynamic-scrolloff)
-67. [Neoconf — Per-project LSP Settings](#neoconf--per-project-lsp-settings)
-68. [Auto-save](#auto-save)
-69. [Web & Devops Stacks](#web--devops-stacks)
-70. [Surround — mini.surround](#surround--minisurround)
-71. [Split / Join Blocks — treesj](#split--join-blocks--treesj)
-72. [Markdown Image Paste & Tables](#markdown-image-paste--tables)
-73. [Git Diff Presets — Diffview](#git-diff-presets-diffview)
-74. [Incremental Selection](#incremental-selection-treesitter)
-75. [How to Customize](#how-to-customize)
-76. [Complete Keybinding Reference](#complete-keybinding-reference)
+17. [Project Search & Replace — grug-far](#project-search--replace--grug-far)
+18. [Python REPL — Iron](#python-repl--iron)
+19. [Node.js REPL — Iron](#nodejs-repl--iron)
+20. [Undo Tree](#undo-tree)
+21. [Session Management](#session-management)
+22. [Multi-cursor](#multi-cursor)
+23. [Text Objects](#text-objects)
+24. [Refactoring](#refactoring)
+25. [Project Switcher](#project-switcher)
+26. [Zen Mode & Focus](#zen-mode--focus)
+27. [Code Outline — Aerial](#code-outline--aerial)
+28. [Live Rename — inc-rename](#live-rename--inc-rename)
+29. [Better Folds — UFO](#better-folds--ufo)
+30. [Tabout](#tabout)
+31. [Color Highlighter](#color-highlighter)
+32. [Package Info](#package-info)
+33. [TODO Comments](#todo-comments)
+34. [Markdown](#markdown)
+35. [Themes](#themes)
+36. [Panel Layout — Edgy](#panel-layout--edgy)
+37. [Inline Git Blame](#inline-git-blame)
+38. [Code Action Lightbulb](#code-action-lightbulb)
+39. [Yank History — Yanky](#yank-history--yanky)
+40. [Better Quickfix — nvim-bqf](#better-quickfix--nvim-bqf)
+41. [Smarter Word Motions — Spider](#smarter-word-motions--spider)
+42. [Buffers & Windows](#buffers--windows)
+43. [Editing Shortcuts](#editing-shortcuts)
+44. [Statusline](#statusline)
+45. [Python — Virtual Environment & LSP](#python--virtual-environment--lsp)
+46. [Auto-tag — nvim-ts-autotag](#auto-tag--nvim-ts-autotag)
+47. [Doc Comments — Neogen](#doc-comments--neogen)
+48. [Marks](#marks)
+49. [Virt-column — Line Length Guide](#virt-column--line-length-guide)
+50. [Scroll-past-EOF — Dynamic Scrolloff](#scroll-past-eof--dynamic-scrolloff)
+51. [Neoconf — Per-project LSP Settings](#neoconf--per-project-lsp-settings)
+52. [Auto-save](#auto-save)
+53. [Web & Devops Stacks](#web--devops-stacks)
+54. [Surround — mini.surround](#surround--minisurround)
+55. [Split / Join Blocks — treesj](#split--join-blocks--treesj)
+56. [Markdown Image Paste & Tables](#markdown-image-paste--tables)
+57. [Git Diff Presets — Diffview](#git-diff-presets-diffview)
+58. [Incremental Selection](#incremental-selection-treesitter)
+59. [How to Customize](#how-to-customize)
+60. [Complete Keybinding Reference](#complete-keybinding-reference)
 
 ---
 
@@ -97,104 +82,70 @@ brew install neovim git node ripgrep fd tree-sitter-cli fzf lazygit
 # For Python REPL (ts-node optional, for TypeScript REPL)
 npm install -g ts-node          # optional: TypeScript REPL support
 pip install sqlite3             # for persistent yank history
-
-# For IoT/embedded
-brew install open-ocd           # ESP32 debugging via OpenOCD
-# probe-rs: https://probe.rs/docs/getting-started/installation/
-
-# Verify versions
-nvim --version     # needs 0.10+
-node --version     # needs 18+
-rg --version       # ripgrep for grep search
-lazygit --version  # git TUI
 ```
 
 ### First launch
 
-```bash
-# 1. Open Neovim — plugins install automatically
-nvim
-
-# 2. Wait for lazy.nvim to finish (~1 min first time)
-# 3. Compile Kanagawa theme (do this once)
-:KanagawaCompile
-
-# 4. Install LSP servers, formatters, debuggers
-:Mason
-# Press i next to: basedpyright, gopls, vtsls, clangd, gofumpt, stylua, ruff
-# Debuggers: debugpy, delve, js-debug-adapter
-
-# 5. Verify everything works
-:checkhealth
-```
+Neovim boots and synchronizes plugins automatically using `lazy.nvim`. Language servers, linters, and formatters are installed via Mason automatically on first launch.
 
 ---
 
 ## Understanding Neovim Basics
 
-Neovim is **modal** — different modes for different tasks. This is the most important concept.
-
 ### Modes
 
-| Mode            | How to Enter  | What it Does                              |
-| --------------- | ------------- | ----------------------------------------- |
-| **Normal**      | `Esc` or `jk` | Navigate, run commands. **Default mode.** |
-| **Insert**      | `i` `a` `o`   | Type text. Navigate with arrow keys `←↑↓→` |
-| **Visual**      | `v`           | Select characters                         |
-| **Visual Line** | `V`           | Select whole lines                        |
-| **Command**     | `:`           | Run vim commands like `:w`, `:q`          |
+Vim is modal — keystrokes do different things depending on which mode you are in.
 
-> **Rule:** Always return to Normal mode when not actively typing. Everything powerful happens in Normal mode.
+| Mode | How to enter | What it does |
+|---|---|---|
+| **Normal** | `Esc` or `jk` | Moving around, running commands (default mode) |
+| **Insert** | `i` (before cursor), `a` (after), `o` (new line below) | Typing text normally |
+| **Visual** | `v` (character), `V` (line), `Ctrl+v` (block) | Selecting text |
+| **Command** | `:` | Running commands (e.g. `:w` save, `:q` quit) |
+| **Terminal** | `<C-\>` | Shell terminal |
 
 ### Essential Motions
 
 ```
-h j k l      → left / down / up / right  (Normal mode cursor movement)
-←↑↓→         → same as hjkl  (also work in Insert mode)
-w            → next word start
-b            → previous word start
-e            → end of current word
-0            → start of line
-$            → end of line
-gg           → top of file
-G            → bottom of file
-5j           → 5 lines down (any number + motion)
-Ctrl+d       → scroll half page down
-Ctrl+u       → scroll half page up
-zh / zl      → scroll viewport left / right  (does NOT move cursor)
+h / j / k / l  → left / down / up / right
+w / b          → next / previous word
+e              → end of word
+0 / $          → start / end of line
+^              → first non-whitespace character on line
+gg / G         → top / bottom of file
+Ctrl+d / u     → half-page down / up
+%              → jump to matching bracket: () [] {}
+* / #          → next / previous occurrence of word under cursor (or gl / gL)
 ```
 
 ### Navigation in Insert Mode
 
-In Insert mode, `h`/`j`/`k`/`l` type those characters — they are not navigation keys.
-To move while staying in Insert mode, use the **arrow keys** (`←↑↓→`).
-
-The recommended vim workflow is:
 ```
-1. jk          → exit Insert mode (go to Normal)
-2. hjkl / w/b  → navigate to where you want
-3. i / a / o   → re-enter Insert mode
+jk             → exit to Normal mode (fast, no reaching for Esc)
+Ctrl+s         → save file (works in Normal, Insert, and Visual)
+Alt+j / Alt+k  → move current line down / up
+Tab            → accept ghost text completion or tab out of quotes/brackets
 ```
-
-This is faster than reaching for arrows once you're used to it, but arrow keys are fully available when you need them.
 
 ### Operators + Motions
 
-```
-d            → delete
-y            → yank (copy)
-c            → change (delete + enter insert)
+Combine an action with a motion:
 
-dw           → delete word        yy → yank line
-d$           → delete to end      dd → delete line
-ciw          → change inner word  di" → delete inside quotes
+```
+d + w          → delete word
+c + w          → change word (deletes word, enters Insert mode)
+y + $          → yank (copy) to end of line
+d + d          → delete whole line
+y + y          → yank (copy) whole line
+gsa + i + w + " → surround word with quotes ("word")
 ```
 
 ### Undo / Redo
 
 ```
-u            → undo
-Ctrl+r       → redo
+u              → undo
+Ctrl+r         → redo
+<leader>uu     → open Undo Tree (visual timeline of all changes)
 ```
 
 ---
@@ -203,45 +154,35 @@ Ctrl+r       → redo
 
 ```
 ~/.config/nvim/
-├── init.lua                  ← Entry point — loads lua/config/lazy.lua
+├── init.lua                  ← Entry point — defensive cwd patch + loads lazy.lua
 │
 └── lua/
     ├── config/
     │   ├── lazy.lua          ← Plugin manager + enabled LazyVim extras
-    │   ├── options.lua       ← Editor settings (scrolloff, cmdheight, winborder, netrw disable…)
+    │   ├── options.lua       ← Editor settings (scrolloff, timeoutlen=300, netrw disable…)
     │   ├── keymaps.lua       ← Custom keybindings + which-key group labels
-    │   └── autocmds.lua      ← Autocommands (inlay hints, virt-column, session hooks)
+    │   └── autocmds.lua      ← Autocommands (inlay hints, virt-column, filetype settings)
     │
     └── plugins/
         ├── autosave.lua      ← Auto-save on InsertLeave/BufLeave/FocusLost
         ├── coding.lua        ← UFO folds, refactoring, autotag, neogen, tabout,
         │                        treesitter textobjects, various textobjs,
-        │                        ts-error-translator, blink.cmp ghost text
-        ├── colorscheme.lua   ← Kanagawa wave (default) + catppuccin, tokyonight,
-        │                        rose-pine, oxocarbon, cyberdream
-        ├── dap.lua           ← Debugger: Python, Go, TS/JS, IoT (probe-rs + OpenOCD)
-        ├── database.lua      ← vim-dadbod-ui SQL client + blink completion
-        ├── editor.lua        ← Neoconf, hardtime, todo-comments, diagnostics,
-        │                        gitsigns blame, neo-tree, oil, smooth scroll,
-        │                        peek definition (goto-preview), no-neck-pain
-        ├── extras.lua        ← Yanky, vim-visual-multi, nvim-bqf,
-        │                        persistence, marks, twilight, zen mode
-        ├── git-advanced.lua  ← Diffview, git-conflict, Octo, lazygit, cicd.nvim
-        ├── iot.lua           ← PlatformIO (ESP32/STM32/RP2040) + clangd_extensions
-        ├── lsp.lua           ← vtsls, gopls, basedpyright, cssls, html, bashls, gofumpt, stylua, shfmt settings
+        │                        ts-error-translator, blink.cmp ghost text, mini.surround, treesj
+        ├── colorscheme.lua   ← tokyonight (default) + catppuccin, rose-pine, kanagawa, cyberdream
+        ├── editor.lua        ← Neoconf, todo-comments, diagnostics, gitsigns,
+        │                        neo-tree explorer, oil file manager, snacks dashboard
+        ├── extras.lua        ← Yanky, vim-visual-multi, nvim-bqf, persistence, marks
+        ├── git-advanced.lua  ← Diffview, git-conflict, lazygit (snacks)
+        ├── lsp.lua           ← vtsls, gopls, basedpyright, cssls, html, bashls, conform formatters
         ├── markdown.lua      ← Markdown preview, image paste, table mode
+        ├── navigation.lua    ← Smart-splits (terminal+tmux aware), spider, harpoon v2, projects
         ├── python.lua        ← basedpyright venv detection, ruff formatter, iron.nvim REPL
-        ├── rest.lua          ← Kulala HTTP/REST client
         ├── search.lua        ← fzf-lua config + hlslens search lens
-        ├── terminal.lua      ← Snacks terminal + snacks.input
-        ├── testing.lua       ← Neotest (Jest/Vitest/pytest/Go) + nvim-coverage
-        ├── ui.lua            ← Edgy, treesitter-context, fidget, lualine,
-        │                        lightbulb, noice
-        ├── ui-extras.lua     ← Dropbar breadcrumbs, colorizer, package-info, wakatime
-        ├── undotree.lua      ← Undo history tree
-        └── visuals.lua       ← Smear cursor, rainbow delimiters, scrollbar,
-                                 incline, modes, biscuits, virt-column, hlargs,
-                                 illuminate, mini.animate
+        ├── terminal.lua      ← Snacks terminal (<C-\>, float, split)
+        ├── ui-extras.lua     ← Colorizer (inline hex/rgb), package-info (package.json only)
+        ├── ui.lua            ← Edgy panels, fidget LSP progress, lualine, lightbulb, noice (bottom TUI)
+        ├── undotree.lua      ← Visual undo timeline (<leader>uu)
+        └── visuals.lua       ← Rainbow delimiters, virt-column, illuminate (cursor word)
 ```
 
 ### LazyVim extras active (`lua/config/lazy.lua`)
@@ -250,21 +191,16 @@ Ctrl+r       → redo
 |---|---|
 | `lang.typescript` | vtsls, eslint, prettier, TS/JS inlay hints |
 | `lang.python` | basedpyright, ruff |
-| `lang.go` | gopls, gofmt/gofumpt |
+| `lang.go` | gopls, gofumpt |
 | `lang.json` | jsonls, schema validation |
 | `lang.tailwind` | Tailwind CSS class completion + sorting |
-| `lang.prisma` | schema.prisma LSP |
-| `lang.docker` | Dockerfile + compose + hadolint |
 | `lang.yaml` | yaml-language-server + schemas |
-| `lang.toml` | TOML (taplo LSP for platformio.ini etc.) |
-| `lang.markdown` | LSP, treesitter, render |
+| `lang.markdown` | LSP, treesitter, render-markdown |
 | `formatting.prettier` | Prettier for TS/JS/CSS/HTML |
-| `test.core` | Neotest framework |
-| `editor.aerial` | Code outline panel |
-| `editor.inc-rename` | Live rename preview |
-| `editor.fzf` | fzf-lua as the LazyVim picker |
-| `editor.overseer` | Task runner — build/test/make commands with UI panel |
-| `editor.dial` | Smarter increment/decrement — dates, booleans, semver |
+| `editor.aerial` | Code outline panel (`<leader>cs`) |
+| `editor.inc-rename` | Live rename preview (`<leader>cr`) |
+| `editor.fzf` | fzf-lua as the primary LazyVim picker |
+| `editor.dial` | Smarter increment/decrement (`<C-a>` / `<C-x>`) |
 | `util.dot` | Dotfile management helpers |
 
 ---
@@ -450,12 +386,11 @@ LSP gives you IDE features automatically when you open a supported file.
 | Python | `basedpyright` | Stricter than pyright, faster, actively maintained |
 | Go | `gopls` | Full Go toolchain, staticcheck, gofumpt |
 | JSON | `jsonls` | Schema validation |
-| C/C++ | `clangd` | IoT/embedded, clangd_extensions for extras |
 | CSS/SCSS | `cssls` / `scssls` | Tailwind class completion, validation |
 | HTML | `html` | Tag/attribute autocompletion |
 | Bash/Shell | `bashls` | Shell script diagnostics + shellcheck |
 | YAML | `yaml-language-server` | Schemas, validation |
-| TOML | `taplo` | platformio.ini, Cargo.toml etc. |
+| TOML | `taplo` | pyproject.toml, Cargo.toml etc. |
 | Tailwind | `tailwindcss` | Class completion, sorting |
 | Prisma | `prisma-language-server` | Schema validation |
 | Docker | `dockerls` | Dockerfile + compose |
@@ -464,13 +399,10 @@ LSP gives you IDE features automatically when you open a supported file.
 
 ```
 gd           → go to definition (jumps there)
-gp           → peek definition (floating window, you stay put)
-gpt          → peek type definition
-gpr          → peek all references
-gpi          → peek implementation (TS/Go only)
-gpc          → close all peek windows
+gr           → all references (fzf-lua list)
+gI           → go to implementation
+gy           → go to type definition
 K            → hover documentation (type, docstring, signature)
-gr           → all references (fzf list)
 ```
 
 **Reading long docs / signatures:** when a hover (`K`) or the signature popup is open,
@@ -509,7 +441,7 @@ TypeScript errors like `"Type 'X' is not assignable to type 'Y' because..."` are
 
 ### Inlay hints
 
-Always-on in TypeScript, JavaScript, Go, Python (basedpyright), and C/C++:
+Always-on in TypeScript, JavaScript, Go, and Python (basedpyright):
 - Parameter names at call sites: `createUser(data:` → `createUser(data: CreateUserDto`
 - Variable types: `const x =` → `const x: string =`
 - Return types, enum values, composite literal field names
@@ -517,17 +449,15 @@ Always-on in TypeScript, JavaScript, Go, Python (basedpyright), and C/C++:
 They render in the theme's comment colour (readable, not the near-invisible default).
 
 ```
-<leader>uH   → toggle inlay hints on/off (shows on/off state in which-key)
+<leader>uh   → toggle inlay hints on/off
 ```
-
-> `<leader>uh` (lowercase) is Hardtime, so the inlay toggle lives on capital `<leader>uH`.
 
 ### LSP management
 
 ```
 :LspInfo       → which servers are running for current file
 :Mason         → install/uninstall language servers and tools
-<leader>lR     → restart all LSP servers (when completions/hints stop working)
+<leader>cL     → restart all LSP servers (when completions/hints stop working)
 ```
 
 ---
@@ -751,75 +681,30 @@ When a file has unresolved conflicts, the statusline shows `⚡N` (e.g. `⚡3` =
 
 ---
 
-## GitHub — Octo
+## Harpoon v2 — Instant File Jumping
 
-Browse and manage GitHub PRs and issues without leaving Neovim.
-
-### Setup (one-time)
-
-```bash
-brew install gh
-gh auth login
-```
-
-### Opening Octo
+Keep your 4 most important files pinned and jump between them instantly without searching or browsing a file tree.
 
 ```
-<leader>gop   → list all open PRs
-<leader>goi   → list all open issues
-<leader>gor   → start PR review (add comments, approve, request changes)
-<leader>gom   → merge current PR
+<leader>H    → add current file to Harpoon
+<leader>h    → open Harpoon quick menu (reorder, edit, delete files)
+<leader>1    → jump to file 1
+<leader>2    → jump to file 2
+<leader>3    → jump to file 3
+<leader>4    → jump to file 4
+]h           → cycle to next Harpoon file
+[h           → cycle to previous Harpoon file
 ```
 
-Or use `:Octo` directly:
+### Why Harpoon?
 
-```
-:Octo pr list
-:Octo issue list
-:Octo pr checkout 42
-:Octo review start
-:Octo pr merge
-```
-
-### Inside a PR view
-
-```
-<leader>ca   → add comment
-Tab          → next file in PR diff
-]c / [c      → next/previous comment thread
-q            → close
-```
-
----
-
-## CI/CD — GitHub Actions
-
-Browse and manage GitHub Actions workflows in a floating window. Background polling sends notifications on status changes (works without opening the UI).
-
-```
-<leader>ga   → open CI/CD pipeline browser (float)
-<leader>gA   → open Actions workflow file (if in .github/workflows/)
-```
-
-### Inside the float
-
-```
-j / k        → move between jobs
-Space        → act on selected job (retry/cancel)
-L            → open job log in a float (ANSI-colored)
-r            → refresh
-/            → live filter
-q            → close
-```
-
-### Background notifications
-
-CI/CD status is polled every 30s. Notifications appear automatically for completed runs:
-` success`, ` failure`, ` cancelled`.
+Instead of cycling through 20 open buffers or typing in fuzzy search for the same files over and over, pin the 2–4 files you are actively working on and switch between them with a single keystroke.
 
 ---
 
 ## Terminal
+
+Floating and split terminals powered by `snacks.nvim`.
 
 ```
 <C-\>        → toggle floating terminal (press again to hide)
@@ -828,25 +713,11 @@ CI/CD status is polled every 30s. Notifications appear automatically for complet
 <leader>Tv   → vertical split terminal (right)
 ```
 
-> Terminal keys live under the `<leader>T` group (capital T) so the `<leader>t`
-> prefix stays dedicated to the test runner.
+### Navigation & Exiting
 
-### Exiting terminal mode
-
-When the terminal opens you are in terminal INSERT mode — keystrokes go to the shell.
-
-```
-<C-\><C-n>   → exit to Normal mode (RELIABLE — always works)
-Esc Esc      → same thing (may not work if noice intercepts)
-```
-
-### After entering Normal mode inside terminal
-
-```
-Ctrl+h/j/k/l → move to another window (terminal stays open)
-<C-\>        → hide the terminal
-j / k        → scroll through terminal output
-```
+- **Seamless split navigation:** `Ctrl+h/j/k/l` moves out of the terminal directly to adjacent splits without needing to leave insert mode.
+- **Scroll output:** Press `<C-\><C-n>` to switch to Normal mode inside the terminal, then use `j` / `k` / `Ctrl+u` / `Ctrl+d` to scroll. Press `i` or `a` to return to shell input.
+- **Hide:** `<C-\>` hides the terminal immediately.
 
 > **Key point:** Hiding with `<C-\>` does NOT kill the process. The shell keeps running in the background.
 
@@ -900,91 +771,6 @@ After this, `Ctrl+h/j/k/l` moves between Neovim windows and tmux panes interchan
 
 ---
 
-## Test Runner — Neotest
-
-Run tests without leaving Neovim. Auto-detects Jest/Vitest/pytest/Go test.
-
-### Running tests
-
-```
-<leader>tt   → run nearest test (cursor inside the test function)
-<leader>tf   → run all tests in current file
-<leader>tl   → re-run last test
-<leader>ta   → run entire test suite (all files)
-<leader>tW   → watch nearest test (re-runs on file save)
-<leader>tS   → stop running test
-```
-
-### Viewing results
-
-```
-<leader>ts   → toggle test summary panel (tree of all tests, pass/fail/skip)
-<leader>to   → toggle test output panel (stdout, error messages)
-]f           → jump to next FAILED test
-[f           → jump to previous FAILED test
-```
-
-### Result icons in your code
-
-```
- (green)   → passed
- (red)     → failed
- (yellow)  → running
- (grey)    → skipped
-```
-
-### Language-specific
-
-**TypeScript/JavaScript:**
-- Auto-detects Jest (`jest.config.*`) or Vitest (`vitest.config.*`)
-- Monorepo-aware: finds the nearest `jest.config.*` up from the file
-- Runs via `npx jest` or `npx vitest`
-
-**Python:**
-- Uses pytest
-- Works with virtual environments (auto-detected)
-- Debug test method: `<leader>dtm` · Debug test class: `<leader>dtc`
-
-**Go:**
-- Runs with `-count=1 -timeout=60s`
-- Debug test: `<leader>dgt` · Debug last test: `<leader>dgl`
-
----
-
-## Test Coverage
-
-Run tests with coverage instrumentation and display results inline in your code.
-
-### Run with coverage
-
-```
-<leader>tT   → run current file tests with coverage instrumentation
-               Python: uses --cov --cov-report=json:/tmp/coverage.json
-               Go:     uses -coverprofile=/tmp/go-coverage.out
-```
-
-### Display coverage
-
-```
-<leader>tc   → toggle coverage signs in gutter (▎ green=covered, red=uncovered, yellow=partial)
-<leader>tC   → coverage summary (shows % per file, highlights files below 80%)
-```
-
-### Workflow
-
-```
-1. <leader>tT  → run with coverage
-2. <leader>tc  → toggle gutter signs — see which lines are untested (red ▎)
-3. Write tests for the red lines
-4. <leader>tT again → signs update
-5. <leader>tC  → check if all files are above 80%
-```
-
-**Python setup:** `pip install pytest-cov`
-**Go:** built-in, no setup needed
-
----
-
 ## Project Search & Replace — grug-far
 
 Search for text across the **entire project** and replace it — with a preview of every change before applying. Much more powerful than `:%s/old/new/g` which only works in one file.
@@ -1005,121 +791,6 @@ q            → close
 ```
 
 > **Supports regex.** For example: `function (\w+)\(` to find all function declarations.
-
----
-
-## REST Client — Kulala
-
-Write and run HTTP requests in `.http` or `.rest` files. Response opens in a vertical split. JSON auto-formatted with `jq`.
-
-> **Note:** All `<leader>r*` keys only appear in `.http` / `.rest` files. In other files, `<leader>r` is not mapped.
-
-### Create a request file
-
-```http
-@baseUrl = http://localhost:3000
-@token   = my-jwt-token
-
-### Health check
-GET {{baseUrl}}/health
-
-### Get all workflows
-GET {{baseUrl}}/workflows
-Authorization: Bearer {{token}}
-
-### Create workflow
-POST {{baseUrl}}/workflows
-Content-Type: application/json
-
-{
-  "name": "charge-card",
-  "steps": []
-}
-
-### Delete workflow
-DELETE {{baseUrl}}/workflows/{{workflowId}}
-```
-
-Variables defined with `@` show their values inline automatically.
-
-### Running requests
-
-Place cursor inside any request block:
-
-```
-<leader>rr   → run request under cursor
-<leader>ra   → run ALL requests sequentially
-<leader>rp   → replay last request (re-run without moving cursor)
-<leader>ri   → inspect request (see full URL, headers, body before sending)
-<leader>rc   → copy as cURL command
-]r           → jump to next request
-[r           → jump to previous request
-```
-
-### Viewing the response
-
-```
-<leader>rv   → cycle through: Body → Headers → Stats
-<leader>rS   → show timing stats (time to first byte, total)
-```
-
-### Environments
-
-Create `kulala.env.json` in the project root:
-
-```json
-{
-  "dev": {
-    "baseUrl": "http://localhost:3000",
-    "token": "dev-token"
-  },
-  "staging": {
-    "baseUrl": "https://staging.example.com",
-    "token": "staging-token"
-  }
-}
-```
-
-```
-<leader>re   → open environment picker → select dev / staging / prod
-<leader>rs   → open scratchpad (temporary .http buffer, not saved)
-<leader>rf   → import from cURL (paste a curl command, convert to .http format)
-```
-
----
-
-## Database — SQL Client
-
-In-editor SQL client powered by **vim-dadbod** + **dadbod-ui** — browse schemas, run queries, and view results without leaving Neovim. Replaces a standalone DB GUI (TablePlus, DBeaver, etc.).
-
-### Opening the drawer
-
-```
-<leader>Du   → toggle the database drawer (left, 40 cols)
-<leader>DB   → add a new connection (prompts for a connection URL)
-<leader>Df   → jump to the DBUI query buffer
-<leader>Dr   → rename the current DB query buffer
-```
-
-### Connection URLs
-
-When prompted by `<leader>DB`, paste a connection URL:
-
-```
-postgres://user:pass@localhost:5432/dbname
-mysql://user:pass@localhost:3306/dbname
-sqlite:/absolute/path/to/file.db
-```
-
-Connections are saved under `stdpath('data')/db_ui` and reappear in the drawer next launch. For project-scoped connections, set `$DBUI_URL` or a `g:dbs` table in a project-local config (see `:help dadbod-ui`).
-
-### Running queries
-
-1. `<leader>Du` to open the drawer, expand a connection → a table opens a preview query.
-2. Or open a `.sql` buffer, write SQL, and run with `<leader>S` (dadbod-ui buffer-local) or `:%DB` to run the whole buffer / `:'<,'>DB` for a visual selection.
-3. Results open in a split. SQL completion (tables, columns, keywords) fires automatically in `sql` / `mysql` / `plsql` buffers via blink.cmp.
-
-> Auto-run on save is **off** by default (`db_ui_execute_on_save = 0`) — queries run only when you ask.
 
 ---
 
@@ -1404,24 +1075,35 @@ Auto-detects projects by looking for `.git`, `package.json`, `go.mod`, `pyprojec
 
 ---
 
-## Zen Mode & Twilight
+## Zen Mode & Focus
 
-### Zen Mode — distraction-free writing
+Distraction-free focus and window maximization powered by `snacks.nvim`.
 
-Hides everything except your code. Centers text. Good for deep focus.
+### Zen Mode
 
-```
-<leader>z    → toggle zen mode
-```
-
-When active: file explorer hides · statusline hides · tabs hide · code is centered. All keymaps still work.
-
-### Twilight — dim inactive code
-
-Dims everything outside your current function/block to 25% opacity. Keeps focus on the active code without full zen mode.
+Hides UI distractions and centers the editor for deep focus.
 
 ```
-<leader>uw   → toggle Twilight
+<leader>uz   → toggle zen mode
+```
+
+When active: sidebar panels hide, statusline simplifies, and code is centered. Press `<leader>uz` again to restore your layout.
+
+### Zoom / Maximize Window
+
+Temporarily maximize the current split to take over the full window without closing other splits.
+
+```
+<leader>uZ   → toggle maximize split
+<leader>wm   → toggle maximize split (mnemonic: window maximize)
+```
+
+### Dim Inactive Code
+
+Dims background context and keeps your cursor's current scope in focus.
+
+```
+<leader>uD   → toggle dimming
 ```
 
 ---
@@ -1521,198 +1203,12 @@ When you open `package.json`, shows **current installed versions** inline and hi
 Activates only for files named `package.json`. Package manager auto-detected from lockfile (`pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn, else npm).
 
 ```
-<leader>np   → toggle showing package versions
-<leader>nu   → update package under cursor to latest
-<leader>nd   → delete package under cursor
-<leader>ni   → install a new package
-<leader>nc   → change version of package under cursor
+<leader>Pp   → toggle showing package versions
+<leader>Pu   → update package under cursor to latest
+<leader>Pd   → delete package under cursor
+<leader>Pi   → install a new package
+<leader>Pc   → change version of package under cursor
 ```
-
----
-
-## Wakatime — Coding Time Tracker
-
-Runs silently in the background. Tracks time by project, language, file. View stats at wakatime.com.
-
-### First-time setup
-
-1. Sign up at wakatime.com (free)
-2. Get your API key from the dashboard
-3. In Neovim: `:WakaTimeApiKey` → paste key → Enter
-4. Tracking starts automatically
-
----
-
-## Debugger — DAP
-
-Step through code, inspect variables, set breakpoints. Supports Python, Go, TypeScript/JavaScript, and IoT (C/C++ via probe-rs and OpenOCD).
-
-### First-time setup
-
-```
-:Mason
-```
-
-Install: `debugpy` (Python) · `delve` (Go) · `js-debug-adapter` (TS/JS)
-
-For IoT: install `probe-rs` from probe.rs and `open-ocd` via Homebrew.
-
-### UI layout when debugging
-
-```
-┌──────────────────────────┬─────────────────────────────────────┐
-│  Variables               │                                     │
-│  items = [...]           │           YOUR CODE                 │
-│  total = 0               │                                     │
-│                          │   ▶  current line (with arrow)      │
-│  Breakpoints             │      variable values shown inline   │
-│  file.py:42  ●           │                                     │
-│                          │                                     │
-│  Call Stack              │                                     │
-│  calculate  line 42      │                                     │
-│  main       line 10      │                                     │
-│                          │                                     │
-│  Watches                 │                                     │
-│  (type expressions)      │                                     │
-└──────────────────────────┴─────────────────────────────────────┘
-│  REPL — evaluate expressions  │  Console — print() output here │
-└───────────────────────────────┴────────────────────────────────┘
-```
-
-### Controls
-
-```
-<F5>         → start / continue to next breakpoint
-<F10>        → step OVER (run next line, don't enter functions)
-<F11>        → step INTO (enter the function being called)
-<F12>        → step OUT  (finish current function, return to caller)
-<leader>dc   → run to cursor (skip ahead to cursor position)
-<leader>dq   → stop debugging
-<leader>dr   → restart session
-<leader>du   → toggle UI open/close
-```
-
-### Breakpoints
-
-```
-<leader>db   → toggle breakpoint  ●  (red dot in gutter)
-<leader>dB   → conditional breakpoint  ◆  (only pauses if condition is true)
-               e.g. enter condition: total > 100
-<leader>dl   → log point  ◎  (print a message WITHOUT pausing)
-```
-
-### Inspecting values
-
-```
-<leader>de   → evaluate expression under cursor (or visual selection) in a popup
-<leader>dh   → hover to see variable value
-```
-
-### Step over vs step into
-
-```python
-result = calculate_total(items)   # cursor here
-```
-
-| Key | What happens |
-|-----|---|
-| `<F10>` step OVER | Runs `calculate_total()` completely, moves to next line. Use when you trust the function. |
-| `<F11>` step INTO | Enters `calculate_total()` so you can debug inside it. Use when the bug is in there. |
-| `<F12>` step OUT  | Finishes current function, returns to caller. Use to escape a function you stepped into. |
-
-### Breakpoint signs
-
-```
-●  red    → normal breakpoint (always pauses)
-◆  blue   → conditional breakpoint
-◎  teal   → log point (prints, does not pause)
-▶  green  → current line being executed
-```
-
-### Python-specific
-
-```
-<leader>dtm  → debug current test METHOD under cursor
-<leader>dtc  → debug current test CLASS
-```
-
-### Go-specific
-
-```
-<leader>dgt  → debug current Go test function
-<leader>dgl  → debug last Go test
-```
-
-### `.vscode/launch.json` support
-
-If your project has a `.vscode/launch.json`, it's loaded automatically at the start of every debug session. No manual setup needed.
-
-### Conditional breakpoint example
-
-```python
-for item in items:   # set conditional breakpoint: item.price > 100
-```
-
-1. `<leader>dB` → type condition `item.price > 100` → Enter
-2. Debugger skips all items with price ≤ 100, only pauses when > 100
-
----
-
-## IoT / Embedded Development — PlatformIO
-
-For ESP32, Arduino, STM32, Raspberry Pi Pico (RP2040/RP2350). Requires `pip install platformio`.
-
-### First-time project setup
-
-```
-<leader>ioi  → init project (board picker, selects framework automatically)
-```
-
-Then write code in `src/main.cpp`.
-
-```
-<leader>ioc  → generate compile_commands.json (run once for LSP support)
-<leader>iog  → generate .clangd   (run once — suppresses cross-compiler LSP errors)
-<leader>lR   → restart LSP to pick up the new .clangd
-```
-
-### Build and upload
-
-```
-<leader>iob  → build             (Piorun build)
-<leader>iou  → upload to device   (Piorun upload)
-<leader>iom  → serial monitor (see device output)
-<leader>iod  → list connected devices
-<leader>iol  → library manager (drops into :Piolib — type search/install/…)
-<leader>ioD  → debug (probe-rs / openocd)
-```
-
-Boards are chosen inside the init picker (`<leader>ioi`) — there is no separate board-search command.
-
-### C/C++ extras — clangd_extensions
-
-```
-gh           → switch between .h and .cpp instantly
-<leader>ioH  → type hierarchy (what implements this class/struct?)
-<leader>ioT  → AST view (expression/type structure)
-```
-
-### Debugging embedded devices
-
-**probe-rs (STM32, RP2040/RP2350):**
-1. Connect ST-Link / CMSIS-DAP / picoprobe via USB
-2. Press `<F5>` → pick the matching debug config from the list
-
-**OpenOCD (ESP32):**
-```bash
-# In a terminal first:
-openocd -f board/esp32-wrover.cfg
-
-# Then in Neovim:
-# <F5> → pick "ESP32 — OpenOCD"
-```
-
-Edit the `chip` field in `lua/plugins/dap.lua` to match your exact chip: `STM32F103C8`, `STM32H743ZI`, `RP2350`, etc.
 
 ---
 
@@ -1775,11 +1271,11 @@ First time: `:Lazy sync` then `:MarkdownPreviewInstall`
 
 | Theme | Command | Style |
 |---|---|---|
-| **Kanagawa Wave** | `:colorscheme kanagawa` | **Default** — dark Japanese ink, compiled for fast startup |
-| **Catppuccin Mocha** | `:colorscheme catppuccin` | Dark, pastel, full integrations (LSP, DAP, fzf, gitsigns, noice…) |
+| **Tokyonight Night** | `:colorscheme tokyonight` | **Default** — clean, dark blue/purple |
+| **Catppuccin Mocha** | `:colorscheme catppuccin` | Dark, pastel, full integrations (LSP, treesitter, fzf, gitsigns, noice…) |
+| **Kanagawa Wave** | `:colorscheme kanagawa` | Dark Japanese ink, compiled bytecode for fast startup |
 | **Oxocarbon** | `:colorscheme oxocarbon` | IBM Carbon, near-black + electric blue |
 | **Cyberdream** | `:colorscheme cyberdream` | Cyberpunk neon |
-| **Tokyonight Night** | `:colorscheme tokyonight` | Dark blue/purple |
 | **Rose Pine** | `:colorscheme rose-pine` | Warm, earthy |
 
 ### Make permanent
@@ -1787,7 +1283,7 @@ First time: `:Lazy sync` then `:MarkdownPreviewInstall`
 Edit `lua/plugins/colorscheme.lua`:
 
 ```lua
-{ "LazyVim/LazyVim", opts = { colorscheme = "kanagawa" } }
+{ "LazyVim/LazyVim", opts = { colorscheme = "tokyonight" } }
 ```
 
 ### Recompile Kanagawa after changing options
@@ -1811,34 +1307,6 @@ Locks tool windows into consistent positions. You never get a random split in th
 | Quickfix | Bottom | `:copen` or `<leader>xQ` |
 | Trouble (Diagnostics) | Bottom | `<leader>xx` |
 | Help | Bottom | `:help <topic>` |
-
----
-
-## Breadcrumbs — Dropbar
-
-Navigation bar at the **top of every window** showing your current location:
-
-```
-src/services/user.service.ts › UserService › createUser
-```
-
-Powered by LSP (treesitter fallback). Each segment is clickable — press it to jump to that scope. Updates live as you move.
-
----
-
-## Sticky Context Header
-
-When you scroll deep into a function, the **function/class signature stays pinned at the top** of the window.
-
-```
-class UserService {           ← pinned (even 200 lines below)
-  ─────────────────────────────
-  ...200 lines of methods...
-
-  async createUser(data):      ← cursor here
-```
-
-Shows up to 3 lines of context. Disappears when you scroll back to the top.
 
 ---
 
@@ -1918,22 +1386,6 @@ All operators work: `dw`, `cw`, `vw`, `yw` all respect the boundaries.
 // Rename part of a camelCase name:
 getUserById    → cursor on "User" → ciw → type "Member" → getMemberById
 ```
-
----
-
-## Hardtime — Break Bad Habits
-
-Notifies (does **not** block) when you repeat `h`/`j`/`k`/`l` more than 3 times in a row. Teaches more efficient navigation motions like `w`, `b`, `5j`, `}`.
-
-```
-<leader>uh   → toggle Hardtime on/off
-```
-
-**Arrow keys are fully enabled** — they work in Normal, Insert, and Visual mode without restriction.
-
-Mode is `hint`: after 3 rapid repeats of the same motion key, a notification suggests a better motion. The keypress still registers — nothing is blocked.
-
-Disabled automatically in panel buffers (neo-tree, DAP, oil, toggleterm, etc.) so it never interrupts you in tool windows.
 
 ---
 
@@ -2141,83 +1593,6 @@ m:           → preview all marks in a popup list
 
 ---
 
-## Function Arg Highlight — Hlargs
-
-Function parameters get a distinct warm-amber color — visually different from regular local variables.
-
-```python
-def process(items, count, callback):   ← items, count, callback shown in warm orange
-    result = []                        ← result shown in normal variable color
-```
-
-`self`, `cls`, and `_` are excluded from highlighting (they're not real arguments).
-
----
-
-## Floating Split Labels — Incline
-
-When you have multiple windows open side by side, each window shows a small floating label in its **top-right corner** with the file icon + name.
-
-```
-┌──────────────────────┐  ┌──────────────────────┐
-│                      │  │              api.ts   │
-│   user.service.ts    │  │                       │
-│                      │  │                       │
-```
-
-- Only appears when more than one window is open
-- Shows `●` if the file has unsaved changes
-- Invisible in panels (neo-tree, aerial, DAP, etc.)
-
----
-
-## Mode Colors
-
-The cursorline color changes subtly based on your current Vim mode:
-
-| Mode | Color |
-|---|---|
-| Normal | Subtle blue (crystalBlue) |
-| Insert | Green (springGreen) |
-| Visual | Purple (oniViolet) |
-| Delete/Yank | Red/Yellow (samuraiRed/carpYellow) |
-
-15% opacity — just enough to know your mode at a glance without being distracting.
-
----
-
-## Noice — Centered Cmdline
-
-Pressing `:` opens a clean centered floating dialog instead of the bottom cmdline bar. `/` search also uses it.
-
-Filtered messages (don't appear as notifications):
-- `"written"` — file save confirmations
-- `"N lines yanked"` — yank messages
-- `"search hit BOTTOM"` — search wrap messages
-- `"Already at oldest/newest change"` — undo limit messages
-
----
-
-## Biscuits — Closing Brace Labels
-
-Shows a virtual text label at closing braces/brackets telling you what they close. Only appears when the opening is **12+ lines away**.
-
-```typescript
-class UserService {
-  // ... 80 lines of methods ...
-}  // class UserService  ← label appears here
-```
-
-Language-specific comment prefixes:
-
-| Language | Prefix |
-|---|---|
-| Python | `  # ` |
-| Go, TypeScript, JS, C, C++ | `  // ` |
-| Lua | `  -- ` |
-
----
-
 ## Virt-column — Line Length Guide
 
 A faint `│` character marks the line length guide. Per-filetype columns:
@@ -2232,19 +1607,11 @@ A faint `│` character marks the line length guide. Per-filetype columns:
 
 ---
 
-## Cinnamon — Smooth Scroll
-
-`Ctrl+d`, `Ctrl+u`, `Ctrl+f`, `Ctrl+b`, and mouse scroll are animated smoothly — like VS Code.
-
-Mouse scroll behavior: scrolls the **viewport** without moving the cursor (VSCode style).
-
----
-
 ## Scroll-past-EOF — Dynamic Scrolloff
 
 When your cursor is near the bottom of a file, `scrolloff` automatically increases so the last line stays centered with empty space below — matching VSCode's `scrollBeyondLastLine`.
 
-Disabled in panel buffers (neo-tree, DAP, oil, trouble, etc.) to avoid unnecessary computation.
+Disabled in panel buffers (neo-tree, oil, trouble, etc.) to avoid unnecessary computation.
 
 ---
 
@@ -2441,22 +1808,18 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | Key | Action |
 |-----|--------|
 | `gd` | Go to definition |
-| `gp` | Peek definition |
-| `gpt` | Peek type definition |
-| `gpr` | Peek references |
-| `gpi` | Peek implementation |
-| `gpc` | Close peek windows |
+| `gr` | All references (fzf-lua) |
+| `gI` | Go to implementation |
+| `gy` | Go to type definition |
 | `K` | Hover documentation |
 | `<C-f> / <C-b>` | Scroll hover/signature docs down/up |
-| `gr` | All references |
 | `<leader>cd` | Show diagnostic float |
 | `]d / [d` | Next/prev diagnostic |
-| `]h / [h` | Next/prev git hunk |
+| `[g / ]g` | Prev/next git hunk |
+| `]h / [h` | Next/prev Harpoon file |
 | `]m / [m` | Next/prev function |
 | `]k / [k` | Next/prev class |
-| `]f / [f` | Next/prev failed test |
 | `]t / [t` | Next/prev TODO |
-| `]r / [r` | Next/prev REST request |
 | `]x / [x` | Next/prev git conflict |
 | `{ / }` | Prev/next aerial symbol |
 | `<leader>uu` | Toggle undo tree |
@@ -2630,4 +1993,3 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 |---------|--------|
 | `:Format` | Format current buffer via Conform |
 | `:ReloadConfig` | Reload all config + plugin modules (run `:Lazy sync` after) |
-| `:WakaTimeApiKey` | Set your WakaTime API key |
