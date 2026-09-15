@@ -159,7 +159,7 @@ Ctrl+r         → redo
 └── lua/
     ├── config/
     │   ├── lazy.lua          ← Plugin manager + enabled LazyVim extras
-    │   ├── options.lua       ← Editor settings (scrolloff, timeoutlen=300, netrw disable…)
+    │   ├── options.lua       ← Editor settings (word wrap default, scrolloff, timeoutlen=300…)
     │   ├── keymaps.lua       ← Custom keybindings + which-key group labels
     │   └── autocmds.lua      ← Autocommands (inlay hints, virt-column, filetype settings)
     │

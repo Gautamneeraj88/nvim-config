@@ -23,7 +23,7 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Enable word wrap only for prose — code files stay unwrapped
+-- Spell check and prose settings for text files
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "markdown", "text", "gitcommit", "gitrebase" },
   callback = function()

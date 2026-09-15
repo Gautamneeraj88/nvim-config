@@ -14,8 +14,11 @@ opt.inccommand   = "split" -- show live substitution results in a split
 opt.updatetime   = 200     -- faster CursorHold / LSP diagnostics
 opt.timeoutlen   = 300     -- 300ms: snappy jk / multi-key response, which-key popup appears smoothly
 
--- UX
+-- UX & Formatting
 opt.confirm      = true    -- ask "Save / Discard / Cancel?" on :q with unsaved changes
+opt.wrap         = true    -- word wrap enabled by default
+opt.linebreak    = true    -- wrap at word boundaries rather than mid-word
+opt.breakindent  = true    -- preserve indentation on wrapped lines
 
 -- Cleaner UI
 opt.cmdheight    = 0       -- hide cmdline when not in use (noice.nvim handles messages)
@@ -32,5 +35,5 @@ opt.foldlevel    = 99      -- open all folds by default
 opt.foldlevelstart = 99
 opt.foldenable   = true
 
--- Statuscolumn — line numbers; gitsigns/DAP/folds use the sign column
+-- Statuscolumn — line numbers; gitsigns/folds use the sign column
 opt.statuscolumn = "%=%l "
