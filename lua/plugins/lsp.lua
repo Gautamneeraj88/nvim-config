@@ -4,21 +4,35 @@ return {
   {
     "neovim/nvim-lspconfig",
     opts = {
+      inlay_hints = {
+        enabled = true,
+      },
+
       servers = {
 
-        -- ── TypeScript / JavaScript (vtsls) ─────────────────────────────────
+        -- ── TypeScript / JavaScript / Next.js / React (vtsls) ────────────────
         vtsls = {
           settings = {
             vtsls = {
+              autoUseWorkspaceTsdk = true, -- automatically use workspace's typescript version (crucial for Next.js)
+              experimental = {
+                completion = {
+                  enableServerSideFuzzyMatch = true,
+                },
+              },
               tsserver = {
                 maxTsServerMemory = 3072, -- 3GB: enough for large monorepos, less wasteful on small projects
               },
             },
             typescript = {
               updateImportsOnFileMove = { enabled = "always" },
+              suggest = {
+                completeFunctionCalls = true,
+              },
               preferences = {
                 importModuleSpecifier = "shortest",
                 quoteStyle = "single",
+                includePackageJsonAutoImports = "auto",
               },
               inlayHints = {
                 parameterNames         = { enabled = "all" },   -- show param names at call sites
@@ -31,9 +45,13 @@ return {
             },
             javascript = {
               updateImportsOnFileMove = { enabled = "always" },
+              suggest = {
+                completeFunctionCalls = true,
+              },
               preferences = {
                 importModuleSpecifier = "shortest",
                 quoteStyle = "single",
+                includePackageJsonAutoImports = "auto",
               },
               inlayHints = {
                 parameterNames         = { enabled = "all" },
@@ -42,6 +60,36 @@ return {
                 propertyDeclarationTypes = { enabled = true },
                 functionLikeReturnTypes = { enabled = true },
                 enumMemberValues       = { enabled = true },
+              },
+            },
+          },
+        },
+
+        -- ── Tailwind CSS — Next.js, React, and CSS autocompletion + hints ─────
+        tailwindcss = {
+          filetypes_exclude = { "markdown" },
+          settings = {
+            tailwindCSS = {
+              classAttributes = { "class", "className", "class:list", "classList", "ngClass" },
+              lint = {
+                cssConflict = "warning",
+                invalidApply = "error",
+                invalidConfigPath = "error",
+                invalidScreen = "error",
+                invalidTailwindDirective = "error",
+                invalidVariant = "error",
+                recommendedVariantOrder = "warning",
+              },
+              validate = true,
+              experimental = {
+                classRegex = {
+                  { "cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
+                  { "cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+                  { "clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+                  { "cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+                  { "twMerge\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+                  { "tv\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
+                },
               },
             },
           },
@@ -88,6 +136,7 @@ return {
                 autoSearchPaths       = true,
                 useLibraryCodeForTypes = true,
                 diagnosticMode        = "openFilesOnly",
+                autoImportCompletions = true,
                 -- FastAPI's documented `Depends()` default-arg idiom is a false
                 -- positive for this rule; the Annotated style avoids it entirely.
                 reportCallInDefaultInitializer = "none",
@@ -123,7 +172,17 @@ return {
   -- Install LSP servers via mason
   {
     "mason-org/mason-lspconfig.nvim",
-    opts = { ensure_installed = { "basedpyright", "cssls", "html", "bashls" } },
+    opts = {
+      ensure_installed = {
+        "vtsls",
+        "tailwindcss",
+        "basedpyright",
+        "cssls",
+        "html",
+        "jsonls",
+        "bashls",
+      },
+    },
   },
 
   -- ─── Formatting (conform) ──────────────────────────────────────────────────

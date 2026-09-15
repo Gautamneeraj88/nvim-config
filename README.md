@@ -382,16 +382,16 @@ LSP gives you IDE features automatically when you open a supported file.
 
 | Language | Server | Notes |
 |---|---|---|
-| TypeScript/JS | `vtsls` | Full TS server, inlay hints, import management |
-| Python | `basedpyright` | Stricter than pyright, faster, actively maintained |
+| TS / JS / React / Next.js | `vtsls` | Workspace TypeScript, inlay hints, auto-imports, call completions |
+| Tailwind CSS | `tailwindcss` | Class completion, hover docs, `cn()` / `clsx()` / `cva()` / `twMerge()` |
+| Python | `basedpyright` + `ruff` | Fast type checking, inlay hints, auto-imports, ruff linting & formatting |
 | Go | `gopls` | Full Go toolchain, staticcheck, gofumpt |
 | JSON | `jsonls` | Schema validation |
-| CSS/SCSS | `cssls` / `scssls` | Tailwind class completion, validation |
+| CSS/SCSS | `cssls` / `scssls` | Vanilla & SCSS completion, validation |
 | HTML | `html` | Tag/attribute autocompletion |
 | Bash/Shell | `bashls` | Shell script diagnostics + shellcheck |
 | YAML | `yaml-language-server` | Schemas, validation |
 | TOML | `taplo` | pyproject.toml, Cargo.toml etc. |
-| Tailwind | `tailwindcss` | Class completion, sorting |
 | Prisma | `prisma-language-server` | Schema validation |
 | Docker | `dockerls` | Dockerfile + compose |
 

@@ -60,9 +60,9 @@ return {
           spacing = 2,
           prefix = "●",
           format = function(d)
-            local msg = d.message
-            if #msg > 60 then msg = msg:sub(1, 57) .. "..." end
-            return msg
+            local line = d.message:match("^[^\r\n]+") or d.message
+            if #line > 90 then line = line:sub(1, 87) .. "..." end
+            return line
           end,
         },
         float = { source = true }, -- border from global opt.winborder
