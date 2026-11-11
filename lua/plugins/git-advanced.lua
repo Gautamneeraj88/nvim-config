@@ -16,15 +16,32 @@ return {
         },
       },
     },
+    -- <leader>gd is a group only (no bare mapping) so which-key opens instantly
+    -- instead of waiting timeoutlen to see whether gdo/gdc/… follows.
     keys = {
-      { "<leader>gd",  "<cmd>DiffviewOpen<cr>", desc = "Diff View (all changes)" },
+      -- Review loop for agent edits: see everything not yet staged, then accept
+      -- per hunk (<leader>ghs / ghr) or everything at once (<leader>gA).
+      { "<leader>ga",  "<cmd>DiffviewOpen<cr>", desc = "Review changes (Diffview)" },
+      {
+        "<leader>gA",
+        function()
+          if vim.fn.confirm("Stage ALL changes (git add -A)?", "&Yes\n&No", 2) ~= 1 then return end
+          local out = vim.fn.system({ "git", "-C", LazyVim.root.git(), "add", "-A" })
+          if vim.v.shell_error ~= 0 then
+            vim.notify("git add -A failed:\n" .. out, vim.log.levels.ERROR)
+            return
+          end
+          vim.notify("Staged all changes", vim.log.levels.INFO)
+        end,
+        desc = "Accept all changes (stage all)",
+      },
       { "<leader>gdo", "<cmd>DiffviewOpen<cr>", desc = "Diff View Open" },
       { "<leader>gdc", "<cmd>DiffviewClose<cr>", desc = "Close Diff View" },
       { "<leader>gdd", "<cmd>DiffviewOpen HEAD~1<cr>", desc = "Diff vs last commit" },
       {
         "<leader>gdm",
         function()
-          local branch = vim.fn.system("git rev-parse --verify origin/main 2>/dev/null")
+          vim.fn.system("git rev-parse --verify origin/main 2>/dev/null")
           local name = vim.v.shell_error == 0 and "main" or "master"
           vim.cmd("DiffviewOpen origin/" .. name .. "...HEAD")
         end,
@@ -33,7 +50,7 @@ return {
       {
         "<leader>gdM",
         function()
-          local branch = vim.fn.system("git rev-parse --verify main 2>/dev/null")
+          vim.fn.system("git rev-parse --verify main 2>/dev/null")
           local name = vim.v.shell_error == 0 and "main" or "master"
           vim.cmd("DiffviewOpen " .. name .. "...HEAD")
         end,

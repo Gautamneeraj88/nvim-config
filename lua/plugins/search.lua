@@ -99,6 +99,10 @@ return {
       },
     },
     keys = {
+      -- The fzf extra binds <leader>gd (git diff files); that turns our Diffview
+      -- <leader>gd group into a mapping+prefix and adds a timeoutlen delay.
+      { "<leader>gd", false },
+
       -- Grep word under cursor / visual selection (LazyVim uses <leader>sw/<leader>sW)
       { "<leader>fw", "<cmd>FzfLua grep_cword<cr>",              desc = "Search Word Under Cursor" },
       { "<leader>fs", "<cmd>FzfLua grep_visual<cr>", mode = "v", desc = "Search Selection" },

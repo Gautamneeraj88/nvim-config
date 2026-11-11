@@ -34,18 +34,8 @@ return {
       { "<C-k>",     function() require("smart-splits").move_cursor_up() end,    mode = { "n", "t" }, desc = "Move to above split" },
       { "<C-l>",     function() require("smart-splits").move_cursor_right() end, mode = { "n", "t" }, desc = "Move to right split" },
     },
-    config = function(_, opts)
-      require("smart-splits").setup(opts)
-      -- Tmux navigation — send Ctrl+hjkl to tmux if running inside tmux
-      -- Requires the smart-splits tmux plugin: https://github.com/mrjones2014/smart-splits.nvim#tmux
-      -- Add to tmux.conf: set -g @smart-splits-navigate-forward 'C-h'
-      if vim.env.TMUX then
-        vim.keymap.set({ "n", "t" }, "<C-h>", function() require("smart-splits").move_cursor_left() end,  { desc = "Move to left split/tmux pane" })
-        vim.keymap.set({ "n", "t" }, "<C-j>", function() require("smart-splits").move_cursor_down() end,  { desc = "Move to below split/tmux pane" })
-        vim.keymap.set({ "n", "t" }, "<C-k>", function() require("smart-splits").move_cursor_up() end,    { desc = "Move to above split/tmux pane" })
-        vim.keymap.set({ "n", "t" }, "<C-l>", function() require("smart-splits").move_cursor_right() end, { desc = "Move to right split/tmux pane" })
-      end
-    end,
+    -- The <C-hjkl> keys above already cross into tmux panes when $TMUX is set —
+    -- smart-splits detects the multiplexer itself. tmux side setup: see README.
   },
 
   -- ─── Spider — smarter word motions for camelCase & snake_case ───────────────
@@ -82,13 +72,14 @@ return {
     branch = "harpoon2",
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = {
-      menu = {
-        width = vim.api.nvim_win_get_width(0) - 4,
-      },
       settings = {
         save_on_toggle = true,
       },
     },
+    -- Harpoon 2 defines setup with a colon (Harpoon:setup). lazy.nvim's default
+    -- calls require("harpoon").setup(opts) with a dot, which passes opts as
+    -- `self` and silently drops every setting — so call it explicitly.
+    config = function(_, opts) require("harpoon"):setup(opts) end,
     keys = {
       { "<leader>H", function() require("harpoon"):list():add() end, desc = "Harpoon Add File" },
       { "<leader>h", function() local harpoon = require("harpoon"); harpoon.ui:toggle_quick_menu(harpoon:list()) end, desc = "Harpoon Menu" },

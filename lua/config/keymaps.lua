@@ -90,6 +90,36 @@ map("n", "<leader>cL", function()
   end, 500)
 end, { desc = "Restart LSP" })
 
+-- ─── Copy code references (for pasting into Claude Code / PRs / chat) ─────────
+-- Normal: path:line   Visual: path:start-end   — path relative to cwd.
+map("n", "<leader>yp", function()
+  local ref = vim.fn.expand("%:.") .. ":" .. vim.fn.line(".")
+  vim.fn.setreg("+", ref)
+  vim.notify("Copied " .. ref)
+end, { desc = "Copy path:line" })
+map("x", "<leader>yp", function()
+  local a, b = vim.fn.line("v"), vim.fn.line(".")
+  if a > b then a, b = b, a end
+  local ref = vim.fn.expand("%:.") .. ":" .. a .. (a ~= b and ("-" .. b) or "")
+  vim.fn.setreg("+", ref)
+  vim.api.nvim_feedkeys(vim.keycode("<Esc>"), "n", false)
+  vim.notify("Copied " .. ref)
+end, { desc = "Copy path:start-end" })
+
+-- ─── Quiet mode — hide inline hints while writing ─────────────────────────────
+-- One toggle for inline blame, LSP inlay hints and completion ghost text.
+-- Ghost text reads vim.g.quiet_mode (see blink.cmp spec in plugins/coding.lua).
+Snacks.toggle.new({
+  name = "Quiet Mode",
+  get = function() return vim.g.quiet_mode == true end,
+  set = function(on)
+    vim.g.quiet_mode = on
+    vim.lsp.inlay_hint.enable(not on)
+    local ok, gs = pcall(require, "gitsigns")
+    if ok then gs.toggle_current_line_blame(not on) end
+  end,
+}):map("<leader>uq")
+
 -- ─── Which-key group labels ───────────────────────────────────────────────────
 -- Labels for custom <leader> prefixes so they show up named in the which-key popup.
 -- LazyVim already registers labels for its own groups (f, b, c, g, q, s, u, w, x…).
@@ -101,6 +131,7 @@ vim.schedule(function()
     { "<leader>R",  group = "Refactor" },
     { "<leader>a",  group = "Argument" },
     { "<leader>gd", group = "Diff" },
+    { "<leader>y",  group = "Copy reference" },
   })
 end)
 

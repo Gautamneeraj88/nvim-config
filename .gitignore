@@ -1,5 +1,8 @@
 # Neovim session files
 *.session.vim
 
+# Local binaries (e.g. the 8MB codebase-graph tool) — never commit
+bin/
+
 # OS
 .DS_Store
