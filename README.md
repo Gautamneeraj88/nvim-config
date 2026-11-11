@@ -66,8 +66,9 @@ This document covers every feature in detail — read it when you're stuck or wa
 56. [Markdown Image Paste & Tables](#markdown-image-paste--tables)
 57. [Git Diff Presets — Diffview](#git-diff-presets-diffview)
 58. [Incremental Selection](#incremental-selection-treesitter)
-59. [How to Customize](#how-to-customize)
-60. [Complete Keybinding Reference](#complete-keybinding-reference)
+59. [Agentic Workflow — Neovim + Claude Code](#agentic-workflow--neovim--claude-code)
+60. [How to Customize](#how-to-customize)
+61. [Complete Keybinding Reference](#complete-keybinding-reference)
 
 ---
 
@@ -155,16 +156,22 @@ Ctrl+r         → redo
 ```
 ~/.config/nvim/
 ├── init.lua                  ← Entry point — defensive cwd patch + loads lazy.lua
+├── lazyvim.json              ← LazyVim state (version/news). "extras" is intentionally
+│                                empty — extras live in lua/config/lazy.lua only
+├── bin/                      ← Local binaries (git-ignored, never committed)
 │
 └── lua/
     ├── config/
-    │   ├── lazy.lua          ← Plugin manager + enabled LazyVim extras
+    │   ├── lazy.lua          ← Plugin manager + enabled LazyVim extras (single source of truth)
     │   ├── options.lua       ← Editor settings (word wrap default, scrolloff, timeoutlen=300…)
-    │   ├── keymaps.lua       ← Custom keybindings + which-key group labels
-    │   └── autocmds.lua      ← Autocommands (inlay hints, virt-column, filetype settings)
+    │   ├── keymaps.lua       ← Custom keybindings, copy-reference (<leader>yp), quiet mode
+    │   │                        (<leader>uq), which-key group labels
+    │   └── autocmds.lua      ← Autocommands (live reload of external edits, inlay hints,
+    │                            virt-column, filetype settings)
     │
     └── plugins/
-        ├── autosave.lua      ← Auto-save on InsertLeave/BufLeave/FocusLost
+        ├── autosave.lua      ← Auto-save on InsertLeave/BufLeave/FocusLost — pauses if the
+        │                        file was changed on disk by another program (agent-safe)
         ├── coding.lua        ← UFO folds, refactoring, autotag, neogen, tabout,
         │                        treesitter textobjects, various textobjs,
         │                        ts-error-translator, blink.cmp ghost text, mini.surround, treesj
@@ -172,7 +179,8 @@ Ctrl+r         → redo
         ├── editor.lua        ← Neoconf, todo-comments, diagnostics, gitsigns,
         │                        neo-tree explorer, oil file manager, snacks dashboard
         ├── extras.lua        ← Yanky, vim-visual-multi, nvim-bqf, persistence, marks
-        ├── git-advanced.lua  ← Diffview, git-conflict, lazygit (snacks)
+        ├── git-advanced.lua  ← Diffview (+ <leader>ga review / <leader>gA accept), git-conflict,
+        │                        lazygit (snacks)
         ├── lsp.lua           ← vtsls, gopls, basedpyright, cssls, html, bashls, conform formatters
         ├── markdown.lua      ← Markdown preview, image paste, table mode
         ├── navigation.lua    ← Smart-splits (terminal+tmux aware), spider, harpoon v2, projects
@@ -186,6 +194,8 @@ Ctrl+r         → redo
 ```
 
 ### LazyVim extras active (`lua/config/lazy.lua`)
+
+`lazy.lua` is the **only** place extras are listed. Don't toggle them with `:LazyExtras` — that UI writes to `lazyvim.json`, and you'd end up with two lists that drift apart.
 
 | Extra | What it provides |
 |---|---|
@@ -574,8 +584,8 @@ Changed lines in the **sign column** (left gutter):
 - Red `_` = line deleted below
 
 ```
-]h           → next changed hunk
-[h           → previous changed hunk
+]g           → next changed hunk   (]h / [h belong to Harpoon)
+[g           → previous changed hunk
 <leader>ghp  → preview this hunk's diff (floating)
 <leader>ghs  → stage this hunk
 <leader>ghr  → reset/discard this hunk
@@ -604,12 +614,16 @@ const port = process.env.PORT ?? 3000;    you, 2 Apr 2026 · add port config
 Side-by-side diffs, full file history, 3-way merge view.
 
 ```
-<leader>gd    → open diff view (all uncommitted changes)
-<leader>gD    → diff current state vs last commit (HEAD~1)
-<leader>gfh   → history of current file (every commit that touched it)
-<leader>gFH   → history of entire project
+<leader>ga    → review changes — open diff view of everything not yet staged
+<leader>gA    → accept all changes (git add -A, asks first)
+<leader>gdo   → open diff view (all uncommitted changes)
+<leader>gdd   → diff current state vs last commit (HEAD~1)
+<leader>gdh   → history of current file (every commit that touched it)
+<leader>gdH   → history of entire project
 <leader>gdc   → close diff view
 ```
+
+`<leader>gd` is a **group**, not a command — press it and which-key shows the `gd*` menu instantly. (If `<leader>gd` were also a mapping, Neovim would wait `timeoutlen` = 300ms every time to see whether you meant `gdo`, `gdc`, … That's also why the fzf extra's own `<leader>gd` is disabled in `search.lua`.)
 
 ### Inside Diffview
 
@@ -700,6 +714,8 @@ Keep your 4 most important files pinned and jump between them instantly without 
 
 Instead of cycling through 20 open buffers or typing in fuzzy search for the same files over and over, pin the 2–4 files you are actively working on and switch between them with a single keystroke.
 
+> **Config note:** Harpoon 2 defines `Harpoon:setup()` with a colon. lazy.nvim's automatic setup calls `require("harpoon").setup(opts)` with a dot, which silently drops every option. `navigation.lua` therefore has an explicit `config = function(_, opts) require("harpoon"):setup(opts) end`. Watch for this pattern with any plugin whose `setup` is a method.
+
 ---
 
 ## Terminal
@@ -761,7 +777,13 @@ bind -n M-Up    if-shell "$is_vim" "send-keys M-Up"    "resize-pane -U 5"
 is_vim="basename #{pane_current_command}) = vim"
 ```
 
-**4. Reload tmux config:**
+**4. Enable focus events** (needed so Neovim knows when you come back from another pane, e.g. Claude Code):
+
+```bash
+set -g focus-events on
+```
+
+**5. Reload tmux config:**
 
 ```bash
 tmux source-file ~/.tmux.conf
@@ -1655,6 +1677,19 @@ Not saved: Neo-tree/Lazy/Mason windows, read-only files, new unnamed buffers.
 
 Manual save still works: `<C-s>`
 
+### Agent-safe: autosave pauses if the file changed on disk
+
+If another program (Claude Code, a formatter, `git checkout`) writes a file **after** your buffer last read or saved it, autosave refuses to write that buffer and warns once:
+
+```
+src/app.ts changed on disk — autosave paused.
+:e! to load it, :w! to keep yours.
+```
+
+How it works (`lua/plugins/autosave.lua`): on every read/write/reload the file's disk modification time is stored in a buffer variable; the autosave `condition` compares it with the current disk mtime and returns `false` if the disk copy is newer. Without this, `auto-save.nvim`'s `silent! write` could overwrite the agent's change without asking.
+
+Unmodified buffers never hit this — they simply reload (see [Agentic Workflow](#agentic-workflow--neovim--claude-code)).
+
 ---
 
 ## Web & Devops Stacks
@@ -1713,14 +1748,14 @@ Beyond preview (`<leader>mp`):
 
 ## Git Diff Presets (Diffview)
 
-In addition to the existing `<leader>gd` / `<leader>gD`:
+In addition to `<leader>gdo` / `<leader>gdd` (see [Diffview](#git-diff-viewer--diffview)):
 
 ```
 <leader>gdm  → diff the whole branch vs origin/main   (review before PR)
 <leader>gdM  → diff the whole branch vs local main
 ```
 
-Hunk-level git (stage/reset/preview/blame, `]h`/`[h`) is provided by gitsigns under `<leader>gh*`.
+Hunk-level git (stage/reset/preview/blame) is provided by gitsigns under `<leader>gh*`; jump between hunks with `]g`/`[g`.
 
 ---
 
@@ -1732,6 +1767,53 @@ Grow/shrink the selection by syntax node — no plugin needed, built into the tr
 <C-space>   → expand selection to the next larger node
 <BS>        → shrink selection back down
 ```
+
+---
+
+## Agentic Workflow — Neovim + Claude Code
+
+This config has **no AI plugins** on purpose: you write code by hand in Neovim, and an agent (Claude Code) works in a separate terminal or tmux pane on the same repo. The pieces below make those two writers coexist safely.
+
+### The loop
+
+```
+1. Agent edits files on disk
+2. Your open buffers reload automatically     (notice: "file reloaded (changed on disk)")
+3. <leader>ga   → review everything not yet staged in Diffview
+4. Per hunk:    ]g / [g to jump, <leader>ghs stage (accept), <leader>ghr reset (reject)
+   Per file:    - in the Diffview file panel toggles staging
+   Everything:  <leader>gA  (git add -A, asks first)
+5. Commit (lazygit: <leader>gg)
+```
+
+Staging = "accepted". After staging, `<leader>ga` only shows what you haven't reviewed yet — so you can review an agent's work in passes.
+
+### Live reload of external edits
+
+`lua/config/autocmds.lua` runs `:checktime` on `CursorHold`, `BufEnter` and `FocusGained`. With `updatetime = 200`, an unmodified buffer picks up the agent's change ~200ms after you stop moving. LazyVim alone only checks on focus/terminal events, which never fire if you stay inside Neovim.
+
+> **Learning note:** that autocmd uses `nested = true`. Autocommands don't trigger other autocommands by default, so without it the reload would happen but `BufReadPost`/`FileChangedShellPost` wouldn't fire — the notice wouldn't show and autosave's mtime tracking would go stale.
+
+If **you** also have unsaved edits in that file, Neovim asks whether to load the disk version, and autosave pauses for that buffer (see [Auto-save](#auto-save)).
+
+> **Rule of thumb:** don't hand-edit a file while the agent is editing it. Let it finish, review, then continue.
+
+### Pointing the agent at code — `<leader>yp`
+
+```
+<leader>yp   (normal)  → copy  src/app.ts:42        to the system clipboard
+<leader>yp   (visual)  → copy  src/app.ts:42-58
+```
+
+Paste it into Claude Code ("refactor `src/app.ts:42-58`…"). Paths are relative to Neovim's cwd, which matches the agent's working directory when both run at the project root.
+
+### Quiet mode — `<leader>uq`
+
+One toggle that hides inline git blame, LSP inlay hints and completion ghost text, for when you want a bare buffer to think and type in. Press again to bring them back. (Ghost text reads `vim.g.quiet_mode` — see the blink.cmp spec in `coding.lua`.)
+
+### tmux setup
+
+Running Claude Code in a tmux pane next to Neovim? Add `set -g focus-events on` to `~/.tmux.conf` (see [Tmux Integration](#tmux-integration)) so returning to Neovim also triggers a reload check.
 
 ---
 
@@ -1867,7 +1949,9 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>gs` | Git status |
 | `<leader>gS` | Git stash |
 | `<leader>ge` | Git explorer |
-| `<leader>gd` / `<leader>gdo` | Diffview Open (all changes) |
+| `<leader>ga` | Review changes (Diffview, unstaged) |
+| `<leader>gA` | Accept all changes (stage all, confirms) |
+| `<leader>gdo` | Diffview Open (all changes) — `<leader>gd` itself is a group |
 | `<leader>gdc` | Close Diffview |
 | `<leader>gdd` | Diffview vs last commit (HEAD~1) |
 | `<leader>gdm` | Diff branch vs origin/main (or master) |
@@ -1935,6 +2019,7 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>fy` | Browse yank history |
 | `<C-n>` | Multi-cursor: select next |
 | `<C-Down/Up>` | Multi-cursor: cursor below/above |
+| `<leader>yp` | Copy `path:line` (visual: `path:start-end`) |
 
 ### UI Toggles
 
@@ -1945,6 +2030,7 @@ Create `.neoconf.json` at the project root (see [Neoconf section](#neoconf--per-
 | `<leader>uD` | Toggle Dimming |
 | `<leader>uR` | Toggle Illuminate (word highlights) |
 | `<leader>uh` | Toggle inlay hints |
+| `<leader>uq` | Quiet mode (blame + inlay hints + ghost text) |
 | `<leader>uw` | Toggle word wrap |
 | `<leader>uu` | Toggle Undo Tree |
 | `<leader>uC` | Switch colorscheme (with live preview) |

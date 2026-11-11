@@ -11,6 +11,28 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 })
 vim.api.nvim_set_hl(0, "LspInlayHint", { link = "Comment" }) -- apply now for the current theme
 
+-- ─── Pick up external edits (Claude Code, formatters, git) ────────────────────
+-- LazyVim only runs :checktime on FocusGained/TermClose/TermLeave, which never
+-- fires while you stay in Neovim and an agent edits files in another pane.
+-- CursorHold (updatetime = 200ms) makes unmodified buffers reload almost live.
+vim.api.nvim_create_autocmd({ "CursorHold", "BufEnter", "FocusGained" }, {
+  group = vim.api.nvim_create_augroup("external_reload", { clear = true }),
+  -- nested: let the reload fire BufReadPost/FileChangedShellPost, which the
+  -- notice below and autosave's mtime tracking (plugins/autosave.lua) rely on.
+  nested = true,
+  callback = function(ev)
+    if vim.fn.mode() == "c" or vim.bo[ev.buf].buftype ~= "" then return end
+    vim.cmd("checktime " .. ev.buf)
+  end,
+})
+vim.api.nvim_create_autocmd("FileChangedShellPost", {
+  group = vim.api.nvim_create_augroup("external_reload_notify", { clear = true }),
+  callback = function(ev)
+    if vim.bo[ev.buf].modified then return end -- you kept your version; autosave.lua warns
+    vim.notify(vim.fn.fnamemodify(ev.file, ":.") .. " reloaded (changed on disk)", vim.log.levels.INFO)
+  end,
+})
+
 -- Session restore is manual via <leader>qs (restore) / <leader>ql (last session).
 -- Auto-restore was removed because it blanks the welcome dashboard on startup.
 

@@ -237,11 +237,12 @@ return {
   -- ─── Completion ghost text — inline suggestion preview ───────────────────────
   -- Shows the top completion candidate greyed-out as you type (like VS Code inline).
   -- Accept with Tab (tabout.nvim already wires Tab → blink → tabout fallback).
+  -- A function so <leader>uq (quiet mode, keymaps.lua) can switch it off live.
   {
     "saghen/blink.cmp",
     opts = {
       completion = {
-        ghost_text = { enabled = true },
+        ghost_text = { enabled = function() return not vim.g.quiet_mode end },
       },
       sources = {
         providers = {
