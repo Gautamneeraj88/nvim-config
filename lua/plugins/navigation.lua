@@ -18,7 +18,7 @@ return {
     "mrjones2014/smart-splits.nvim",
     event = "VeryLazy",
     opts = {
-      at_edge = "stop",          -- don't wrap around when reaching window edge
+      move = { at_edge = "stop" }, -- don't wrap around when reaching window edge
       ignored_buftypes = { "nofile", "quickfix", "prompt" },
       ignored_filetypes = { "neo-tree", "aerial", "lazy", "mason", "trouble" },
     },
